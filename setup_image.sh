@@ -23,6 +23,8 @@ network={
  psk=\"${WIRELESS_PASSWORD}\"
 }" > /Volumes/boot/wpa_supplicant.conf
 
+# TODO: exit config.txt and uncomment dtparam=spi=on
+
 mkdir -p /Volumes/boot/eink-radiator
 
 cp docker-compose.yml /Volumes/boot/eink-radiator
