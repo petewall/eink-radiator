@@ -7,7 +7,7 @@ sudo apt autoremove
 
 # Install required software
 sudo apt-get install git jq libatlas-base-dev libffi-dev libssl-dev python-numpy python3-numpy python3-pip vim
-pip3 install docker-compose inky yq
+pip3 install docker-compose yq
 
 # Install docker
 curl -sSL https://get.docker.com | sh
