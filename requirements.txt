@@ -1,2 +1,2 @@
 inky == 0.0.5
-Pillow == 7.0.0
+Pillow == 7.1.0
