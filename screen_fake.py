@@ -1,14 +1,11 @@
-from inky import inky, InkyWHAT
-
 class Screen:
   """This is a fake screen that shows the image in a window"""
 
   def __init__(self):
     self.image = None
-    self.screen = InkyWHAT('red')
 
   def size(self):
-    return (self.screen.WIDTH, self.screen.WIDTH)
+    return (400, 300)
 
   def get_image(self):
     return self.image
@@ -18,5 +15,4 @@ class Screen:
 
   def show(self):
     if self.image is not None:
-      self.screen.set_image(self.image)
-      self.screen.show()
+      self.image.show()
