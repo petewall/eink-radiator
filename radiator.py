@@ -1,5 +1,5 @@
 from image_sources.image import ImageContent
-from image_sources.concourse import ConcourseContent
+from image_sources.concourse.concourse import ConcourseContent
 
 class Radiator:
 
