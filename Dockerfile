@@ -1,13 +1,13 @@
 FROM arm32v5/python:3.7-buster AS requirements_builder
 
-ARG INKY_VERSION=0.0.5
-
 RUN pip install pipenv
 
 WORKDIR /tmp
 COPY [ "Pipfile", "Pipfile.lock", "/tmp/" ]
 ARG PIPENV_IGNORE_VIRTUALENVS=1
 RUN pipenv lock --requirements > /tmp/requirements.txt
+
+ARG INKY_VERSION=0.0.5
 RUN echo "inky==${INKY_VERSION}" >> /tmp/requirements.txt
 
 FROM arm32v5/python:3.7-buster
