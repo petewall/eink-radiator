@@ -15,6 +15,11 @@ class ConcourseContent:
 
   def get_image(self):
     image = Image.new('RGBA', (400, 300), 'black')
+
+    logo = Image.open("image_sources/concourse/logo.png")
+    image.paste(logo, box=(5, 5, 40, 40), mask=logo)
+
     image_canvas = ImageDraw.Draw(image)
-    image_canvas.text((10, 10), 'Concourse', fill='white', font=self.title_font)
+    image_canvas.text((45, 3), 'Concourse', fill='white', font=self.title_font)
+    image_canvas.line([(5, 47), (395, 47)], fill='red', width=2)
     return image

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  eink-radiator:
+    image: petewall/eink-radiator
+    privileged: true
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+    ports:
+      - "5000:80"

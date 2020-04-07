@@ -7,9 +7,7 @@ radiator = Radiator()
 
 @app.route('/', methods=['GET'])
 def serve_controller_page():
-  return render_template('index.html',
-    source_name=radiator.get_image_source().name()
-  )
+  return render_template('index.html')
 
 @app.route('/radiator-image.png', methods=['GET'])
 def serve_radiator_image():
