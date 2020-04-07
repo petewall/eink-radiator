@@ -1,6 +1,7 @@
+FROM arm32v5/python:3.7-buster AS requirements_builder
+
 ARG INKY_VERSION=0.0.5
 
-FROM arm32v5/python:3.7-buster AS requirements_builder
 RUN pip install pipenv
 
 WORKDIR /tmp
