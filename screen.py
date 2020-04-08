@@ -1,7 +1,8 @@
-from inky import inky, InkyWHAT
+# pylint: disable=import-error
+from inky import InkyWHAT
 
 
-class Screen(object):
+class Screen():
     def __init__(self):
         self.screen = InkyWHAT('red')
 
@@ -9,5 +10,5 @@ class Screen(object):
         return (self.screen.WIDTH, self.screen.WIDTH)
 
     def set_image(self, image):
-        self.screen.set_image(self.image)
+        self.screen.set_image(image)
         self.screen.show()

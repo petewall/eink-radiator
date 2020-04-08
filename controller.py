@@ -1,5 +1,7 @@
-from flask import Flask, render_template, send_file
+# pylint: disable=invalid-name
+
 from io import BytesIO
+from flask import Flask, render_template, send_file
 from image_sources.image import ImageContent
 from image_sources.concourse.concourse import ConcourseContent
 from radiator import Radiator

@@ -1,11 +1,12 @@
+# pylint: disable=no-self-use
+
 import unittest
 from unittest import TestCase
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import MagicMock
 from radiator import Radiator
-from screen_fake import Screen
 
 
-class FakeImageSource(object):
+class FakeImageSource():
     image = "This is my image"
 
     def __init__(self):

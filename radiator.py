@@ -6,7 +6,7 @@ else:
     from screen_fake import Screen
 
 
-class Radiator(object):
+class Radiator():
     image = None
     image_source = 0
     screen = Screen()

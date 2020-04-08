@@ -1,7 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
 
+FONT_PATH = 'image_sources/concourse/RobotoSlab-Regular.ttf'
 
-class ConcourseContent(object):
+class ConcourseContent():
     @classmethod
     def name(cls):
         return "Concourse"
@@ -10,7 +11,7 @@ class ConcourseContent(object):
         self.url = None
         self.username = None
         self.password = None
-        self.title_font = ImageFont.truetype(font='image_sources/concourse/RobotoSlab-Regular.ttf', size=30)
+        self.title_font = ImageFont.truetype(font=FONT_PATH, size=30)
 
     def get_image(self):
         image = Image.new('RGBA', (400, 300), 'black')

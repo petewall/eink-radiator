@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-class ImageContent:
+class ImageContent():
     @classmethod
     def name(cls):
         return "Static Image"

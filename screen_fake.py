@@ -1,4 +1,6 @@
-class Screen(object):
+# pylint: disable=no-self-use
+
+class Screen():
     def size(self):
         return (400, 300)
 
