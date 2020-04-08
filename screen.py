@@ -1,9 +1,7 @@
 from inky import inky, InkyWHAT
 
 
-class Screen:
-    """This displays an image on the InkyWhat"""
-
+class Screen(object):
     def __init__(self):
         self.screen = InkyWHAT('red')
 

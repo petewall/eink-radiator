@@ -2,8 +2,6 @@ from PIL import Image
 
 
 class ImageContent:
-    """Return an image from a file"""
-
     @classmethod
     def name(cls):
         return "Static Image"

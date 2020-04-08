@@ -12,6 +12,7 @@ radiator = Radiator([
 ])
 radiator.refresh()
 
+
 @app.route('/', methods=['GET'])
 def serve_controller_page():
     return render_template('index.html')

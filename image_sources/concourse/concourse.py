@@ -1,9 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 
-class ConcourseContent:
-    """Build status from a concourse server"""
-
+class ConcourseContent(object):
     @classmethod
     def name(cls):
         return "Concourse"

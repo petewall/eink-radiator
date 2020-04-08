@@ -1,6 +1,4 @@
-class Screen:
-    """This is a fake screen that shows the image in a window"""
-
+class Screen(object):
     def size(self):
         return (400, 300)
 
