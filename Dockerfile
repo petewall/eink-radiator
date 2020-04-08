@@ -17,14 +17,16 @@ WORKDIR /eink-radiator
 COPY --from=requirements_builder /tmp/requirements.txt /eink-radiator/
 RUN pip install --requirement /eink-radiator/requirements.txt
 
-COPY [ \
-    "controller.py", \
-    "radiator.py", \
-    "screen.py", \
-    "image_sources", \
-    "static", \
-    "templates", \
-    "/eink-radiator/"\
-]
+COPY \
+    controller.py \
+    radiator.py \
+    screen.py \
+    \
+    image_sources \
+    static \
+    templates \
+    \
+    /eink-radiator/
+
 ENV EINK_SCREEN_PRESENT=true
-CMD ["python" "controller.py"]
+CMD python controller.py
