@@ -5,7 +5,8 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 from radiator import Radiator
 
-
+# pylint: disable=fixme
+# TODO: Convert this into a MagicMock and assert on the inputs
 class FakeImageSource():
     image = "This is my image"
 
@@ -16,7 +17,7 @@ class FakeImageSource():
     def name(cls):
         return "Fake Image Source"
 
-    def get_image(self):
+    def get_image(self, _):
         return self.image
 
 
