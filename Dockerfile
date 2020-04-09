@@ -22,11 +22,10 @@ COPY \
     radiator.py \
     screen.py \
     \
-    image_sources \
-    static \
-    templates \
-    \
     /eink-radiator/
+COPY image_sources /eink-radiator/image_sources
+COPY static /eink-radiator/static
+COPY templates /eink-radiator/templates
 
 ENV EINK_SCREEN_PRESENT=true
 CMD python controller.py
