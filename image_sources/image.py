@@ -9,5 +9,5 @@ class ImageContent():
     def __init__(self):
         self.image = Image.open("image_sources/InkywHAT-400x300.png")
 
-    def get_image(self):
+    def get_image(self, _):
         return self.image

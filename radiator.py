@@ -15,7 +15,7 @@ class Radiator():
         self.image_sources = image_sources
 
     def refresh(self):
-        self.image = self.get_image_source().get_image()
+        self.image = self.get_image_source().get_image(self.screen.size())
         self.screen.set_image(self.image)
 
     def get_image(self):
