@@ -1,6 +1,6 @@
 clean:
 	rm -rf temp
-	docker rm petewall/eink-radiator
+	docker rmi petewall/eink-radiator
 
 # Docker image targets
 build:
@@ -11,6 +11,7 @@ push:
 
 # Code targets
 temp/make-targets/deps: Pipfile Pipfile.lock
+	if ! command -v pipenv ; then pip install pipenv; fi
 	pipenv sync --dev
 	mkdir -p temp/make-targets
 	touch temp/make-targets/deps
