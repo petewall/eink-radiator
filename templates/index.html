@@ -1,8 +1,28 @@
 <html>
 <head>
-  <title>eInk Radiator</title>
+    <title>eInk Radiator</title>
+    <link rel="stylesheet" href="/static/simple-grid.min.css" type="text/css" />
+    <link rel="stylesheet" href="/static/style.css" type="text/css" />
 </head>
 <body>
-  <img src="/radiator-image.png" />
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h2>Current image</h2>
+                <img src="/radiator-image.png" style="height: {{ height }}; width: {{ width }};"/>
+                <button>Refresh</button>
+            </div>
+            <div class="col-6">
+                <h2>Image Sources</h2>
+                <select size="6" style="width: {{ width }};">
+                    {% for source in image_sources %}
+                        <option>{{ source.name() }}</option>
+                    {% endfor %}
+                </select>
+                <button disabled>Delete</button>
+                <h2>Configure new image source</h2>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

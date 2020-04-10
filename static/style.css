@@ -1,0 +1,7 @@
+.row>div {
+    text-align: center
+}
+
+img, select {
+    margin-bottom: 1em;
+}
