@@ -1,8 +1,9 @@
 # pylint: disable=no-self-use
 
-class Screen():
+
+class Screen:
     def size(self):
-        return (400, 300)
+        return 400, 300
 
     def set_image(self, image):
         image.show()
