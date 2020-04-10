@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,global-statement
 
 from io import BytesIO
 import os
@@ -11,14 +11,20 @@ if os.environ.get('EINK_SCREEN_PRESENT'):
 else:
     from screen_fake import Screen
 
+image = None
 image_sources = [
     ConcourseContent(),
     ImageContent()
 ]
 source_index = 0
 screen = Screen()
-image = image_sources[source_index].get_image(screen.size())
-screen.set_image(image)
+
+
+def refresh():
+    global image, source_index
+    image = image_sources[source_index].get_image(screen.size())
+    screen.set_image(image)
+
 
 app = Flask(__name__)
 
@@ -30,11 +36,23 @@ def serve_controller_page():
 
 @app.route('/radiator-image.png', methods=['GET'])
 def serve_radiator_image():
-    img_buffer = BytesIO()
-    image.save(img_buffer, 'PNG')
-    img_buffer.seek(0)
-    return send_file(img_buffer, mimetype='image/png')
+    global image
+
+    if image is not None:
+        img_buffer = BytesIO()
+        image.save(img_buffer, 'PNG')
+        img_buffer.seek(0)
+        return send_file(img_buffer, mimetype='image/png')
+    return None
+
+
+@app.route('/next', methods=['POST'])
+def next_image_source():
+    global source_index
+    source_index += 1
+    refresh()
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    refresh()
+    app.run(debug=os.environ.get('DEBUG', False))

@@ -2,7 +2,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 FONT_PATH = 'image_sources/concourse/RobotoSlab-Regular.ttf'
 
-class ConcourseContent():
+
+class ConcourseContent:
     @classmethod
     def name(cls):
         return "Concourse"
