@@ -23,4 +23,6 @@ COPY static                 /eink-radiator/static
 COPY templates              /eink-radiator/templates
 
 ENV EINK_SCREEN_PRESENT=true
+ENV PORT=5000
+EXPOSE 5000
 CMD python radiator.py
