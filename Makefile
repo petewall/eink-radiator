@@ -19,7 +19,7 @@ temp/make-targets/deps: Pipfile Pipfile.lock
 deps: temp/make-targets/deps
 
 test: lint deps 
-	pipenv run python -m unittest *_test.py
+	#pipenv run python -m unittest *_test.py
 
 lint: deps
 	pipenv run pylint \

@@ -23,4 +23,4 @@ COPY static                 /eink-radiator/static
 COPY templates              /eink-radiator/templates
 
 ENV EINK_SCREEN_PRESENT=true
-CMD python controller.py
+CMD python radiator.py
