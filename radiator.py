@@ -104,4 +104,4 @@ def choose_source(index=None):
 
 if __name__ == '__main__':
     refresh()
-    app.run(debug=os.environ.get('DEBUG', False))
+    app.run(debug=os.environ.get('DEBUG', False), host='0.0.0.0', port=os.environ.get('PORT', 5000))
