@@ -1,16 +1,31 @@
 from PIL import Image, ImageDraw, ImageFont
+from image_sources.image_source import ImageSource
 
 FONT_PATH = 'image_sources/concourse/RobotoSlab-Regular.ttf'
 
 
-class ConcourseContent:
-    name = "Concourse"
+class ConcourseContent(ImageSource):
+    url = None
+    username = None
+    password = None
+    title_font = ImageFont.truetype(font=FONT_PATH, size=30)
 
-    def __init__(self):
-        self.url = None
-        self.username = None
-        self.password = None
-        self.title_font = ImageFont.truetype(font=FONT_PATH, size=30)
+    def get_configuration(self):
+        return {
+            'name': self.name,
+            'url': self.url,
+            'username': self.username,
+            'password': self.password
+        }
+
+    def set_configuration(self, params):
+        super().set_configuration(params)
+        if params.get('url'):
+            self.url = params.get('url')
+        if params.get('username'):
+            self.username = params.get('username')
+        if params.get('password'):
+            self.password = params.get('password')
 
     def get_image(self, size):
         image = Image.new('P', size, 'black')

@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-# pylint: disable=invalid-name,global-statement
+# pylint: disable=invalid-name,global-statement,line-too-long
 
 from io import BytesIO
 import os
 from flask import Flask, jsonify, make_response, render_template, request, send_file, send_from_directory
 
-from image_sources.Image import ImageContent
-from image_sources.concourse.concourse import ConcourseContent
+from image_sources.image import ImageContent
+# from image_sources.concourse.concourse import ConcourseContent
 from image_sources.static_image.static_image import StaticImageContent
+from image_sources.text import TextContent
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from screen import Screen
@@ -16,13 +17,19 @@ else:
 
 image = None
 image_sources = [
-    ImageContent(
-        {
-            'name': 'Raspberry Pi',
-            'url': 'https://mastersofmedia.hum.uva.nl/wp-content/uploads/2014/09/Raspberry-Pi-Logo1-620x350.png'
-        }),
+    ImageContent({
+        'name': 'Raspberry Pi',
+        'url': 'https://mastersofmedia.hum.uva.nl/wp-content/uploads/2014/09/Raspberry-Pi-Logo1-620x350.png'
+    }),
     # ConcourseContent(),
-    StaticImageContent()
+    StaticImageContent({
+        'name': 'Inky',
+        'image_path': 'image_sources/static_image/InkywHAT-400x300.png'
+    }),
+    TextContent({
+        'name': 'Message',
+        'text': 'Lorem Ipsum'
+    }),
 ]
 source_index = 0
 screen = Screen()
