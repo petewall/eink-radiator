@@ -2,6 +2,16 @@
     text-align: center
 }
 
+#image {
+    border: 1px solid black;
+}
+
 img, select {
     margin-bottom: 1em;
+}
+
+#configuration {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
 }

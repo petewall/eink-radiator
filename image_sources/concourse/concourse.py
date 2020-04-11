@@ -4,9 +4,7 @@ FONT_PATH = 'image_sources/concourse/RobotoSlab-Regular.ttf'
 
 
 class ConcourseContent:
-    @classmethod
-    def name(cls):
-        return "Concourse"
+    name = "Concourse"
 
     def __init__(self):
         self.url = None

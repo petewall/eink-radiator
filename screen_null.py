@@ -5,5 +5,5 @@ class Screen:
     def size(self):
         return 400, 300
 
-    def set_image(self, image):
-        image.show()
+    def set_image(self, _):
+        pass

@@ -1,28 +1,40 @@
 <html>
 <head>
     <title>eInk Radiator</title>
-    <link rel="stylesheet" href="/static/simple-grid.min.css" type="text/css" />
-    <link rel="stylesheet" href="/static/style.css" type="text/css" />
+    <link rel="stylesheet" href="/static/simple-grid.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/static/style.css" type="text/css"/>
+    <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-6">
-                <h2>Current image</h2>
-                <img src="/radiator-image.png" style="height: {{ height }}; width: {{ width }};"/>
-                <button>Refresh</button>
-            </div>
-            <div class="col-6">
-                <h2>Image Sources</h2>
-                <select size="6" style="width: {{ width }};">
-                    {% for source in image_sources %}
-                        <option>{{ source.name() }}</option>
-                    {% endfor %}
-                </select>
-                <button disabled>Delete</button>
-                <h2>Configure new image source</h2>
-            </div>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <h2>Current image</h2>
+            <img id="image" src="/radiator-image.png" style="height: {{ height }}; width: {{ width }};"/>
+        </div>
+        <div class="col-6">
+            <h2>Image Sources</h2>
+            <select id="image_sources" size="6" style="width: {{ width }};">
+                {% for source in image_sources %}
+                    <option {% if loop.index0 == source_index %}selected {% endif %}>
+                        {{ source.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button id="deleteSource" disabled>Delete</button>
+            <select>
+                <option></option>
+                <option>Concourse</option>
+                <option>Image</option>
+                <option>Text</option>
+            </select>
+            <button id="addSource" disabled>Add</button>
+            <h3>Configuration</h3>
+            <div id="configuration"></div>
+            <button id="saveConfig">Save</button>
         </div>
     </div>
+</div>
+<script src="static/actions.js"></script>
 </body>
 </html>
