@@ -10,5 +10,5 @@ class Screen:
         return self.screen.WIDTH, self.screen.HEIGHT
 
     def set_image(self, image):
-        self.screen.set_image(image)
+        self.screen.set_image(image.convert("P"))
         self.screen.show()

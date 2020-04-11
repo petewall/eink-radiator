@@ -28,7 +28,7 @@ class ConcourseContent(ImageSource):
             self.password = params.get('password')
 
     def get_image(self, size):
-        image = Image.new('P', size, 'black')
+        image = Image.new('RGB', size, 'black')
 
         logo = Image.open("image_sources/concourse/logo.png")
         image.paste(logo, box=(5, 5, 40, 40), mask=logo)
