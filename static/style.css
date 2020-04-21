@@ -9,6 +9,10 @@ body > div {
     flex-direction: column;
 }
 
+p {
+    text-align: center;
+}
+
 #configuration {
     display: flex;
     flex-direction: column;
@@ -25,7 +29,6 @@ body > div {
     background-blend-mode: color;
     /*filter: opacity(30%);*/
 }
-
 
 /* https://stephanwagner.me/only-css-loading-spinner */
 @keyframes loading {

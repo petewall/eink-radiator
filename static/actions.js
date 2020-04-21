@@ -55,6 +55,9 @@ async function getConfiguration() {
 
         let field = document.createElement('input')
         field.setAttribute('name', key)
+        if (key === 'password') {
+            field.setAttribute('type', 'password')
+        }
         field.value = configuration[key]
         configurationContainer.appendChild(field)
     }
