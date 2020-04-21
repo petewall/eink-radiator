@@ -1,9 +1,35 @@
+function bufferToBase64(buffer) {
+    let binary = '';
+    let bytes = [].slice.call(new Uint8Array(buffer))
+    bytes.forEach((b) => binary += String.fromCharCode(b))
+    return window.btoa(binary)
+}
+
+async function refreshImage(url, image) {
+    let response = await fetch(url)
+    if (response.status === 200) {
+        let buffer = await response.arrayBuffer()
+        image.style.backgroundImage = `url("data:image/png;base64,${bufferToBase64(buffer)}")`
+    } else {
+        image.style.backgroundImage = ""
+    }
+    image.classList.remove('loading')
+}
+
+const previewImage = document.getElementById('preview-image')
+const radiatorImage = document.getElementById('radiator-image')
+
+let refreshPreviewImage = () => refreshImage('/preview-image.png', previewImage)
+let refreshRadiatorImage = () => refreshImage('/radiator-image.png', radiatorImage)
+
 const imageSources = document.getElementById("image_sources")
 imageSources.onchange = async (e) => {
+    previewImage.classList.add('loading')
     await fetch(`/select_source/${e.target.selectedIndex}`, {
         method: 'POST'
     })
     await getConfiguration()
+    await refreshPreviewImage()
 }
 
 const configurationContainer = document.getElementById('configuration')
@@ -34,7 +60,6 @@ async function getConfiguration() {
     }
     saveConfigButton.removeAttribute('disabled')
 }
-getConfiguration()
 
 saveConfigButton.onclick = async () => {
     let config = {}
@@ -44,7 +69,7 @@ saveConfigButton.onclick = async () => {
         }
     }
 
-    console.log(`Saving configuration for source: ${JSON.stringify(config)}`)
+    previewImage.classList.add('loading')
     await fetch('/source', {
         method: 'PATCH',
         body: JSON.stringify(config),
@@ -52,4 +77,22 @@ saveConfigButton.onclick = async () => {
             'Content-Type': 'application/json;charset=utf-8'
         }
     })
+    await refreshPreviewImage()
 }
+
+const setImageButton = document.getElementById('setImage')
+setImageButton.onclick = async () => {
+    setImageButton.setAttribute('disabled', 'disabled')
+    radiatorImage.classList.add('loading')
+
+    await fetch('/set_image', {
+        method: 'POST'
+    })
+
+    await refreshRadiatorImage()
+    setImageButton.removeAttribute('disabled')
+}
+
+refreshPreviewImage()
+refreshRadiatorImage()
+getConfiguration()

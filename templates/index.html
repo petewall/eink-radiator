@@ -1,40 +1,46 @@
 <html>
 <head>
     <title>eInk Radiator</title>
-    <link rel="stylesheet" href="/static/simple-grid.min.css" type="text/css"/>
     <link rel="stylesheet" href="/static/style.css" type="text/css"/>
     <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
+    <style>
+        .image {
+            height: {{ height }}px;
+            width: {{ width }}px;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <h2>Current image</h2>
-            <img id="image" src="/radiator-image.png" style="height: {{ height }}; width: {{ width }};"/>
-        </div>
-        <div class="col-6">
-            <h2>Image Sources</h2>
-            <select id="image_sources" size="6" style="width: {{ width }};">
-                {% for source in image_sources %}
-                    <option {% if loop.index0 == source_index %}selected {% endif %}>
-                        {{ source.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button id="deleteSource" disabled>Delete</button>
-            <select>
-                <option></option>
-                <option>Concourse</option>
-                <option>Image</option>
-                <option>Text</option>
-            </select>
-            <button id="addSource" disabled>Add</button>
-            <h3>Configuration</h3>
-            <div id="configuration"></div>
-            <button id="saveConfig">Save</button>
-        </div>
-    </div>
+
+<div>
+    <h2>Image Sources</h2>
+    <select id="image_sources" size="6" style="width: {{ width }};">
+        {% for source in image_sources %}
+            <option {% if loop.index0 == source_index %}selected {% endif %}>
+                {{ source.name }}
+            </option>
+        {% endfor %}
+    </select>
+    <h3>Configuration</h3>
+    <div id="configuration"></div>
+    <p>
+        <button id="saveConfig">Save</button>
+    </p>
 </div>
+
+<div>
+    <h2>Image Preview</h2>
+    <div id="preview-image" class="image"></div>
+</div>
+
+<div>
+    <h2>Image on Screen</h2>
+    <div id="radiator-image" class="image"></div>
+    <p>
+        <button id="setImage">set image</button>
+    </p>
+</div>
+
 <script src="static/actions.js"></script>
 </body>
 </html>
