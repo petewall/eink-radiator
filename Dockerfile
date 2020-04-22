@@ -21,6 +21,9 @@ COPY radiator.py screen.py  /eink-radiator/
 COPY image_sources          /eink-radiator/image_sources
 COPY static                 /eink-radiator/static
 COPY templates              /eink-radiator/templates
+# Including test_fixtures while we have a hard-coded static image source
+# TODO: Remove this when you can reliably add and persist sources
+COPY test_fixtures          /eink-radiator/test_fixtures
 
 ENV EINK_SCREEN_PRESENT=true
 ENV PORT=5000
