@@ -28,4 +28,5 @@ COPY test_fixtures          /eink-radiator/test_fixtures
 ENV EINK_SCREEN_PRESENT=true
 ENV PORT=5000
 EXPOSE 5000
+HEALTHCHECK CMD python -c "import requests; requests.get('http://localhost:5000/')"
 CMD python radiator.py

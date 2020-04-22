@@ -55,12 +55,15 @@ class ConcourseContent(ImageSource):
         if self.auth_token is None:
             self.auth()
         headers = {'Authorization': 'Bearer ' + self.auth_token}
-
         jobs = requests.get(self.url + '/api/v1/jobs', headers=headers).json()
+
         pipelines = {}
         for job in jobs:
-            success = job.get('finished_build', {}).get('status', False) == 'succeeded'
-            pipelines[job.get('pipeline_name')] = success
+            name = job.get('pipeline_name')
+            if pipelines.get(name) is None:
+                pipelines[name] = True
+            if job.get('finished_build', {}).get('status', False) != 'succeeded':
+                pipelines[name] = False
         return pipelines
 
     def get_image(self, size):
