@@ -2,6 +2,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import requests
 from image_sources.image_source import ImageSource
+from color import Color
 
 FONT_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), '..', 'RobotoSlab-Regular.ttf'
@@ -70,14 +71,15 @@ class ConcourseContent(ImageSource):
         if not self.configured():
             return None
 
-        image = Image.new('RGB', size, 'black')
+        image = Image.new('P', size, Color.black.value)
+        image.putpalette(Color.palette())
 
         logo = Image.open("image_sources/concourse/logo.png")
         image.paste(logo, box=(5, 5, 40, 40), mask=logo)
 
         image_canvas = ImageDraw.Draw(image)
-        image_canvas.text((45, 3), 'Concourse', fill='white', font=self.title_font)
-        image_canvas.line([(5, 47), (395, 47)], fill='red', width=2)
+        image_canvas.text((45, 3), 'Concourse', fill=Color.white.value, font=self.title_font)
+        image_canvas.line([(5, 47), (395, 47)], fill=Color.red.value, width=2)
 
         pipelines = self.get_pipeline_status()
         pipeline_names = list(pipelines.keys())
@@ -85,8 +87,8 @@ class ConcourseContent(ImageSource):
         y_pos = 50
         for pipeline in pipeline_names:
             success = pipelines[pipeline]
-            color = 'white' if success else 'red'
-            image_canvas.text((5, y_pos), pipeline, fill=color, font=self.content_font)
+            color = Color.white if success else Color.red
+            image_canvas.text((5, y_pos), pipeline, fill=color.value, font=self.content_font)
             y_pos += 17
 
         return image

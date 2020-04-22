@@ -37,11 +37,11 @@ class TestTextContent(unittest.TestCase):
             'text': 'Shields up! Rrrrred alert!',
             'foreground_color': {
                 'value': 'red',
-                'options': ['black', 'white', 'red']
+                'options': ['white', 'black', 'red']
             },
             'background_color': {
                 'value': 'black',
-                'options': ['black', 'white', 'red']
+                'options': ['white', 'black', 'red']
             }
         })
 
