@@ -8,8 +8,8 @@ FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'RobotoSla
 
 class TextContent(ImageSource):
     text = None
-    foreground_color = Color.RED
-    background_color = Color.BLACK
+    foreground_color = Color.BLACK
+    background_color = Color.WHITE
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
     def get_configuration(self):
