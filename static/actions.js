@@ -53,13 +53,26 @@ async function getConfiguration() {
         label.innerText = `${key}: `
         configurationContainer.appendChild(label)
 
-        let field = document.createElement('input')
-        field.setAttribute('name', key)
-        if (key === 'password') {
-            field.setAttribute('type', 'password')
+        if (typeof configuration[key] === 'string') {
+            let field = document.createElement('input')
+            field.setAttribute('name', key)
+            if (key === 'password') {
+                field.setAttribute('type', 'password')
+            }
+            field.value = configuration[key]
+            configurationContainer.appendChild(field)
+        } else {
+            let dropdown = document.createElement('select')
+            dropdown.setAttribute('name', key)
+            for (let option of configuration[key].options) {
+                let option_obj = document.createElement('option')
+                option_obj.setAttribute('value', option)
+                option_obj.innerText = option
+                dropdown.appendChild(option_obj)
+            }
+            dropdown.value = configuration[key].value
+            configurationContainer.appendChild(dropdown)
         }
-        field.value = configuration[key]
-        configurationContainer.appendChild(field)
     }
     saveConfigButton.removeAttribute('disabled')
 }
@@ -67,7 +80,7 @@ async function getConfiguration() {
 saveConfigButton.onclick = async () => {
     let config = {}
     for (let node of configurationContainer.childNodes) {
-        if (node.tagName === 'INPUT') {
+        if (node.tagName === 'INPUT' || node.tagName === 'SELECT') {
             config[node.getAttribute('name')] = node.value
         }
     }
