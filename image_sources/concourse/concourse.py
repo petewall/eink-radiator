@@ -1,6 +1,6 @@
 import os
-import requests
 from PIL import Image, ImageDraw, ImageFont
+import requests
 from image_sources.image_source import ImageSource
 
 FONT_PATH = os.path.join(
