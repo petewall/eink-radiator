@@ -23,7 +23,7 @@ class TextContent(ImageSource):
             'background_color': {
                 'value': self.background_color.name,
                 'options': Color.all_colors()
-            },
+            }
         }
 
     def set_configuration(self, params):

@@ -18,9 +18,15 @@ async function refreshImage(url, image) {
 
 const previewImage = document.getElementById('preview-image')
 const radiatorImage = document.getElementById('radiator-image')
+const setImageButton = document.getElementById('setImage')
 
 let refreshPreviewImage = () => refreshImage('/preview-image.png', previewImage)
-let refreshRadiatorImage = () => refreshImage('/radiator-image.png', radiatorImage)
+let refreshRadiatorImage = async () => {
+    radiatorImage.classList.add('loading')
+    setImageButton.setAttribute('disabled', 'disabled')
+    await refreshImage('/radiator-image.png', radiatorImage)
+    setImageButton.removeAttribute('disabled')
+}
 
 const imageSources = document.getElementById("image_sources")
 imageSources.onchange = async (e) => {
@@ -96,7 +102,6 @@ saveConfigButton.onclick = async () => {
     await refreshPreviewImage()
 }
 
-const setImageButton = document.getElementById('setImage')
 setImageButton.onclick = async () => {
     setImageButton.setAttribute('disabled', 'disabled')
     radiatorImage.classList.add('loading')

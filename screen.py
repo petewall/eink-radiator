@@ -1,21 +1,24 @@
-# pylint: disable=import-error
-from inky import InkyWHAT
+# pylint: disable=no-self-use
+import time
 
 
 class Screen:
+    busy = False
     image = None
 
-    def __init__(self):
-        self.screen = InkyWHAT('red')
-
     def size(self):
-        return self.screen.WIDTH, self.screen.HEIGHT
+        return 400, 300
 
     def set_image(self, image):
         if image != self.image:
+            self.busy = True
             self.image = image.convert('P')
-            self.screen.set_image(self.image)
-            self.screen.show()
+            self.busy = False
+
+    def show_image(self):
+        pass
 
     def get_image(self):
+        while self.busy:
+            time.sleep(0.5)
         return self.image

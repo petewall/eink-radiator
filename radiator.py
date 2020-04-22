@@ -5,15 +5,20 @@ from io import BytesIO
 import os
 from flask import Flask, jsonify, make_response, render_template, request, send_file, send_from_directory
 
+from image_sources.blank import BlankContent
 from image_sources.image import ImageContent
 from image_sources.concourse.concourse import ConcourseContent
 from image_sources.static_image import StaticImageContent
 from image_sources.text import TextContent
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
-    from screen import Screen
+    from inky_screen import InkyScreen
+
+    screen = InkyScreen()
 else:
-    from screen_null import Screen
+    from screen import Screen
+
+    screen = Screen()
 
 current_image = None
 image_sources = [
@@ -33,9 +38,11 @@ image_sources = [
         'name': 'Message',
         'text': 'Lorem Ipsum'
     }),
+    BlankContent({'name': 'White'}),
+    BlankContent({'name': 'Black', 'color': 'black'}),
+    BlankContent({'name': 'Red', 'color': 'red'})
 ]
 source_index = 0
-screen = Screen()
 
 
 def refresh():
