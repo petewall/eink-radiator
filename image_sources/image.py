@@ -20,6 +20,7 @@ class ImageContent(ImageSource):
             self.image = Image.open(urllib.request.urlopen(self.image_url))
 
     def get_image(self, size):
-        if self.image is not None:
-            return self.image.resize(size)
-        return None
+        if self.image is None:
+            return None
+
+        return self.image.resize(size)

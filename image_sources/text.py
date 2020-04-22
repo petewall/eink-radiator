@@ -21,6 +21,9 @@ class TextContent(ImageSource):
             self.text = params.get('text')
 
     def get_image(self, size):
+        if self.text is None:
+            return None
+
         image = Image.new('P', size, 'black')
 
         image_canvas = ImageDraw.Draw(image)

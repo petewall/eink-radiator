@@ -1,10 +1,11 @@
 import os
-import json
 import requests
 from PIL import Image, ImageDraw, ImageFont
 from image_sources.image_source import ImageSource
 
-FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'RobotoSlab-Regular.ttf')
+FONT_PATH = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), '..', 'RobotoSlab-Regular.ttf'
+)
 
 
 class ConcourseContent(ImageSource):
@@ -58,7 +59,8 @@ class ConcourseContent(ImageSource):
         jobs = requests.get(self.url + '/api/v1/jobs', headers=headers).json()
         pipelines = {}
         for job in jobs:
-            pipelines[job.get('pipeline_name')] = job.get('finished_build').get('status') == 'succeeded'
+            success = job.get('finished_build', {}).get('status', False) == 'succeeded'
+            pipelines[job.get('pipeline_name')] = success
         return pipelines
 
     def get_image(self, size):
@@ -75,9 +77,13 @@ class ConcourseContent(ImageSource):
         image_canvas.line([(5, 47), (395, 47)], fill='red', width=2)
 
         pipelines = self.get_pipeline_status()
+        pipeline_names = list(pipelines.keys())
+        pipeline_names.sort()
         y_pos = 50
-        for pipeline, success in pipelines.items():
-            image_canvas.text((5, y_pos), pipeline, fill='white' if success else 'red', font=self.content_font)
+        for pipeline in pipeline_names:
+            success = pipelines[pipeline]
+            color = 'white' if success else 'red'
+            image_canvas.text((5, y_pos), pipeline, fill=color, font=self.content_font)
             y_pos += 17
 
         return image

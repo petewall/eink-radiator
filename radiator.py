@@ -7,7 +7,7 @@ from flask import Flask, jsonify, make_response, render_template, request, send_
 
 from image_sources.image import ImageContent
 from image_sources.concourse.concourse import ConcourseContent
-from image_sources.static_image.static_image import StaticImageContent
+from image_sources.static_image import StaticImageContent
 from image_sources.text import TextContent
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
@@ -15,7 +15,7 @@ if os.environ.get('EINK_SCREEN_PRESENT'):
 else:
     from screen_null import Screen
 
-image = None
+current_image = None
 image_sources = [
     ImageContent({
         'name': 'Raspberry Pi',
@@ -27,7 +27,7 @@ image_sources = [
     }),
     StaticImageContent({
         'name': 'Inky',
-        'image_path': 'image_sources/static_image/InkywHAT-400x300.png'
+        'image_path': 'test_fixtures/InkywHAT-400x300.png'
     }),
     TextContent({
         'name': 'Message',
@@ -39,8 +39,8 @@ screen = Screen()
 
 
 def refresh():
-    global image, source_index
-    image = image_sources[source_index].get_image(screen.size())
+    global current_image, source_index
+    current_image = image_sources[source_index].get_image(screen.size())
 
 
 app = Flask(__name__)
@@ -62,20 +62,21 @@ def serve_static_file(filename):
 
 
 def image_response(image):
-    if image is not None:
-        img_buffer = BytesIO()
-        image.save(img_buffer, 'PNG')
-        img_buffer.seek(0)
-        response = make_response(send_file(img_buffer, mimetype='image/png'))
-        response.headers['Cache-Control'] = 'no-cache'
-        return response
-    return make_response('', 404)
+    if image is None:
+        return make_response('', 404)
+
+    img_buffer = BytesIO()
+    image.save(img_buffer, 'PNG')
+    img_buffer.seek(0)
+    response = make_response(send_file(img_buffer, mimetype='image/png'))
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
 
 @app.route('/preview-image.png', methods=['GET'])
 def serve_image():
-    global image
-    return image_response(image)
+    global current_image
+    return image_response(current_image)
 
 
 @app.route('/radiator-image.png', methods=['GET'])
@@ -115,8 +116,8 @@ def choose_source(index=None):
 
 @app.route('/set_image', methods=['POST'])
 def display_image():
-    global image, screen
-    screen.set_image(image)
+    global current_image, screen
+    screen.set_image(current_image)
     return '', 200
 
 

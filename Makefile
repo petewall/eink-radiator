@@ -18,12 +18,14 @@ temp/make-targets/deps: Pipfile Pipfile.lock
 
 deps: temp/make-targets/deps
 
-test: lint deps 
-	#pipenv run python -m unittest *_test.py
+TEST_SOURCES := $(shell find $$PWD -name '*_test.py')
+
+test: $(TEST_SOURCES) lint deps
+	pipenv run python -m unittest $(TEST_SOURCES)
 
 lint: deps
 	pipenv run pylint \
-		--disable missing-module-docstring,missing-class-docstring,missing-function-docstring\
+		--disable duplicate-code,missing-module-docstring,missing-class-docstring,missing-function-docstring\
 		*.py image_sources
 
 # Misc targets
