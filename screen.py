@@ -13,6 +13,7 @@ class Screen:
         if image != self.image:
             self.busy = True
             self.image = image.convert('P')
+            self.show_image()
             self.busy = False
 
     def show_image(self):

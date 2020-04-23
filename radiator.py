@@ -13,11 +13,9 @@ from image_sources.text import TextContent
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen
-
     screen = InkyScreen()
 else:
     from screen import Screen
-
     screen = Screen()
 
 current_image = None
