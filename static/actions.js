@@ -59,7 +59,7 @@ async function getConfiguration() {
         label.innerText = `${key}: `
         configurationContainer.appendChild(label)
 
-        if (typeof configuration[key] === 'string') {
+        if (configuration[key] == null || typeof configuration[key] === 'string') {
             let field = document.createElement('input')
             field.setAttribute('name', key)
             if (key === 'password') {

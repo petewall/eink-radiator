@@ -47,7 +47,9 @@ source_index = 0
 
 def refresh():
     global current_image, source_index
-    current_image = image_sources[source_index].get_image(screen.size())
+    new_image = image_sources[source_index].get_image(screen.size())
+    if new_image is not None:
+        current_image = new_image
 
 
 app = Flask(__name__)

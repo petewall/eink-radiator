@@ -14,7 +14,7 @@
 
 <div>
     <h2>Image Sources</h2>
-    <select id="image_sources" size="6" style="width: {{ width }};">
+    <select id="image_sources" size="10" style="width: {{ width }};">
         {% for source in image_sources %}
             <option {% if loop.index0 == source_index %}selected {% endif %}>
                 {{ source.name }}
