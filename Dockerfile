@@ -17,8 +17,7 @@ WORKDIR /eink-radiator
 COPY --from=requirements_builder /tmp/requirements.txt /eink-radiator/
 RUN pip install --requirement /eink-radiator/requirements.txt
 
-COPY color.py radiator.py screen.py \
-                        /eink-radiator/
+COPY *.py               /eink-radiator/
 COPY image_sources      /eink-radiator/image_sources
 COPY static             /eink-radiator/static
 COPY templates          /eink-radiator/templates
