@@ -48,6 +48,36 @@ function removeConfiguration() {
     }
 }
 
+function makeTextField(name, value, isPassword) {
+    let field = document.createElement('input')
+    field.setAttribute('name', name)
+    if (isPassword) {
+        field.setAttribute('type', 'password')
+    }
+    field.value = value
+    return field
+}
+
+function makeSelection(name, value, options) {
+    let dropdown = document.createElement('select')
+    dropdown.setAttribute('name', name)
+    for (let option of options) {
+        let option_obj = document.createElement('option')
+        option_obj.setAttribute('value', option)
+        option_obj.innerText = option
+        dropdown.appendChild(option_obj)
+    }
+    dropdown.value = value
+    return dropdown
+}
+
+function makeTextArea(name, value) {
+    let field = document.createElement('textarea')
+    field.setAttribute('name', name)
+    field.value = value
+    return field
+}
+
 async function getConfiguration() {
     removeConfiguration()
 
@@ -60,24 +90,11 @@ async function getConfiguration() {
         configurationContainer.appendChild(label)
 
         if (configuration[key] == null || typeof configuration[key] === 'string') {
-            let field = document.createElement('input')
-            field.setAttribute('name', key)
-            if (key === 'password') {
-                field.setAttribute('type', 'password')
-            }
-            field.value = configuration[key]
-            configurationContainer.appendChild(field)
-        } else {
-            let dropdown = document.createElement('select')
-            dropdown.setAttribute('name', key)
-            for (let option of configuration[key].options) {
-                let option_obj = document.createElement('option')
-                option_obj.setAttribute('value', option)
-                option_obj.innerText = option
-                dropdown.appendChild(option_obj)
-            }
-            dropdown.value = configuration[key].value
-            configurationContainer.appendChild(dropdown)
+            configurationContainer.appendChild(makeTextField(key, configuration[key], key === 'password'))
+        } else if (configuration[key].type === 'select') {
+            configurationContainer.appendChild(makeSelection(key, configuration[key].value, configuration[key].options))
+        } else if (configuration[key].type === 'textarea') {
+            configurationContainer.appendChild(makeTextArea(key, configuration[key].value))
         }
     }
     saveConfigButton.removeAttribute('disabled')
@@ -86,7 +103,9 @@ async function getConfiguration() {
 saveConfigButton.onclick = async () => {
     let config = {}
     for (let node of configurationContainer.childNodes) {
-        if (node.tagName === 'INPUT' || node.tagName === 'SELECT') {
+        if (node.tagName === 'INPUT' ||
+            node.tagName === 'SELECT' ||
+            node.tagName === 'TEXTAREA') {
             config[node.getAttribute('name')] = node.value
         }
     }

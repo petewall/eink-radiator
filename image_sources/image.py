@@ -26,6 +26,7 @@ class ImageContent(ImageSource):
             'name': self.name,
             'url': self.image_url,
             'scale': {
+                'type': 'select',
                 'value': self.scale.name,
                 'options': ImageScale.all_types()
             }

@@ -10,6 +10,7 @@ class BlankContent(ImageSource):
         return {
             'name': self.name,
             'color': {
+                'type': 'select',
                 'value': self.color.name,
                 'options': Color.all_colors()
             }

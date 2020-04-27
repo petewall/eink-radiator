@@ -29,6 +29,7 @@ class TestTextContent(unittest.TestCase):
         self.assertDictEqual(content.get_configuration(), {
             'name': 'Red',
             'color': {
+                'type': 'select',
                 'value': 'red',
                 'options': ['white', 'black', 'red']
             }

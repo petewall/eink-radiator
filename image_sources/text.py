@@ -15,12 +15,17 @@ class TextContent(ImageSource):
     def get_configuration(self):
         return {
             'name': self.name,
-            'text': self.text,
+            'text': {
+                'type': 'textarea',
+                'value': self.text
+            },
             'foreground_color': {
+                'type': 'select',
                 'value': self.foreground_color.name,
                 'options': Color.all_colors()
             },
             'background_color': {
+                'type': 'select',
                 'value': self.background_color.name,
                 'options': Color.all_colors()
             }
@@ -47,5 +52,5 @@ class TextContent(ImageSource):
         text_x = int((size[0] - text_width) / 2)
         text_y = int((size[1] - text_height) / 2)
         color = self.foreground_color.value
-        image_canvas.text((text_x, text_y), self.text, fill=color, font=self.font)
+        image_canvas.text((text_x, text_y), self.text, fill=color, font=self.font, align='center')
         return image

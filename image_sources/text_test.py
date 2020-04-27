@@ -34,12 +34,17 @@ class TestTextContent(unittest.TestCase):
         })
         self.assertDictEqual(content.get_configuration(), {
             'name': 'Test Image',
-            'text': 'Shields up! Rrrrred alert!',
+            'text': {
+                'type': 'textarea',
+                'value': 'Shields up! Rrrrred alert!'
+            },
             'foreground_color': {
+                'type': 'select',
                 'value': 'red',
                 'options': ['white', 'black', 'red']
             },
             'background_color': {
+                'type': 'select',
                 'value': 'black',
                 'options': ['white', 'black', 'red']
             }
@@ -48,5 +53,34 @@ class TestTextContent(unittest.TestCase):
         image = content.get_image((400, 300))
         self.assertEqual(image.tobytes(), expected_image.tobytes())
 
+    def test_multiline_string(self):
+        expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_3.png'))
+
+        content = TextContent({
+            'text': 'Docker engineers\ndo it in a container',
+            'foreground_color': 'white',
+            'background_color': 'black'
+        })
+        self.assertDictEqual(content.get_configuration(), {
+            'name': 'New image source',
+            'text': {
+                'type': 'textarea',
+                'value': 'Docker engineers\ndo it in a container'
+            },
+            'foreground_color': {
+                'type': 'select',
+                'value': 'white',
+                'options': ['white', 'black', 'red']
+            },
+            'background_color': {
+                'type': 'select',
+                'value': 'black',
+                'options': ['white', 'black', 'red']
+            }
+        })
+
+        image = content.get_image((400, 300))
+
+        self.assertEqual(image.tobytes(), expected_image.tobytes())
     if __name__ == '__main__':
         unittest.main()

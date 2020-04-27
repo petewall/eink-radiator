@@ -47,6 +47,7 @@ class TestStaticImageContent(unittest.TestCase):
             'name': 'Test Image',
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': {
+                'type': 'select',
                 'value': 'scale',
                 'options': ['scale', 'contain', 'cover']
             },
