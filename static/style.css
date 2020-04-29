@@ -13,6 +13,12 @@ p {
     text-align: center;
 }
 
+#source_buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 #configuration {
     display: flex;
     flex-direction: column;

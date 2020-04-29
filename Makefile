@@ -18,15 +18,32 @@ temp/make-targets/deps: Pipfile Pipfile.lock
 
 deps: temp/make-targets/deps
 
-TEST_SOURCES := $(shell find $$PWD -name '*_test.py')
+temp/make-targets/js-deps: package.json yarn.lock
+	yarn install
+	mkdir -p temp/make-targets
+	touch temp/make-targets/js-deps
 
-test: $(TEST_SOURCES) lint deps
+js-deps: temp/make-targets/js-deps
+
+TEST_SOURCES := $(shell find $$PWD -name '*_test.py')
+test-units: $(TEST_SOURCES) deps
 	pipenv run python -m unittest $(TEST_SOURCES)
+
+test-features: deps
+	behave
+
+test: test-units test-features
 
 lint: deps
 	pipenv run pylint \
 		--disable duplicate-code,missing-module-docstring,missing-class-docstring,missing-function-docstring\
 		*.py image_sources
+
+JAVASCRIPT_SOURCES := $(shell find $$PWD/static -name '*.js')
+lint-js: $(JAVASCRIPT_SOURCES) js-deps
+	yarn run eslint static
+
+test-all: lint lint-js test
 
 # Misc targets
 ssh:

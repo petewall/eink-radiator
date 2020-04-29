@@ -1,5 +1,6 @@
 import os
 import unittest
+from hamcrest import assert_that, equal_to, has_entries, is_, none
 from PIL import Image
 from image_sources.static_image import StaticImageContent
 
@@ -18,24 +19,24 @@ class TestStaticImageContent(unittest.TestCase):
             'image_path': os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png')
         })
         image = content.get_image((400, 300))
-        self.assertEqual(image.tobytes(), self.expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(self.expected_image.tobytes())))
 
     def test_set_configuration(self):
         content = StaticImageContent({})
         image = content.get_image((400, 300))
-        self.assertIsNone(image)
+        assert_that(image, is_(none()))
 
         content.set_configuration({
             'name': 'Test Static Image',
             'image_path': os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'),
             'superfluous': 'not relevant'
         })
-        self.assertEqual(content.get_configuration(), {
+        assert_that(content.get_configuration(), has_entries({
             'name': 'Test Static Image'
-        })
+        }))
 
         image = content.get_image((400, 300))
-        self.assertEqual(image.tobytes(), self.expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(self.expected_image.tobytes())))
 
     if __name__ == '__main__':
         unittest.main()

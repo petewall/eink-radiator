@@ -1,5 +1,6 @@
 import os
 import unittest
+from hamcrest import assert_that, equal_to, has_entries, is_
 from PIL import Image
 from image_sources.blank import BlankContent
 
@@ -15,7 +16,7 @@ class TestTextContent(unittest.TestCase):
         content = BlankContent({})
         image = content.get_image((400, 300))
 
-        self.assertEqual(image.tobytes(), expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
 
     def test_set_configuration(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'blank_red.png'))
@@ -26,17 +27,17 @@ class TestTextContent(unittest.TestCase):
             'color': 'red',
             'superfluous': 'not relevant'
         })
-        self.assertDictEqual(content.get_configuration(), {
+        assert_that(content.get_configuration(), has_entries({
             'name': 'Red',
             'color': {
                 'type': 'select',
                 'value': 'red',
                 'options': ['white', 'black', 'red']
             }
-        })
+        }))
 
         image = content.get_image((400, 300))
-        self.assertEqual(image.tobytes(), expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
 
     if __name__ == '__main__':
         unittest.main()

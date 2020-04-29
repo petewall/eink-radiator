@@ -1,42 +1,16 @@
-function bufferToBase64(buffer) {
-    let binary = '';
-    let bytes = [].slice.call(new Uint8Array(buffer))
-    bytes.forEach((b) => binary += String.fromCharCode(b))
-    return window.btoa(binary)
-}
+/* global previewImage, radiatorImage, refreshPreviewImage, refreshRadiatorImage, setImageButton  */
 
-async function refreshImage(url, image) {
-    let response = await fetch(url)
-    if (response.status === 200) {
-        let buffer = await response.arrayBuffer()
-        image.style.backgroundImage = `url("data:image/png;base64,${bufferToBase64(buffer)}")`
-    } else {
-        image.style.backgroundImage = ""
-    }
-    image.classList.remove('loading')
-}
-
-const previewImage = document.getElementById('preview-image')
-const radiatorImage = document.getElementById('radiator-image')
-const setImageButton = document.getElementById('setImage')
-
-let refreshPreviewImage = () => refreshImage('/preview-image.png', previewImage)
-let refreshRadiatorImage = async () => {
-    radiatorImage.classList.add('loading')
-    setImageButton.setAttribute('disabled', 'disabled')
-    await refreshImage('/radiator-image.png', radiatorImage)
-    setImageButton.removeAttribute('disabled')
-}
-
-const imageSources = document.getElementById("image_sources")
-imageSources.onchange = async (e) => {
+const imageSources = document.getElementById('image_sources')
+async function loadImageSourceConfiguration() {
     previewImage.classList.add('loading')
-    await fetch(`/select_source/${e.target.selectedIndex}`, {
+    await fetch(`/select_source/${imageSources.selectedIndex}`, {
         method: 'POST'
     })
     await getConfiguration()
     await refreshPreviewImage()
+
 }
+imageSources.onchange = loadImageSourceConfiguration
 
 const configurationContainer = document.getElementById('configuration')
 const saveConfigButton = document.getElementById('saveConfig')
@@ -102,14 +76,20 @@ async function getConfiguration() {
 
 saveConfigButton.onclick = async () => {
     let config = {}
+    let sourceName = ""
     for (let node of configurationContainer.childNodes) {
         if (node.tagName === 'INPUT' ||
             node.tagName === 'SELECT' ||
             node.tagName === 'TEXTAREA') {
-            config[node.getAttribute('name')] = node.value
+            let name = node.getAttribute('name')
+            config[name] = node.value
+            if (name === 'name') {
+                sourceName = node.value
+            }
         }
     }
 
+    imageSources.options[imageSources.selectedIndex].innerText = sourceName
     previewImage.classList.add('loading')
     await fetch('/source', {
         method: 'PATCH',
@@ -133,6 +113,48 @@ setImageButton.onclick = async () => {
     setImageButton.removeAttribute('disabled')
 }
 
-refreshPreviewImage()
-refreshRadiatorImage()
-getConfiguration()
+const newSourceList = document.getElementById('new_source_list')
+const addSourceButton = document.getElementById('add_source')
+const deleteSourceButton = document.getElementById('delete_source')
+
+addSourceButton.onclick = async () => {
+    const name = `New ${newSourceList.value}`
+    await fetch('/source', {
+        method: 'POST',
+        body: JSON.stringify({
+            index: newSourceList.selectedIndex - 1,
+            config: {name}
+        }),
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        }
+    })
+    const newSource = document.createElement('option')
+    newSource.textContent = name
+
+    imageSources.appendChild(newSource)
+
+    newSourceList.selectedIndex = 0
+    addSourceButton.setAttribute('disabled', 'disabled')
+}
+
+deleteSourceButton.onclick = async () => {
+    const index = imageSources.selectedIndex
+    imageSources.remove(index)
+    if (index === imageSources.length) {
+        imageSources.selectedIndex = imageSources.length - 1
+        await loadImageSourceConfiguration()
+    }
+
+    await fetch('/source', {
+        method: 'DELETE'
+    })
+}
+
+newSourceList.onchange = () => {
+    if (newSourceList.selectedIndex === 0) {
+        addSourceButton.setAttribute('disabled', 'disabled')
+    } else {
+        addSourceButton.removeAttribute('disabled')
+    }
+}

@@ -1,5 +1,6 @@
 import os
 import unittest
+from hamcrest import assert_that, equal_to, has_entries, is_, none
 from PIL import Image
 from image_sources.text import TextContent
 
@@ -16,14 +17,14 @@ class TestTextContent(unittest.TestCase):
             'text': 'It is now safe to turn off your computer'
         })
         image = content.get_image((400, 300))
-        self.assertEqual(image.tobytes(), expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
 
     def test_set_configuration(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_2.png'))
 
         content = TextContent({})
         image = content.get_image((400, 300))
-        self.assertIsNone(image)
+        assert_that(image, is_(none()))
 
         content.set_configuration({
             'name': 'Test Image',
@@ -32,7 +33,7 @@ class TestTextContent(unittest.TestCase):
             'background_color': 'black',
             'superfluous': 'not relevant'
         })
-        self.assertDictEqual(content.get_configuration(), {
+        assert_that(content.get_configuration(), has_entries({
             'name': 'Test Image',
             'text': {
                 'type': 'textarea',
@@ -48,10 +49,10 @@ class TestTextContent(unittest.TestCase):
                 'value': 'black',
                 'options': ['white', 'black', 'red']
             }
-        })
+        }))
 
         image = content.get_image((400, 300))
-        self.assertEqual(image.tobytes(), expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
 
     def test_multiline_string(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_3.png'))
@@ -61,7 +62,7 @@ class TestTextContent(unittest.TestCase):
             'foreground_color': 'white',
             'background_color': 'black'
         })
-        self.assertDictEqual(content.get_configuration(), {
+        assert_that(content.get_configuration(), has_entries({
             'name': 'New image source',
             'text': {
                 'type': 'textarea',
@@ -77,10 +78,10 @@ class TestTextContent(unittest.TestCase):
                 'value': 'black',
                 'options': ['white', 'black', 'red']
             }
-        })
+        }))
 
         image = content.get_image((400, 300))
 
-        self.assertEqual(image.tobytes(), expected_image.tobytes())
+        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
     if __name__ == '__main__':
         unittest.main()

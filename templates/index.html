@@ -21,6 +21,18 @@
             </option>
         {% endfor %}
     </select>
+
+    <div id="source_buttons">
+        <select id="new_source_list">
+            <option value="" disabled selected>Select image source type</option>
+            {% for source in source_types %}
+                <option value="{{ source.__name__ }}">{{ source.__name__ }}</option>
+            {% endfor %}
+        </select>
+        <button id="add_source" disabled>Add</button>
+        <button id="delete_source">Delete</button>
+    </div>
+
     <h3>Configuration</h3>
     <div id="configuration"></div>
     <p>
@@ -41,6 +53,8 @@
     </p>
 </div>
 
+<script src="static/images.js"></script>
 <script src="static/actions.js"></script>
+<script src="static/index.js"></script>
 </body>
 </html>
