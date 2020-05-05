@@ -59,7 +59,7 @@ def start_browser(context):
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
 
-    context.browser = webdriver.Chrome()
+    context.browser = webdriver.Chrome(chrome_options=options)
 
     yield context.browser
 
