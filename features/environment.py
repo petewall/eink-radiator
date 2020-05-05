@@ -37,7 +37,7 @@ def get(url):
 
 @fixture
 def service_hook(context, port=5000):
-    if os.path.isfile("radiator.pickle"):
+    if os.path.isfile('radiator.pickle'):
         os.remove('radiator.pickle')
     context.port = port
     context.url = f'http://localhost:{port}'
@@ -51,6 +51,14 @@ def service_hook(context, port=5000):
 
 @fixture
 def start_browser(context):
+    options = webdriver.ChromeOptions()
+    if os.getenv('CI') is not None:
+        options.add_argument('headless')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--disable-extensions')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--no-sandbox')
+
     context.browser = webdriver.Chrome()
 
     yield context.browser
