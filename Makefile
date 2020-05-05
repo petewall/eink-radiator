@@ -30,7 +30,7 @@ test-units: $(TEST_SOURCES) deps
 	pipenv run python -m unittest $(TEST_SOURCES)
 
 test-features: deps
-	behave
+	pipenv run behave
 
 test: test-units test-features
 
