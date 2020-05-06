@@ -27,17 +27,12 @@ class ConcourseContent(ImageSource):
 
     def set_configuration(self, params):
         super().set_configuration(params)
-        if params.get('url'):
+        if params.get('url') is not None:
             self.url = params.get('url')
-        if params.get('username'):
+        if params.get('username') is not None:
             self.username = params.get('username')
-        if params.get('password'):
+        if params.get('password') is not None:
             self.password = params.get('password')
-
-    def configured(self):
-        return self.url is not None and \
-               self.username is not None and \
-               self.password is not None
 
     def auth(self):
         session = requests.Session()
@@ -68,8 +63,12 @@ class ConcourseContent(ImageSource):
         return pipelines
 
     def get_image(self, size):
-        if not self.configured():
-            return None
+        if self.url is None or self.url is '':
+            raise ValueError('Concourse URL is required')
+        if self.username is None or self.username is '':
+            raise ValueError('Concourse username is required')
+        if self.password is None or self.password is '':
+            raise ValueError('Concourse password is required')
 
         image = Image.new('P', size, Color.black.value)
         image.putpalette(Color.palette())

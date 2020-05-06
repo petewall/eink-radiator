@@ -34,15 +34,15 @@ class ImageContent(ImageSource):
 
     def set_configuration(self, params):
         super().set_configuration(params)
-        if params.get('scale'):
+        if params.get('scale') is not None:
             self.scale = ImageScale[params.get('scale')]
-        if params.get('url'):
+        if params.get('url') is not None:
             self.image_url = params.get('url')
             self.image = Image.open(urllib.request.urlopen(self.image_url))
 
     def get_image(self, size):
         if self.image is None:
-            return None
+            raise ValueError('Image URL is required')
 
         if self.scale == ImageScale.scale:
             return self.image.resize(size)

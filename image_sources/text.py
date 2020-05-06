@@ -33,16 +33,16 @@ class TextContent(ImageSource):
 
     def set_configuration(self, params):
         super().set_configuration(params)
-        if params.get('text'):
+        if params.get('text') is not None:
             self.text = params.get('text')
-        if params.get('foreground_color'):
+        if params.get('foreground_color') is not None:
             self.foreground_color = Color[params.get('foreground_color')]
-        if params.get('background_color'):
+        if params.get('background_color') is not None:
             self.background_color = Color[params.get('background_color')]
 
     def get_image(self, size):
         if self.text is None:
-            return None
+            raise ValueError('Text is required')
 
         image = Image.new('P', size, self.background_color.value)
         image.putpalette(Color.palette())

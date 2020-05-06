@@ -6,10 +6,12 @@ import pickle
 import os
 from flask import Flask, jsonify, make_response, render_template, request, send_file, send_from_directory
 
+from color import Color
 from image_sources.blank import White, Black, Red
 from image_sources.image import ImageContent
 from image_sources.concourse.concourse import ConcourseContent
 from image_sources.text import TextContent
+from image_sources.weather.weather import WeatherContent
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen
@@ -26,12 +28,18 @@ source_types = [
 state = {
     'current_image': None,
     'image_sources': [
+        WeatherContent({}),
         White(),
         Black(),
         Red()
     ],
     'source_index': 0
 }
+
+error_image = TextContent({
+    'name': 'Error Text',
+    'foreground_color': Color.red.name,
+})
 
 
 def get_image_source():
@@ -56,11 +64,17 @@ def load():
 
 def refresh():
     global state
+    size = screen.size()
+    new_image = None
     image_source = get_image_source()
     if image_source is not None:
-        new_image = image_source.get_image(screen.size())
-        if new_image is not None:
-            state['current_image'] = new_image
+        try:
+            new_image = image_source.get_image(size)
+        except BaseException as e:
+            error_image.set_configuration({'text': f'Failed to generate image:\n{str(e)}'})
+            new_image = error_image.get_image(size)
+    if new_image is not None:
+        state['current_image'] = new_image
 
 
 app = Flask(__name__)
