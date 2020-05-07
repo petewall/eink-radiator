@@ -63,11 +63,11 @@ class ConcourseContent(ImageSource):
         return pipelines
 
     def get_image(self, size):
-        if self.url is None or self.url is '':
+        if self.url is None or self.url == '':
             raise ValueError('Concourse URL is required')
-        if self.username is None or self.username is '':
+        if self.username is None or self.username == '':
             raise ValueError('Concourse username is required')
-        if self.password is None or self.password is '':
+        if self.password is None or self.password == '':
             raise ValueError('Concourse password is required')
 
         image = Image.new('P', size, Color.black.value)

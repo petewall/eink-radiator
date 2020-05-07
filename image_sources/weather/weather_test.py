@@ -1,9 +1,8 @@
 import os
-from io import BytesIO
 import unittest
-from requests import Response
 from unittest.mock import call, patch
-from hamcrest import assert_that, calling, equal_to, has_entries, is_, raises
+from requests import Response
+from hamcrest import assert_that, calling, equal_to, is_, raises
 from PIL import Image
 from image_sources.weather.weather import WeatherContent
 
@@ -15,13 +14,19 @@ class TestWeatherContent(unittest.TestCase):
 
     def test_missing_api_key(self):
         content = WeatherContent({})
-        assert_that(calling(content.get_image).with_args((1, 1)), raises(ValueError, "API key is required"))
+        assert_that(
+            calling(content.get_image).with_args((1, 1)),
+            raises(ValueError, "API key is required")
+        )
 
     def test_missing_location(self):
         content = WeatherContent({
             'api_key': 'test'
         })
-        assert_that(calling(content.get_image).with_args((1, 1)), raises(ValueError, "Location is required"))
+        assert_that(
+            calling(content.get_image).with_args((1, 1)),
+            raises(ValueError, "Location is required")
+        )
 
     def test_get_image(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'weather.png'))

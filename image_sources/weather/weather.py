@@ -1,11 +1,13 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 import requests
 from image_sources.image_source import ImageSource
 from color import Color
 
-FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'RobotoSlab-Regular.ttf')
+FONT_PATH = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), '..', 'RobotoSlab-Regular.ttf'
+)
 
 day_of_week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -39,16 +41,19 @@ class WeatherContent(ImageSource):
             self.location = params.get('location')
 
     def build_weather_url(self, path):
-        return f'https://api.openweathermap.org/data/2.5/{path}?q={self.location}&units={self.unit}&appid={self.api_key}'
+        return f'https://api.openweathermap.org/data/2.5/{path}' + \
+            f'?q={self.location}&units={self.unit}&appid={self.api_key}'
 
     def get_weather(self):
         current = requests.get(self.build_weather_url('weather'))
         if current.status_code != 200:
-            raise RuntimeError(f'Failed to get current\nweather for {self.location}:\n{current.status_code}: {current.text}')
+            raise RuntimeError(f'Failed to get current\nweather for {self.location}:\n' + \
+                f'{current.status_code}: {current.text}')
 
         forecast = requests.get(self.build_weather_url('forecast'))
         if forecast.status_code != 200:
-            raise RuntimeError(f'Failed to get weather\nforecast for {self.location}:\n{forecast.status_code}: {forecast.text}')
+            raise RuntimeError(f'Failed to get weather\nforecast for {self.location}:\n' + \
+                f'{forecast.status_code}: {forecast.text}')
         return current.json(), forecast.json()
 
     def get_image(self, size):
