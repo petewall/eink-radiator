@@ -71,10 +71,12 @@ def refresh():
         try:
             new_image = image_source.get_image(size)
         except BaseException as e:  #pylint: disable=broad-except
-            error_image.set_configuration({'text': f'Failed to generate image:\n{str(e)}'})
+            message = f'Failed to generate image:\n{str(e)}'
+            error_image.set_configuration({'text': message})
             new_image = error_image.get_image(size)
     if new_image is not None:
         state['current_image'] = new_image
+        save()
 
 
 app = Flask(__name__)
@@ -138,8 +140,8 @@ def delete_image_source():
     state['image_sources'].pop(state['source_index'])
     if state['source_index'] == len(state['image_sources']):
         state['source_index'] -= 1
-    refresh()
     save()
+    refresh()
     return make_response('', 200)
 
 
@@ -147,8 +149,8 @@ def delete_image_source():
 def set_source_config():
     config = request.json
     get_image_source().set_configuration(config)
-    refresh()
     save()
+    refresh()
     return make_response('', 200)
 
 

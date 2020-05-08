@@ -1,7 +1,7 @@
 import os
 import subprocess
 from behave import *
-from hamcrest import *
+from hamcrest import assert_that, calling, is_, not_none, raises
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.expected_conditions import title_is
 from selenium.webdriver.support.wait import WebDriverWait
