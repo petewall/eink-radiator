@@ -1,7 +1,7 @@
+# pylint: disable=no-self-use
 import os
 import unittest
-from unittest.mock import call, patch
-from requests import Response
+import requests_mock
 from hamcrest import assert_that, calling, equal_to, is_, raises
 from PIL import Image
 from image_sources.weather.weather import WeatherContent
@@ -28,7 +28,8 @@ class TestWeatherContent(unittest.TestCase):
             raises(ValueError, "Location is required")
         )
 
-    def test_get_image(self):
+    @requests_mock.Mocker()
+    def test_get_image(self, request_mock):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'weather.png'))
 
         content = WeatherContent({
@@ -36,43 +37,38 @@ class TestWeatherContent(unittest.TestCase):
             'location': '55901'
         })
 
-        current = Response()
-        current._content = """
-        {
-            "name": "Rochester",
-            "main": {
-                "temp": 68
-            },
-            "weather": [{
-                "description": "perfect"
-            }]
-        }
-        """.encode()
-        current.status_code = 200
-        forecast = Response()
-        forecast._content = """
-        {
-            "city": {
-                "timezone": -18000                
-            },
-            "list": [
-                {"dt": 1588874400, "main": {"temp_min": 0, "temp_max": 10}}, {}, {}, {}, {}, {}, {}, {},
-                {"dt": 1588960800, "main": {"temp_min": 10, "temp_max": 20}}, {}, {}, {}, {}, {}, {}, {},
-                {"dt": 1589047200, "main": {"temp_min": 20, "temp_max": 30}}, {}, {}, {}, {}, {}, {}, {},
-                {"dt": 1589133600, "main": {"temp_min": 30, "temp_max": 40}}, {}, {}, {}, {}, {}, {}, {},
-                {"dt": 1589220000, "main": {"temp_min": 40, "temp_max": 50}}, {}, {}, {}, {}, {}, {}, {}
-            ]
-        }
-        """.encode()
-        forecast.status_code = 200
+        request_mock.get(
+            'https://api.openweathermap.org/data/2.5/weather?q=55901&units=imperial&appid=test',
+            json={
+                "name": "Rochester",
+                "main": {
+                    "temp": 68
+                },
+                "weather": [{
+                    "description": "perfect"
+                }]
+            })
+        request_mock.get(
+            'https://api.openweathermap.org/data/2.5/forecast?q=55901&units=imperial&appid=test',
+            json={
+                "city": {
+                    "timezone": -18000
+                },
+                "list": [
+                    {"dt": 1588874400, "main": {"temp_min": 0, "temp_max": 10}}, {}, {}, {},
+                    {}, {}, {}, {},
+                    {"dt": 1588960800, "main": {"temp_min": 10, "temp_max": 20}}, {}, {}, {},
+                    {}, {}, {}, {},
+                    {"dt": 1589047200, "main": {"temp_min": 20, "temp_max": 30}}, {}, {}, {},
+                    {}, {}, {}, {},
+                    {"dt": 1589133600, "main": {"temp_min": 30, "temp_max": 40}}, {}, {}, {},
+                    {}, {}, {}, {},
+                    {"dt": 1589220000, "main": {"temp_min": 40, "temp_max": 50}}, {}, {}, {},
+                    {}, {}, {}, {}
+                ]
+            })
 
-        with patch('requests.get', side_effect=[current, forecast]) as get:
-            image = content.get_image((400, 300))
-
-        get.assert_has_calls([
-            call('https://api.openweathermap.org/data/2.5/weather?q=55901&units=imperial&appid=test'),
-            call('https://api.openweathermap.org/data/2.5/forecast?q=55901&units=imperial&appid=test')
-        ])
+        image = content.get_image((400, 300))
 
         # image.save(os.path.join(self.test_fixtures_dir, 'weather.png'), 'PNG')
 

@@ -9,6 +9,7 @@ behave = "*"
 selenium = "*"
 pyhamcrest = "*"
 get-port = "*"
+requests-mock = "*"
 
 [packages]
 Pillow = "*"
@@ -16,4 +17,4 @@ flask = "*"
 requests = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

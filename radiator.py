@@ -70,7 +70,7 @@ def refresh():
     if image_source is not None:
         try:
             new_image = image_source.get_image(size)
-        except BaseException as e:
+        except BaseException as e:  #pylint: disable=broad-except
             error_image.set_configuration({'text': f'Failed to generate image:\n{str(e)}'})
             new_image = error_image.get_image(size)
     if new_image is not None:

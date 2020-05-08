@@ -1,13 +1,14 @@
+# pylint: disable=no-self-use
 import os
 import unittest
 from unittest.mock import patch
-from hamcrest import assert_that, equal_to, has_entries, is_, none
+from hamcrest import assert_that, calling, equal_to, has_entries, is_, raises
 from PIL import Image
 from image_sources.image import ImageContent
 
 
 @patch('urllib.request.urlopen')
-class TestStaticImageContent(unittest.TestCase):
+class TestImageContent(unittest.TestCase):
     mock_image = None
     test_fixtures_dir = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures'
@@ -18,6 +19,14 @@ class TestStaticImageContent(unittest.TestCase):
 
     def tearDown(self):
         self.mock_image.close()
+
+    def test_missing_url(self, urlopen):
+        content = ImageContent({})
+        assert_that(
+            calling(content.get_image).with_args((1, 1)),
+            raises(ValueError, "Image URL is required")
+        )
+        urlopen.assert_not_called()
 
     def test_get_image(self, urlopen):
         urlopen.return_value = self.mock_image
@@ -35,10 +44,6 @@ class TestStaticImageContent(unittest.TestCase):
         urlopen.return_value = self.mock_image
 
         content = ImageContent({})
-        image = content.get_image((400, 300))
-        urlopen.assert_not_called()
-        assert_that(image, is_(none()))
-
         content.set_configuration({
             'name': 'Test Image',
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',

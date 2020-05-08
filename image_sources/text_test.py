@@ -1,6 +1,7 @@
+# pylint: disable=no-self-use
 import os
 import unittest
-from hamcrest import assert_that, equal_to, has_entries, is_, none
+from hamcrest import assert_that, calling, equal_to, has_entries, is_, raises
 from PIL import Image
 from image_sources.text import TextContent
 
@@ -9,6 +10,13 @@ class TestTextContent(unittest.TestCase):
     test_fixtures_dir = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures'
     )
+
+    def test_missing_text(self):
+        content = TextContent({})
+        assert_that(
+            calling(content.get_image).with_args((1, 1)),
+            raises(ValueError, "Text is required")
+        )
 
     def test_get_image(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_1.png'))
@@ -23,9 +31,6 @@ class TestTextContent(unittest.TestCase):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_2.png'))
 
         content = TextContent({})
-        image = content.get_image((400, 300))
-        assert_that(image, is_(none()))
-
         content.set_configuration({
             'name': 'Test Image',
             'text': 'Shields up! Rrrrred alert!',
