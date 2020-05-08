@@ -8,6 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
 import requests
 from features.environment import start_service
+from time import sleep
 
 
 @when('I view the page')
@@ -98,6 +99,8 @@ def step_impl(context):
 
 @step('I change the name')
 def step_impl(context):
+    sleep(0.1)  # This is needed for the config to show up in the DOM
+                # TODO: Change this to an eventually style test
     name_field = context.browser.find_element_by_name('name')
     name_field.clear()
     name_field.send_keys('my new name')
