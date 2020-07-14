@@ -5,7 +5,7 @@ RUN wget https://chromedriver.storage.googleapis.com/81.0.4044.69/chromedriver_l
 RUN unzip chromedriver_linux64.zip
 RUN chmod +x chromedriver
 
-FROM python:3.8.2
+FROM python:3.8.4
 
 ENV CI=true
 LABEL description="An image suitable for running feature tests"
