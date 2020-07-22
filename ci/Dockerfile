@@ -1,7 +1,7 @@
 FROM ubuntu AS get-chromedriver
 RUN apt-get update && \
     apt-get install -y unzip wget
-RUN wget https://chromedriver.storage.googleapis.com/81.0.4044.69/chromedriver_linux64.zip
+RUN wget https://chromedriver.storage.googleapis.com/84.0.4147.30/chromedriver_linux64.zip
 RUN unzip chromedriver_linux64.zip
 RUN chmod +x chromedriver
 
