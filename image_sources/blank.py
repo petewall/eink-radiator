@@ -31,21 +31,12 @@ class White(BlankContent):
     def __init__(self):
         super(White, self).__init__({'name': 'White', 'color': 'white'})
 
-    def get_configuration(self):
-        return {}
-
 
 class Black(BlankContent):
     def __init__(self):
         super(Black, self).__init__({'name': 'Black', 'color': 'black'})
 
-    def get_configuration(self):
-        return {}
-
 
 class Red(BlankContent):
     def __init__(self):
         super(Red, self).__init__({'name': 'Red', 'color': 'red'})
-
-    def get_configuration(self):
-        return {}

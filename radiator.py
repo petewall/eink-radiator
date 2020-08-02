@@ -1,82 +1,76 @@
 #!/usr/bin/env python
 # pylint: disable=invalid-name,global-statement,line-too-long
-
 from io import BytesIO
 import pickle
 import os
 from flask import Flask, jsonify, make_response, render_template, request, send_file, send_from_directory
 
-from color import Color
 from image_sources.blank import White, Black, Red
-from image_sources.image import ImageContent
 from image_sources.concourse.concourse import ConcourseContent
+from image_sources.image import ImageContent
+# from image_sources.slideshow import SlideshowContent
 from image_sources.text import TextContent
 from image_sources.weather.weather import WeatherContent
+from screen import Screen
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen
     screen = InkyScreen()
+    preview_screen = Screen(screen.size())
 else:
-    from screen import Screen
-    screen = Screen()
+    screen = Screen((400, 300))
+    preview_screen = Screen((400, 300))
+
+screen_size = screen.size()
 
 source_types = [
     ConcourseContent,
     ImageContent,
+    # SlideshowContent,
     TextContent
 ]
 state = {
-    'current_image': None,
     'image_sources': [
         WeatherContent({}),
         White(),
         Black(),
         Red()
     ],
-    'source_index': 0
+    'chosen_image_source': None,
+    'preview_image_source': 0,
 }
 
-error_image = TextContent({
-    'name': 'Error Text',
-    'foreground_color': Color.red.name,
-})
 
-
-def get_image_source():
-    if state['source_index'] is None:
+def get_preview_image_source():
+    if state['preview_image_source'] is None:
         return None
-    return state['image_sources'][state['source_index']]
+    return state['image_sources'][state['preview_image_source']]
+
+
+def get_screen_image_source():
+    if state['chosen_image_source'] is None:
+        return None
+    return state['image_sources'][state['chosen_image_source']]
+
+
+data_file_path = os.environ.get('DATA_FILE_PATH') or os.path.join(os.getcwd(), 'radiator.pickle')
 
 
 def save():
-    picklefile = open("radiator.pickle", 'wb')
+    picklefile = open(data_file_path, 'wb')
     pickle.dump(state, picklefile)
     picklefile.close()
 
 
 def load():
     global state
-    if os.path.isfile("radiator.pickle"):
-        picklefile = open("radiator.pickle", 'rb')
+    if os.path.isfile(data_file_path):
+        picklefile = open(data_file_path, 'rb')
         state = pickle.load(picklefile)
         picklefile.close()
 
-
-def refresh():
-    global state
-    size = screen.size()
-    new_image = None
-    image_source = get_image_source()
-    if image_source is not None:
-        try:
-            new_image = image_source.get_image(size)
-        except BaseException as e:  #pylint: disable=broad-except
-            message = f'Failed to generate image:\n{str(e)}'
-            error_image.set_configuration({'text': message})
-            new_image = error_image.get_image(size)
-    if new_image is not None:
-        state['current_image'] = new_image
-        save()
+        screen.set_image_source(get_screen_image_source())
+        preview_screen.set_image_source(get_preview_image_source())
 
 
 app = Flask(__name__)
@@ -84,13 +78,15 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def serve_controller_page():
-    return render_template('index.html',
-                           height=screen.size()[1],
-                           width=screen.size()[0],
-                           image_sources=state['image_sources'],
-                           source_index=state['source_index'],
-                           source_types=source_types
-                           )
+    return render_template(
+        'index.html',
+        height=screen_size[1],
+        width=screen_size[0],
+        image_sources=state['image_sources'],
+        chosen_image_source=state['chosen_image_source'],
+        preview_image_source=state['preview_image_source'],
+        source_types=source_types
+    )
 
 
 @app.route('/static/<path:filename>', methods=['GET'])
@@ -111,8 +107,8 @@ def image_response(image):
 
 
 @app.route('/preview-image.png', methods=['GET'])
-def serve_image():
-    return image_response(state['current_image'])
+def serve_preview_image():
+    return image_response(preview_screen.get_image())
 
 
 @app.route('/radiator-image.png', methods=['GET'])
@@ -122,7 +118,7 @@ def serve_screen_image():
 
 @app.route('/source', methods=['GET'])
 def get_source_config():
-    return jsonify(get_image_source().get_configuration())
+    return jsonify(get_preview_image_source().get_configuration())
 
 
 @app.route('/source', methods=['POST'])
@@ -137,25 +133,29 @@ def add_image_source():
 
 @app.route('/source', methods=['DELETE'])
 def delete_image_source():
-    state['image_sources'].pop(state['source_index'])
-    if state['source_index'] == len(state['image_sources']):
-        state['source_index'] -= 1
+    index = state['preview_image_source']
+    state['image_sources'].pop(index)
+
+    if state['chosen_image_source'] == index:
+        state['chosen_image_source'] = None
+        screen.set_image_source(None)
+    if state['chosen_image_source'] > index:
+        state['chosen_image_source'] -= 1
     save()
-    refresh()
     return make_response('', 200)
 
 
 @app.route('/source', methods=['PATCH'])
 def set_source_config():
     config = request.json
-    get_image_source().set_configuration(config)
+    get_preview_image_source().set_configuration(config)
+    preview_screen.refresh()
     save()
-    refresh()
     return make_response('', 200)
 
 
 @app.route('/select_source/<index>', methods=['POST'])
-def choose_source(index=None):
+def select_source(index=None):
     if index is None:
         return 'missing source index', 400
 
@@ -163,20 +163,26 @@ def choose_source(index=None):
     if index < 0 or index > len(state['image_sources']):
         return 'source index out of range', 400
 
-    state['source_index'] = index
-    refresh()
+    state['preview_image_source'] = index
+    image_source = state['image_sources'][index]
+    preview_screen.set_image_source(image_source)
+    save()
     return make_response('', 200)
 
 
 @app.route('/set_image', methods=['POST'])
-def display_image():
-    screen.set_image(state['current_image'])
+def set_image_source():
+    global state
+    index = state['preview_image_source']
+    state['chosen_image_source'] = index
+    image_source = state['image_sources'][index]
+    screen.set_image_source(image_source)
+    save()
     return '', 200
 
 
 if __name__ == '__main__':
     load()
-    refresh()
     port = os.environ.get('PORT', 5000)
     print(f'Starting server on port {port}...')
     app.run(debug=os.environ.get('DEBUG', False), host='0.0.0.0', port=port)

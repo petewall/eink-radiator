@@ -13,6 +13,10 @@ p {
     text-align: center;
 }
 
+#image_sources>option.chosen {
+    font-weight: bold;
+}
+
 #source_buttons {
     display: flex;
     flex-direction: row;

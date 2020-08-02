@@ -1,7 +1,9 @@
 # pylint: disable=no-self-use,protected-access
 import time
+import traceback
 from PIL import Image
 from color import Color
+from image_sources.text import TextContent
 
 
 def quantize(image, palette):
@@ -19,12 +21,40 @@ def quantize(image, palette):
     return image._new(converted_image)
 
 
+error_image = TextContent({
+    'name': 'Error Text',
+    'foreground_color': Color.red.name,
+})
+
+
 class Screen:
     busy = False
     image = None
+    image_source = None
+    image_size = None
+
+    def __init__(self, size):
+        self.image_size = size
 
     def size(self):
-        return 400, 300
+        return self.image_size
+
+    def set_image_source(self, image_source):
+        self.image_source = image_source
+        self.refresh()
+
+    def refresh(self):
+        if self.image_source is None:
+            return
+
+        try:
+            image = self.image_source.get_image(self.size())
+        except BaseException as e:  # pylint: disable=broad-except
+            traceback.print_exc()
+            message = f'Failed to generate image:\n{str(e)}'
+            error_image.set_configuration({'text': message})
+            image = error_image.get_image(self.size())
+        self.set_image(image)
 
     def set_image(self, image):
         if image != self.image:

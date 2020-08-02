@@ -25,6 +25,8 @@ COPY templates          /eink-radiator/templates
 # TODO: Remove this when you can reliably add and persist sources
 COPY test_fixtures      /eink-radiator/test_fixtures
 
+VOLUME /data
+ENV DATA_FILE_PATH=/data/radiator.pickle
 ENV EINK_SCREEN_PRESENT=true
 ENV PORT=5000
 EXPOSE 5000

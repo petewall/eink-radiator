@@ -1,7 +1,9 @@
 import os
 from behave import *
+from behave.model_core import Status
 import subprocess
 from time import sleep
+
 from selenium import webdriver
 import requests
 from get_port import find_free_port
@@ -68,6 +70,7 @@ def start_browser(context):
 
 def before_all(context):
     use_fixture(start_browser, context)
+    # use_fixture(start_serving_test_fixtures, context)
 
 
 def before_feature(context, _):
@@ -75,3 +78,8 @@ def before_feature(context, _):
     assert_that(port, is_(instance_of(int)))
     assert_that(error, is_({}))
     use_fixture(service_hook, context, port=port)
+
+
+def after_feature(context, feature):
+    if feature.status == Status.failed:
+        context.browser.get_screenshot_as_file("screenshot.png")

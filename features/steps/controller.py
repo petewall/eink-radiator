@@ -1,8 +1,5 @@
-import os
-import subprocess
 from behave import *
-from hamcrest import assert_that, calling, is_, not_none, raises
-from selenium.common.exceptions import NoSuchElementException
+from hamcrest import assert_that, is_, not_none
 from selenium.webdriver.support.expected_conditions import title_is
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
@@ -19,12 +16,6 @@ def step_impl(context):
 
     wait = WebDriverWait(context.browser, 10)
     wait.until(title_is('eInk Radiator'))
-
-
-@when('I select TextContent from the new source dropdown')
-def step_impl(context):
-    new_source_dropdown = Select(context.browser.find_element_by_id('new_source_list'))
-    new_source_dropdown.select_by_value('TextContent')
 
 
 @then('the add button is enabled')
@@ -56,45 +47,28 @@ def step_impl(context):
 
 @step('I click add')
 def step_impl(context):
-    add_button = context.browser.find_element_by_id('add_source')
-    add_button.click()
+    context.browser.find_element_by_id('add_source').click()
 
 
-@then('a new text source is added')
+@when('I click delete')
 def step_impl(context):
-    source_selection = Select(context.browser.find_element_by_id('image_sources'))
-    source_selection.select_by_visible_text('New TextContent')
+    context.browser.find_element_by_id('delete_source').click()
 
 
-@step('I select the text source')
+@when('I click save')
 def step_impl(context):
-    source_selection = Select(context.browser.find_element_by_id('image_sources'))
-    source_selection.select_by_visible_text('test text content')
+    context.browser.find_element_by_id('saveConfig').click()
 
 
-@step('I click delete')
+@when('I click the "set image" button')
 def step_impl(context):
-    add_button = context.browser.find_element_by_id('delete_source')
-    add_button.click()
+    context.browser.find_element_by_id('setImage').click()
 
 
-@then('the text source is removed')
+@when('I select the red image source')
 def step_impl(context):
-    source_selection = Select(context.browser.find_element_by_id('image_sources'))
-    assert_that(
-        calling(source_selection.select_by_visible_text)
-        .with_args('test text content'),
-        raises(NoSuchElementException))
-
-
-@given('a text source exists')
-def step_impl(context):
-    requests.post(context.url + '/source', json={
-        'index': 2,
-        'config': {
-            'name': 'test text content'
-        }
-    })
+    image_sources = Select(context.browser.find_element_by_id('image_sources'))
+    image_sources.select_by_visible_text('Red')
 
 
 @step('I change the name')
@@ -104,7 +78,6 @@ def step_impl(context):
     name_field = context.browser.find_element_by_name('name')
     name_field.clear()
     name_field.send_keys('my new name')
-    context.browser.find_element_by_id('saveConfig').click()
 
 
 @then('new name shows up in the list')
@@ -120,7 +93,26 @@ def step_impl(context):
     context.radiator_process = start_service(context.port, context.url)
 
 
-@then('the text source has the new name')
+@then('the source has the new name')
 def step_impl(context):
     source_selection = Select(context.browser.find_element_by_id('image_sources'))
     source_selection.select_by_visible_text('my new name')
+
+
+red_image = 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAEsCAMAAADaaRXwAAADAFBMVEX///8AAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///+Qv8j4AAACv0lEQVR4nO3RMQ0AMAzAsKr8QfceguWwEUTKLCnzO4CXITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBgSY0iMITGGxBwkxKmuDfckdQAAAABJRU5ErkJggg==")'
+
+
+@then('the preview image goes red')
+def step_impl(context):
+    sleep(0.1)
+    preview_image = context.browser.find_element_by_id('preview-image')
+    image = preview_image.value_of_css_property('background-image')
+    assert_that(image, is_(red_image))
+
+
+@then('the screen image goes red')
+def step_impl(context):
+    sleep(0.1)
+    preview_image = context.browser.find_element_by_id('radiator-image')
+    image = preview_image.value_of_css_property('background-image')
+    assert_that(image, is_(red_image))

@@ -1,5 +1,9 @@
 /* global previewImage, radiatorImage, refreshPreviewImage, refreshRadiatorImage, setImageButton  */
 
+const newSourceList = document.getElementById('new_source_list')
+const addSourceButton = document.getElementById('add_source')
+const deleteSourceButton = document.getElementById('delete_source')
+
 const imageSources = document.getElementById('image_sources')
 async function loadImageSourceConfiguration() {
     previewImage.classList.add('loading')
@@ -32,6 +36,14 @@ function makeTextField(name, value, isPassword) {
     return field
 }
 
+function makeNumberField(name, value) {
+    let field = document.createElement('input')
+    field.setAttribute('name', name)
+    field.setAttribute('type', 'number')
+    field.value = value
+    return field
+}
+
 function makeSelection(name, value, options) {
     let dropdown = document.createElement('select')
     dropdown.setAttribute('name', name)
@@ -54,10 +66,16 @@ function makeTextArea(name, value) {
 
 async function getConfiguration() {
     removeConfiguration()
+    deleteSourceButton.removeAttribute('disabled')
 
     let response = await fetch('/source')
     let configuration = await response.json()
     for (let key in configuration) {
+        if (key === 'deletable' && configuration[key].value === false) {
+            deleteSourceButton.setAttribute('disabled', 'disabled')
+            continue
+        }
+
         let label = document.createElement('label')
         label.setAttribute('for', key)
         label.innerText = `${key}: `
@@ -65,6 +83,8 @@ async function getConfiguration() {
 
         if (configuration[key] == null || typeof configuration[key] === 'string') {
             configurationContainer.appendChild(makeTextField(key, configuration[key], key === 'password'))
+        } else if (typeof configuration[key] === 'number') {
+            configurationContainer.appendChild(makeNumberField(key, configuration[key]))
         } else if (configuration[key].type === 'select') {
             configurationContainer.appendChild(makeSelection(key, configuration[key].value, configuration[key].options))
         } else if (configuration[key].type === 'textarea') {
@@ -112,10 +132,6 @@ setImageButton.onclick = async () => {
     await refreshRadiatorImage()
     setImageButton.removeAttribute('disabled')
 }
-
-const newSourceList = document.getElementById('new_source_list')
-const addSourceButton = document.getElementById('add_source')
-const deleteSourceButton = document.getElementById('delete_source')
 
 addSourceButton.onclick = async () => {
     const name = `New ${newSourceList.value}`
