@@ -1,5 +1,4 @@
 Feature: Creating and removing sources
-
   Scenario: Creating an image source
     When I view the page
     Then the add button is disabled

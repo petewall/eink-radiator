@@ -13,7 +13,8 @@ def step_impl(context):
     requests.post(context.url + '/source', json={
         'index': source_types.index(TextContent),
         'config': {
-            'name': 'test text content'
+            'name': 'test text content',
+            'text': 'initial text content'
         }
     })
 
@@ -59,6 +60,8 @@ expected_text_image = 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAA
 
 @then('the preview image shows the text image')
 def step_impl(context):
+    sleep(0.1)  # This is needed for the config to show up in the DOM
+                # TODO: Change this to an eventually style test
     preview_image = context.browser.find_element_by_id('preview-image')
     image = preview_image.value_of_css_property('background-image')
     assert_that(image, is_(expected_text_image))
@@ -66,6 +69,8 @@ def step_impl(context):
 
 @then('the screen image shows the same image')
 def step_impl(context):
+    sleep(0.1)  # This is needed for the config to show up in the DOM
+                # TODO: Change this to an eventually style test
     preview_image = context.browser.find_element_by_id('radiator-image')
     image = preview_image.value_of_css_property('background-image')
     assert_that(image, is_(expected_text_image))

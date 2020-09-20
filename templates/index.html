@@ -17,8 +17,8 @@
     <select id="image_sources" size="10" style="width: {{ width }};">
         {% for source in image_sources %}
             <option
-                    {% if loop.index0 == chosen_image_source %}class="chosen" {% endif %}
                     {% if loop.index0 == preview_image_source %}selected {% endif %}
+                    {% if loop.index0 == screen_image_source %}class="chosen" {% endif %}
             >
                 {{ source.name }}
             </option>

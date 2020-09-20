@@ -1,6 +1,5 @@
 from image_sources.image_source import ImageSource
 from image_sources.image import ImageContent
-from datetime import datetime, timedelta
 
 
 class SlideshowContent(ImageSource):
@@ -34,7 +33,7 @@ class SlideshowContent(ImageSource):
         if len(self.images) == 0:
             raise ValueError('No image URLs defined')
 
-        image = self.images[self.image_index].get_image(size)
+        image, _ = self.images[self.image_index].get_image(size)
         self.image_index = (self.image_index + 1) % len(self.images)
 
-        return image
+        return image, self.interval

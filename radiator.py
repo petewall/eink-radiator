@@ -8,7 +8,7 @@ from flask import Flask, jsonify, make_response, render_template, request, send_
 from image_sources.blank import White, Black, Red
 from image_sources.concourse.concourse import ConcourseContent
 from image_sources.image import ImageContent
-# from image_sources.slideshow import SlideshowContent
+from image_sources.slideshow import SlideshowContent
 from image_sources.text import TextContent
 from image_sources.weather.weather import WeatherContent
 from screen import Screen
@@ -26,7 +26,7 @@ screen_size = screen.size()
 source_types = [
     ConcourseContent,
     ImageContent,
-    # SlideshowContent,
+    SlideshowContent,
     TextContent
 ]
 state = {
@@ -36,8 +36,8 @@ state = {
         Black(),
         Red()
     ],
-    'chosen_image_source': None,
     'preview_image_source': 0,
+    'screen_image_source': 0
 }
 
 
@@ -48,9 +48,9 @@ def get_preview_image_source():
 
 
 def get_screen_image_source():
-    if state['chosen_image_source'] is None:
+    if state['screen_image_source'] is None:
         return None
-    return state['image_sources'][state['chosen_image_source']]
+    return state['image_sources'][state['screen_image_source']]
 
 
 data_file_path = os.environ.get('DATA_FILE_PATH') or os.path.join(os.getcwd(), 'radiator.pickle')
@@ -83,8 +83,8 @@ def serve_controller_page():
         height=screen_size[1],
         width=screen_size[0],
         image_sources=state['image_sources'],
-        chosen_image_source=state['chosen_image_source'],
         preview_image_source=state['preview_image_source'],
+        screen_image_source=state['screen_image_source'],
         source_types=source_types
     )
 
@@ -136,11 +136,12 @@ def delete_image_source():
     index = state['preview_image_source']
     state['image_sources'].pop(index)
 
-    if state['chosen_image_source'] == index:
-        state['chosen_image_source'] = None
-        screen.set_image_source(None)
-    if state['chosen_image_source'] > index:
-        state['chosen_image_source'] -= 1
+    if state['screen_image_source'] is not None:
+        if state['screen_image_source'] == index:
+            state['screen_image_source'] = None
+            screen.set_image_source(None)
+        if state['screen_image_source'] > index:
+            state['screen_image_source'] -= 1
     save()
     return make_response('', 200)
 
@@ -164,8 +165,7 @@ def select_source(index=None):
         return 'source index out of range', 400
 
     state['preview_image_source'] = index
-    image_source = state['image_sources'][index]
-    preview_screen.set_image_source(image_source)
+    preview_screen.set_image_source(get_preview_image_source())
     save()
     return make_response('', 200)
 
@@ -174,9 +174,8 @@ def select_source(index=None):
 def set_image_source():
     global state
     index = state['preview_image_source']
-    state['chosen_image_source'] = index
-    image_source = state['image_sources'][index]
-    screen.set_image_source(image_source)
+    state['screen_image_source'] = index
+    screen.set_image_source(get_screen_image_source())
     save()
     return '', 200
 

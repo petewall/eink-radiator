@@ -45,7 +45,7 @@ class ImageContent(ImageSource):
             raise ValueError('Image URL is required')
 
         if self.scale == ImageScale.scale:
-            return self.image.resize(size)
+            return self.image.resize(size), None
 
         if self.scale == ImageScale.contain:
             scaled = self.image.copy()
@@ -55,7 +55,7 @@ class ImageContent(ImageSource):
                 int((size[0] - scaled.size[0]) / 2),
                 int((size[1] - scaled.size[1]) / 2)
             ))
-            return image
+            return image, None
 
         if self.scale == ImageScale.cover:
             size_ratio = size[0] / size[1]
@@ -72,5 +72,5 @@ class ImageContent(ImageSource):
                 x_offset + new_width,
                 y_offset + new_height,
             ))
-            return cropped.resize(size)
-        return None
+            return cropped.resize(size), None
+        return None, None

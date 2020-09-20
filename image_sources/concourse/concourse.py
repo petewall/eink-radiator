@@ -90,4 +90,4 @@ class ConcourseContent(ImageSource):
             image_canvas.text((5, y_pos), pipeline, fill=color.value, font=self.content_font)
             y_pos += 17
 
-        return image
+        return image, None

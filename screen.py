@@ -1,5 +1,6 @@
 # pylint: disable=no-self-use,protected-access
 import time
+import threading
 import traceback
 from PIL import Image
 from color import Color
@@ -32,6 +33,7 @@ class Screen:
     image = None
     image_source = None
     image_size = None
+    refresh_timer = None
 
     def __init__(self, size):
         self.image_size = size
@@ -40,20 +42,34 @@ class Screen:
         return self.image_size
 
     def set_image_source(self, image_source):
+        self.cancel_refresh_timer()
         self.image_source = image_source
         self.refresh()
+
+    def generate_error_image(self, error_message):
+        message = f'Failed to generate image:\n{error_message}'
+        error_image.set_configuration({'text': message})
+        return error_image.get_image(self.size())
+
+    def cancel_refresh_timer(self):
+        if self.refresh_timer is not None:
+            self.refresh_timer.cancel()
+            self.refresh_timer = None
 
     def refresh(self):
         if self.image_source is None:
             return
 
+        refresh_interval = None
         try:
-            image = self.image_source.get_image(self.size())
+            image, refresh_interval = self.image_source.get_image(self.size())
         except BaseException as e:  # pylint: disable=broad-except
             traceback.print_exc()
-            message = f'Failed to generate image:\n{str(e)}'
-            error_image.set_configuration({'text': message})
-            image = error_image.get_image(self.size())
+            image, _ = self.generate_error_image(str(e))
+
+        if refresh_interval is not None:
+            self.refresh_timer = threading.Timer(refresh_interval, self.refresh)
+            self.refresh_timer.start()
         self.set_image(image)
 
     def set_image(self, image):

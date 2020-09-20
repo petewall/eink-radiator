@@ -1,5 +1,5 @@
-Feature: Image sources that auto-update
-  Scenario: Image sources that auto-update
+Feature: Slideshow image source
+  Scenario: Slideshow image source
     Given A slideshow source exists
     When I view the page
     And I select the slideshow source

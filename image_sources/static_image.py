@@ -16,4 +16,4 @@ class StaticImageContent(ImageSource):
             self.image = Image.open(params.get('image_path'))
 
     def get_image(self, _):
-        return self.image
+        return self.image, None

@@ -53,4 +53,4 @@ class TextContent(ImageSource):
         text_y = int((size[1] - text_height) / 2)
         color = self.foreground_color.value
         image_canvas.text((text_x, text_y), self.text, fill=color, font=self.font, align='center')
-        return image
+        return image, None

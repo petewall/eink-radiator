@@ -24,7 +24,7 @@ class BlankContent(ImageSource):
     def get_image(self, size):
         image = Image.new('P', size, self.color.value)
         image.putpalette(Color.palette())
-        return image
+        return image, None
 
 
 class White(BlankContent):

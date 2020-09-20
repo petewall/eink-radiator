@@ -121,4 +121,4 @@ class WeatherContent(ImageSource):
         y = height - 70
         image_canvas.line([(0, y), (width, y)], fill=Color.black.value, width=3)
 
-        return image
+        return image, None

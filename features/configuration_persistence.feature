@@ -1,5 +1,4 @@
 Feature: Configuration persists
-
   Scenario: Configuration change persists
     Given A text source exists
     When I view the page
