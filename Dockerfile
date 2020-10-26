@@ -1,4 +1,4 @@
-FROM arm32v5/python:3.8-buster AS requirements_builder
+FROM arm32v5/python:3.9.0-buster AS requirements_builder
 
 RUN pip install pipenv
 
@@ -10,7 +10,7 @@ RUN pipenv lock --requirements > /tmp/requirements.txt
 ARG INKY_VERSION=0.0.5
 RUN echo "inky==${INKY_VERSION}" >> /tmp/requirements.txt
 
-FROM arm32v5/python:3.8-buster
+FROM arm32v5/python:3.9.0-buster
 
 WORKDIR /eink-radiator
 
