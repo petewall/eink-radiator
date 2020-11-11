@@ -7,6 +7,13 @@ from color import Color
 from image_sources.text import TextContent
 
 
+BREAKING CODE TO TYPE A MESSAGE:
+1. Have image sources that need updates (slideshows, weather, etc...) to inherit from a parent class
+  a. Handles the next refresh time
+  b. caches the image and returns if called again before that time
+  c. standardizes the user configuration for these fields
+
+
 def quantize(image, palette):
     """Convert an RGB or L mode image to use a given P image's palette."""
     # From https://stackoverflow.com/a/29438149/1255644
