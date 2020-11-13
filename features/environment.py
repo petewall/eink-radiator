@@ -1,4 +1,5 @@
 import os
+import base64
 from behave import *
 from behave.model_core import Status
 import subprocess
@@ -68,8 +69,26 @@ def start_browser(context):
     context.browser.quit()
 
 
+@fixture
+def load_test_fixtures(context):
+    test_fixtures_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures')
+    red_image_file = open(os.path.join(test_fixtures_dir, 'blank_red.png'), 'rb')
+    red_image_encoded = str(base64.b64encode(red_image_file.read()), 'utf-8')
+    red_image_file.close()
+
+    white_image_file = open(os.path.join(test_fixtures_dir, 'blank_red.png'), 'rb')
+    white_image_encoded = str(base64.b64encode(white_image_file.read()), 'utf-8')
+    white_image_file.close()
+
+    context.fixtures = {
+        'red_image': 'url("data:image/png;base64,{}")'.format(red_image_encoded),
+        'white_image': 'url("data:image/png;base64,{}")'.format(white_image_encoded)
+    }
+
+
 def before_all(context):
     use_fixture(start_browser, context)
+    use_fixture(load_test_fixtures, context)
     # use_fixture(start_serving_test_fixtures, context)
 
 
