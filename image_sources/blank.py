@@ -7,8 +7,7 @@ class BlankContent(ImageSource):
     color = Color.white
 
     def get_configuration(self):
-        return {
-            'name': self.name,
+        return super().get_configuration() | {
             'color': {
                 'type': 'select',
                 'value': self.color.name,

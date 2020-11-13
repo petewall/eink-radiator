@@ -8,6 +8,11 @@ class ImageSource:
         if params is not None:
             self.set_configuration(params)
 
+    def get_configuration(self):
+        return {
+            'name': self.name,
+        }
+
     def set_configuration(self, params):
         if params.get('name'):
             self.name = params.get('name')
