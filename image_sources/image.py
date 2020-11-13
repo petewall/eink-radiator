@@ -4,6 +4,7 @@ from PIL import Image
 
 from color import Color
 from image_sources.image_source import ImageSource
+from image_sources.blank import White
 
 
 class ImageScale(Enum):
@@ -20,6 +21,7 @@ class ImageContent(ImageSource):
     scale = ImageScale.scale
     image = None
     image_url = None
+    white_background = White()
 
     def get_configuration(self):
         return super().get_configuration() | {
@@ -49,20 +51,23 @@ class ImageContent(ImageSource):
         if self.scale == ImageScale.contain:
             scaled = self.image.copy()
             scaled.thumbnail(size)
-            image = Image.new(self.image.mode, size, Color.white.name)
+            image = self.image.resize(size)
+            image.paste(self.white_background.get_image(size)[0])
             image.paste(scaled, box=(
                 int((size[0] - scaled.size[0]) / 2),
                 int((size[1] - scaled.size[1]) / 2)
             ))
+
             return image, None
 
         if self.scale == ImageScale.cover:
-            size_ratio = size[0] / size[1]
-            image_ratio = self.image.size[0] / self.image.size[1]
-            image_is_wider = image_ratio > size_ratio
-            image_is_taller = not image_is_wider
-            new_width = self.image.size[1] * size_ratio if image_is_wider else self.image.size[0]
-            new_height = self.image.size[0] * size_ratio if image_is_taller else self.image.size[1]
+            scale_factor = max(
+                size[0] / self.image.size[0],
+                size[1] / self.image.size[1]
+            )
+            new_height = size[1] * scale_factor
+            new_width = size[0] * scale_factor
+
             x_offset = int((self.image.size[0] - new_width) / 2)
             y_offset = int((self.image.size[1] - new_height) / 2)
             cropped = self.image.crop((

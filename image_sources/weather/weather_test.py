@@ -5,6 +5,7 @@ import requests_mock
 from hamcrest import assert_that, calling, equal_to, is_, none, raises
 from PIL import Image
 from image_sources.weather.weather import WeatherContent
+from pillow_image_matcher import the_same_image_as
 
 
 class TestWeatherContent(unittest.TestCase):
@@ -70,10 +71,7 @@ class TestWeatherContent(unittest.TestCase):
 
         image, update_interval = content.get_image((400, 300))
         assert_that(update_interval, is_(none()))
-
-        # image.save(os.path.join(self.test_fixtures_dir, 'weather.png'), 'PNG')
-
-        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        assert_that(image, is_(the_same_image_as(expected_image)))
 
         expected_image.close()
 

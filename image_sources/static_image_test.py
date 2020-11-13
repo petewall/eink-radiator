@@ -3,6 +3,7 @@ import unittest
 from hamcrest import assert_that, equal_to, has_entries, is_, none
 from PIL import Image
 from image_sources.static_image import StaticImageContent
+from pillow_image_matcher import the_same_image_as
 
 
 class TestStaticImageContent(unittest.TestCase):
@@ -23,7 +24,7 @@ class TestStaticImageContent(unittest.TestCase):
         })
         image, update_interval = content.get_image((400, 300))
         assert_that(update_interval, is_(none()))
-        assert_that(image.tobytes(), is_(equal_to(self.expected_image.tobytes())))
+        assert_that(image, is_(the_same_image_as(self.expected_image)))
 
     def test_set_configuration(self):
         content = StaticImageContent({})
@@ -42,7 +43,7 @@ class TestStaticImageContent(unittest.TestCase):
 
         image, update_interval = content.get_image((400, 300))
         assert_that(update_interval, is_(none()))
-        assert_that(image.tobytes(), is_(equal_to(self.expected_image.tobytes())))
+        assert_that(image, is_(the_same_image_as(self.expected_image)))
 
     if __name__ == '__main__':
         unittest.main()

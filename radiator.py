@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # pylint: disable=invalid-name,global-statement,line-too-long
+
 from io import BytesIO
 import pickle
 import os
@@ -42,13 +43,13 @@ state = {
 
 
 def get_preview_image_source():
-    if state['preview_image_source'] is None:
+    if state.get('preview_image_source') is None:
         return None
     return state['image_sources'][state['preview_image_source']]
 
 
 def get_screen_image_source():
-    if state['screen_image_source'] is None:
+    if state.get('screen_image_source') is None:
         return None
     return state['image_sources'][state['screen_image_source']]
 
