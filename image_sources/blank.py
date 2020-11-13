@@ -28,14 +28,14 @@ class BlankContent(ImageSource):
 
 class White(BlankContent):
     def __init__(self):
-        super(White, self).__init__({'name': 'White', 'color': 'white'})
+        super().__init__({'name': 'White', 'color': 'white'})
 
 
 class Black(BlankContent):
     def __init__(self):
-        super(Black, self).__init__({'name': 'Black', 'color': 'black'})
+        super().__init__({'name': 'Black', 'color': 'black'})
 
 
 class Red(BlankContent):
     def __init__(self):
-        super(Red, self).__init__({'name': 'Red', 'color': 'red'})
+        super().__init__({'name': 'Red', 'color': 'red'})

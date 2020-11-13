@@ -2,7 +2,6 @@ from enum import Enum, auto
 import urllib.request
 from PIL import Image
 
-from color import Color
 from image_sources.image_source import ImageSource
 from image_sources.blank import White
 

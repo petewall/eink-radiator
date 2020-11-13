@@ -63,9 +63,9 @@ class Screen:
         refresh_interval = None
         try:
             image, refresh_interval = self.image_source.get_image(self.size())
-        except BaseException as e:  # pylint: disable=broad-except
+        except BaseException as exception:  # pylint: disable=broad-except
             traceback.print_exc()
-            image, _ = self.generate_error_image(str(e))
+            image, _ = self.generate_error_image(str(exception))
 
         if refresh_interval is not None:
             self.refresh_timer = threading.Timer(refresh_interval, self.refresh)

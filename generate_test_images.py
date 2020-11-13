@@ -1,14 +1,14 @@
 #!/usr/bin/env python
+# pylint: disable=line-too-long
 
 import os
 import json
-import requests
+from unittest.mock import patch
 import requests_mock
 from image_sources.blank import Red, White
 from image_sources.image import ImageContent
 from image_sources.text import TextContent
 from image_sources.weather.weather import WeatherContent
-from unittest.mock import patch
 
 def generate_blank():
     content = Red()
@@ -35,7 +35,7 @@ def generate_image():
         content.set_configuration({'scale': 'cover'})
         image, _ = content.get_image((200, 300))
         image.save(os.path.join('test_fixtures', 'image_covered_tall.png'))
-        
+
         image, _ = content.get_image((400, 200))
         image.save(os.path.join('test_fixtures', 'image_covered_wide.png'))
 

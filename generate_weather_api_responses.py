@@ -2,8 +2,8 @@
 
 import json
 import os
-import requests
 import sys
+import requests
 from image_sources.weather.weather import WeatherContent
 
 content = WeatherContent({

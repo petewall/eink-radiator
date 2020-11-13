@@ -7,7 +7,7 @@ import os
 from flask import Flask, jsonify, make_response, render_template, request, send_file, send_from_directory
 
 from image_sources.blank import White, Black, Red
-from image_sources.concourse.concourse import ConcourseContent
+# from image_sources.concourse.concourse import ConcourseContent
 from image_sources.image import ImageContent
 from image_sources.slideshow import SlideshowContent
 from image_sources.text import TextContent

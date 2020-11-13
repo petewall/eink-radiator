@@ -1,7 +1,8 @@
+from abc import abstractmethod, ABC
 # pylint: disable=too-few-public-methods
 
 
-class ImageSource:
+class ImageSource(ABC):
     name = "New image source"
 
     def __init__(self, params):
@@ -16,3 +17,7 @@ class ImageSource:
     def set_configuration(self, params):
         if params.get('name'):
             self.name = params.get('name')
+
+    @abstractmethod
+    def get_image(self, size):
+        pass

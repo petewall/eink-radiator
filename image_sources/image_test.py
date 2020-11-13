@@ -2,7 +2,7 @@
 import os
 import unittest
 from unittest.mock import patch
-from hamcrest import assert_that, calling, equal_to, has_entries, is_, none, raises
+from hamcrest import assert_that, calling, has_entries, is_, none, raises
 from PIL import Image
 from image_sources.image import ImageContent
 from pillow_image_matcher import the_same_image_as
@@ -105,7 +105,9 @@ class TestImageContent(unittest.TestCase):
         assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
-        expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_contained_wide.png'))
+        expected_image = Image.open(
+            os.path.join(self.test_fixtures_dir, 'image_contained_wide.png')
+        )
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
@@ -113,7 +115,9 @@ class TestImageContent(unittest.TestCase):
         assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
-        expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_contained_tall.png'))
+        expected_image = Image.open(
+            os.path.join(self.test_fixtures_dir, 'image_contained_tall.png')
+        )
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
