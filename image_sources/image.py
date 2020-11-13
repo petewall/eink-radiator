@@ -22,8 +22,7 @@ class ImageContent(ImageSource):
     image_url = None
 
     def get_configuration(self):
-        return {
-            'name': self.name,
+        return super().get_configuration() | {
             'url': self.image_url,
             'scale': {
                 'type': 'select',

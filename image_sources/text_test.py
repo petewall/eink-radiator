@@ -1,7 +1,7 @@
 # pylint: disable=no-self-use
 import os
 import unittest
-from hamcrest import assert_that, calling, equal_to, has_entries, is_, raises
+from hamcrest import assert_that, calling, equal_to, has_entries, is_, none, raises
 from PIL import Image
 from image_sources.text import TextContent
 
@@ -24,8 +24,10 @@ class TestTextContent(unittest.TestCase):
         content = TextContent({
             'text': 'It is now safe to turn off your computer'
         })
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     def test_set_configuration(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_2.png'))
@@ -56,8 +58,10 @@ class TestTextContent(unittest.TestCase):
             }
         }))
 
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     def test_multiline_string(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_3.png'))
@@ -85,8 +89,8 @@ class TestTextContent(unittest.TestCase):
             }
         }))
 
-        image = content.get_image((400, 300))
-
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
     if __name__ == '__main__':
         unittest.main()

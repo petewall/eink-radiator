@@ -1,11 +1,11 @@
 import os
 import unittest
-from hamcrest import assert_that, equal_to, has_entries, is_
+from hamcrest import assert_that, equal_to, has_entries, is_, none
 from PIL import Image
 from image_sources.blank import BlankContent
 
 
-class TestTextContent(unittest.TestCase):
+class TestBlankContent(unittest.TestCase):
     test_fixtures_dir = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures'
     )
@@ -14,9 +14,11 @@ class TestTextContent(unittest.TestCase):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'blank_white.png'))
 
         content = BlankContent({})
-        image = content.get_image((400, 300))
-
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+
+        expected_image.close()
 
     def test_set_configuration(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'blank_red.png'))
@@ -36,8 +38,11 @@ class TestTextContent(unittest.TestCase):
             }
         }))
 
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+
+        expected_image.close()
 
     if __name__ == '__main__':
         unittest.main()

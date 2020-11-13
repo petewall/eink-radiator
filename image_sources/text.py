@@ -13,8 +13,7 @@ class TextContent(ImageSource):
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
     def get_configuration(self):
-        return {
-            'name': self.name,
+        return super().get_configuration() | {
             'text': {
                 'type': 'textarea',
                 'value': self.text

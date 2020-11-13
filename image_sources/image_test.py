@@ -2,7 +2,7 @@
 import os
 import unittest
 from unittest.mock import patch
-from hamcrest import assert_that, calling, equal_to, has_entries, is_, raises
+from hamcrest import assert_that, calling, equal_to, has_entries, is_, none, raises
 from PIL import Image
 from image_sources.image import ImageContent
 
@@ -34,11 +34,13 @@ class TestImageContent(unittest.TestCase):
         content = ImageContent({
             'url': 'http://www.example.com/images/InkywHAT-400x300.png'
         })
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image.png'))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     def test_set_configuration(self, urlopen):
         urlopen.return_value = self.mock_image
@@ -59,11 +61,13 @@ class TestImageContent(unittest.TestCase):
             },
         }))
 
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image.png'))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     def test_scaled_image(self, urlopen):
         urlopen.return_value = self.mock_image
@@ -72,11 +76,13 @@ class TestImageContent(unittest.TestCase):
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': 'scale'
         })
-        image = content.get_image((200, 200))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_scaled.png'))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     def test_contained_image(self, urlopen):
         urlopen.return_value = self.mock_image
@@ -85,11 +91,13 @@ class TestImageContent(unittest.TestCase):
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': 'contain'
         })
-        image = content.get_image((200, 200))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_contained.png'))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     def test_covered_image(self, urlopen):
         urlopen.return_value = self.mock_image
@@ -97,11 +105,13 @@ class TestImageContent(unittest.TestCase):
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': 'cover'
         })
-        image = content.get_image((200, 200))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_covered.png'))
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        expected_image.close()
 
     if __name__ == '__main__':
         unittest.main()

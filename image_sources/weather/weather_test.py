@@ -2,7 +2,7 @@
 import os
 import unittest
 import requests_mock
-from hamcrest import assert_that, calling, equal_to, is_, raises
+from hamcrest import assert_that, calling, equal_to, is_, none, raises
 from PIL import Image
 from image_sources.weather.weather import WeatherContent
 
@@ -68,11 +68,14 @@ class TestWeatherContent(unittest.TestCase):
                 ]
             })
 
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
 
         # image.save(os.path.join(self.test_fixtures_dir, 'weather.png'), 'PNG')
 
         assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+
+        expected_image.close()
 
     if __name__ == '__main__':
         unittest.main()

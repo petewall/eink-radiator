@@ -14,16 +14,21 @@ class TestStaticImageContent(unittest.TestCase):
     def setUp(self):
         self.expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'static_image.png'))
 
+    def tearDown(self):
+        self.expected_image.close()
+
     def test_get_image(self):
         content = StaticImageContent({
             'image_path': os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png')
         })
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(self.expected_image.tobytes())))
 
     def test_set_configuration(self):
         content = StaticImageContent({})
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image, is_(none()))
 
         content.set_configuration({
@@ -35,7 +40,8 @@ class TestStaticImageContent(unittest.TestCase):
             'name': 'Test Static Image'
         }))
 
-        image = content.get_image((400, 300))
+        image, update_interval = content.get_image((400, 300))
+        assert_that(update_interval, is_(none()))
         assert_that(image.tobytes(), is_(equal_to(self.expected_image.tobytes())))
 
     if __name__ == '__main__':

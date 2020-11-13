@@ -5,11 +5,6 @@ from image_sources.image_source import ImageSource
 class StaticImageContent(ImageSource):
     image = None
 
-    def get_configuration(self):
-        return {
-            'name': self.name
-        }
-
     def set_configuration(self, params):
         super().set_configuration(params)
         if params.get('image_path'):
