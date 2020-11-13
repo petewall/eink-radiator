@@ -25,14 +25,14 @@ else:
 screen_size = screen.size()
 
 source_types = [
-    ConcourseContent,
     ImageContent,
     SlideshowContent,
-    TextContent
+    TextContent,
+    WeatherContent
 ]
 state = {
     'image_sources': [
-        WeatherContent({}),
+        WeatherContent({ 'name': 'Weather' }),
         White(),
         Black(),
         Red()

@@ -49,7 +49,6 @@ class WeatherContent(ImageSource):
         if current.status_code != 200:
             raise RuntimeError(f'Failed to get current\nweather for {self.location}:\n' + \
                 f'{current.status_code}: {current.text}')
-
         forecast = requests.get(self.build_weather_url('forecast'))
         if forecast.status_code != 200:
             raise RuntimeError(f'Failed to get weather\nforecast for {self.location}:\n' + \

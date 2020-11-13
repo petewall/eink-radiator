@@ -1,24 +1,20 @@
 #!/usr/bin/env python
 
 import os
+import json
+import requests
+import requests_mock
 from image_sources.blank import Red, White
 from image_sources.image import ImageContent
 from image_sources.text import TextContent
+from image_sources.weather.weather import WeatherContent
 from unittest.mock import patch
 
-def generate_text_1():
-    content = TextContent({
-        'text': 'It is now safe to turn off your computer'
-    })
-    image, _ = content.get_image((400, 300))
-    image.save(os.path.join('test_fixtures', 'text_1.png'))
-
-def generate_blank_red():
+def generate_blank():
     content = Red()
     image, _ = content.get_image((400, 300))
     image.save(os.path.join('test_fixtures', 'blank_red.png'))
 
-def generate_blank_white():
     content = White()
     image, _ = content.get_image((400, 300))
     image.save(os.path.join('test_fixtures', 'blank_white.png'))
@@ -47,8 +43,14 @@ def generate_image():
         image, _ = content.get_image((200, 200))
         image.save(os.path.join('test_fixtures', 'image_scaled.png'))
 
-def generate_text_2():
+def generate_text():
     content = TextContent({
+        'text': 'It is now safe to turn off your computer'
+    })
+    image, _ = content.get_image((400, 300))
+    image.save(os.path.join('test_fixtures', 'text_1.png'))
+
+    content.set_configuration({
         'name': 'Test Image',
         'text': 'Shields up! Rrrrred alert!',
         'foreground_color': 'red',
@@ -58,8 +60,7 @@ def generate_text_2():
     image, _ = content.get_image((400, 300))
     image.save(os.path.join('test_fixtures', 'text_2.png'))
 
-def generate_text_3():
-    content = TextContent({
+    content.set_configuration({
         'text': 'Docker engineers\ndo it in a container',
         'foreground_color': 'white',
         'background_color': 'black'
@@ -68,12 +69,25 @@ def generate_text_3():
     image.save(os.path.join('test_fixtures', 'text_3.png'))
 
 def generate_weather():
-    pass
+    with requests_mock.Mocker() as request_mock:
+        with open(os.path.join('test_fixtures', 'current_weather.json'), 'r') as current_weather:
+            with open(os.path.join('test_fixtures', 'forecast.json'), 'r') as forecast:
+                content = WeatherContent({
+                    'api_key': 'test',
+                    'location': '55901'
+                })
 
-generate_blank_red()
-generate_blank_white()
+                request_mock.get(
+                    'https://api.openweathermap.org/data/2.5/weather?q=55901&units=imperial&appid=test',
+                    json=json.load(current_weather))
+                request_mock.get(
+                    'https://api.openweathermap.org/data/2.5/forecast?q=55901&units=imperial&appid=test',
+                    json=json.load(forecast))
+
+                image, _ = content.get_image((400, 300))
+                image.save(os.path.join('test_fixtures', 'weather.png'))
+
+generate_blank()
 generate_image()
-generate_text_1()
-generate_text_2()
-generate_text_3()
+generate_text()
 generate_weather()
