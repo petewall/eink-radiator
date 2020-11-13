@@ -4,6 +4,7 @@ import unittest
 from hamcrest import assert_that, calling, equal_to, has_entries, is_, none, raises
 from PIL import Image
 from image_sources.text import TextContent
+from pillow_image_matcher import the_same_image_as
 
 
 class TestTextContent(unittest.TestCase):
@@ -19,15 +20,18 @@ class TestTextContent(unittest.TestCase):
         )
 
     def test_get_image(self):
-        expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_1.png'))
-
         content = TextContent({
             'text': 'It is now safe to turn off your computer'
         })
         image, update_interval = content.get_image((400, 300))
         assert_that(update_interval, is_(none()))
-        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
-        expected_image.close()
+
+        if os.getenv("SAVE_TEST_FIXTURES") == "true":
+            image.save(os.path.join(self.test_fixtures_dir, 'text_1.png'))
+        else:
+            expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_1.png'))
+            assert_that(image, is_(the_same_image_as(expected_image)))
+            expected_image.close()
 
     def test_set_configuration(self):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'text_2.png'))
@@ -60,7 +64,7 @@ class TestTextContent(unittest.TestCase):
 
         image, update_interval = content.get_image((400, 300))
         assert_that(update_interval, is_(none()))
-        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
     def test_multiline_string(self):
@@ -91,6 +95,6 @@ class TestTextContent(unittest.TestCase):
 
         image, update_interval = content.get_image((400, 300))
         assert_that(update_interval, is_(none()))
-        assert_that(image.tobytes(), is_(equal_to(expected_image.tobytes())))
+        assert_that(image, is_(the_same_image_as(expected_image)))
     if __name__ == '__main__':
         unittest.main()
