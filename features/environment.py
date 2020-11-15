@@ -1,6 +1,6 @@
 import os
 import base64
-from behave import *
+from behave import fixture, use_fixture
 from behave.model_core import Status
 import subprocess
 from time import sleep
@@ -8,7 +8,7 @@ from time import sleep
 from selenium import webdriver
 import requests
 from get_port import find_free_port
-from hamcrest import *
+from hamcrest import assert_that, instance_of, is_
 
 
 def start_service(port, url):

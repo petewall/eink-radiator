@@ -5,7 +5,7 @@ Feature: Configuration persists
     And I select the text source
     And I change the name
     And I click save
-    Then new name shows up in the list
+    Then the new name shows up in the list
 
     When the service is restarted
     And I view the page
