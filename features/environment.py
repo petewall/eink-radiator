@@ -80,8 +80,13 @@ def load_test_fixtures(context):
     white_image_encoded = str(base64.b64encode(white_image_file.read()), 'utf-8')
     white_image_file.close()
 
+    text_image_file = open(os.path.join(test_fixtures_dir, 'text_1.png'), 'rb')
+    text_image_encoded = str(base64.b64encode(text_image_file.read()), 'utf-8')
+    text_image_file.close()
+
     context.fixtures = {
         'red_image': 'url("data:image/png;base64,{}")'.format(red_image_encoded),
+        'text_image': 'url("data:image/png;base64,{}")'.format(text_image_encoded),
         'white_image': 'url("data:image/png;base64,{}")'.format(white_image_encoded)
     }
 

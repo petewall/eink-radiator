@@ -37,7 +37,7 @@ def i_change_the_text(context):
                 # TODO: Change this to an eventually style test
     name_field = context.browser.find_element_by_name('text')
     name_field.clear()
-    name_field.send_keys('Show this text!')
+    name_field.send_keys('It is now safe to turn off your computer')
 
 
 @then('a new text source is added')
@@ -55,16 +55,13 @@ def the_text_source_is_removed(context):
         raises(NoSuchElementException))
 
 
-expected_text_image = 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAEsCAMAAADaaRXwAAADAFBMVEX///8AAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///+Qv8j4AAACUElEQVR4nO3W0Y7bIBAFUPj/n64qJTEMg2NnrXpDz3moCMWQnRvApQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwa9Ra7/4KX6PWa6uVzieQ4wRyv9oX7epq/bvqr5Fzfdk6Lpk1aX7w9JnBSwTyiKKJRCB3SgonkDvdEcj79waBtM3tCOvHvTqS461/L+hvpWG+4R0iWyoMj0s/G93gxQJpu0JNhr/7bCBjjePQmFDIIK7znwXy+lubrtL0tMV6DZnNm8+XT5w/3Q7YaSwRyFCLruzxVkk3Rj+klPh5nC+tav50tnSdDFkjkOem7zpCa+hpdsqhQGLrB4GU157aGfzd4iE+LX/pkijP26Hp6CadzpceN/nTs33QPrdcICXskmOBPH+mww82TvIukKyI/f8nv5jVA/nro0C2fz4LZNie48AxkHDvrRrI+xsjjompZJNl8/WVyxJ5c6StHEiy9Y8EUtpA6o8CeXzOL/XZgZYfWSv4PJD2Ph9rci6QmMhuII+bK5l/BUcCmZS0XhDI5LTZO4WafTkb8s3OBRJedbbWUJLrA2lWmw1ZwbOatSZV72pe2hC69tlA6naPjz+C5Olu6SzUpaKpm/Zz12pGdc+NzThvOl8d+oYJZkvvfLmySCDxvTMPJL7ZlPawy+swD2Rn9fh0XHrny02/CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAv9Ac83QVgNSV4lgAAAABJRU5ErkJggg==")'
-
-
 @then('the preview image shows the text image')
 def the_preview_image_shows_the_text_image(context):
     sleep(0.1)  # This is needed for the config to show up in the DOM
                 # TODO: Change this to an eventually style test
     preview_image = context.browser.find_element_by_id('preview-image')
     image = preview_image.value_of_css_property('background-image')
-    assert_that(image, is_(expected_text_image))
+    assert_that(image, is_(context.fixtures['text_image']))
 
 
 @then('the screen image shows the same image')
@@ -73,4 +70,4 @@ def the_screen_image_shows_the_same_image(context):
                 # TODO: Change this to an eventually style test
     preview_image = context.browser.find_element_by_id('radiator-image')
     image = preview_image.value_of_css_property('background-image')
-    assert_that(image, is_(expected_text_image))
+    assert_that(image, is_(context.fixtures['text_image']))
