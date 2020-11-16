@@ -71,15 +71,16 @@ def start_browser(context):
 
 @fixture
 def load_test_fixtures(context):
-    test_fixtures_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures')
-    red_image_file = open(os.path.join(test_fixtures_dir, 'blank_red.png'), 'rb')
+    static_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'static')
+    red_image_file = open(os.path.join(static_dir, 'red.png'), 'rb')
     red_image_encoded = str(base64.b64encode(red_image_file.read()), 'utf-8')
     red_image_file.close()
 
-    white_image_file = open(os.path.join(test_fixtures_dir, 'blank_red.png'), 'rb')
+    white_image_file = open(os.path.join(static_dir, 'white.png'), 'rb')
     white_image_encoded = str(base64.b64encode(white_image_file.read()), 'utf-8')
     white_image_file.close()
 
+    test_fixtures_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures')
     text_image_file = open(os.path.join(test_fixtures_dir, 'text_1.png'), 'rb')
     text_image_encoded = str(base64.b64encode(text_image_file.read()), 'utf-8')
     text_image_file.close()
@@ -94,7 +95,6 @@ def load_test_fixtures(context):
 def before_all(context):
     use_fixture(start_browser, context)
     use_fixture(load_test_fixtures, context)
-    # use_fixture(start_serving_test_fixtures, context)
 
 
 def before_feature(context, _):

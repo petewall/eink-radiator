@@ -24,7 +24,7 @@ def i_set_two_image_urls(context):
                 # TODO: Change this to an eventually style test
     image_urls_field = context.browser.find_element_by_name('images')
     image_urls_field.clear()
-    image_urls_field.send_keys(f'{context.url}/white.png\n{context.url}/red.png')
+    image_urls_field.send_keys(f'{context.url}/static/white.png\n{context.url}/static/red.png')
 
 
 @when('I change the interval to 1 second')
@@ -50,7 +50,7 @@ def the_screen_shows_the_first_image(context):
     sleep(0.1)
     preview_image = context.browser.find_element_by_id('preview-image')
     image = preview_image.value_of_css_property('background-image')
-    assert_that(image, is_(context.fixtures['red_image']))
+    assert_that(image, is_(context.fixtures['white_image']))
 
 
 @then('the screen image shows the second image')
@@ -58,5 +58,5 @@ def the_screen_image_shows_the_second_image(context):
     sleep(0.1)
     preview_image = context.browser.find_element_by_id('preview-image')
     image = preview_image.value_of_css_property('background-image')
-    assert_that(image, is_(context.fixtures['white_image']))
+    assert_that(image, is_(context.fixtures['red_image']))
 

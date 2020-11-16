@@ -13,11 +13,11 @@ from image_sources.weather.weather import WeatherContent
 def generate_blank():
     content = Red()
     image, _ = content.get_image((400, 300))
-    image.save(os.path.join('test_fixtures', 'blank_red.png'))
+    image.save(os.path.join('static', 'red.png'))
 
     content = White()
     image, _ = content.get_image((400, 300))
-    image.save(os.path.join('test_fixtures', 'blank_white.png'))
+    image.save(os.path.join('static', 'white.png'))
 
 def generate_image():
     source_image = open(os.path.join('test_fixtures', 'InkywHAT-400x300.png'), 'rb')
