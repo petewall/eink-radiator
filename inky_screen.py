@@ -6,7 +6,7 @@ from screen import Screen
 class InkyScreen(Screen):
     def __init__(self):
         physical_screen = InkyWHAT('red')
-        super().__init__(physical_screen.resolution)
+        super().__init__(physical_screen.resolution, "InkyWHAT Screen")
         self.screen = physical_screen
 
     def show_image(self):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=invalid-name,global-statement,line-too-long
 
+import logging
 from io import BytesIO
 import pickle
 import os
@@ -13,6 +14,8 @@ from image_sources.slideshow import SlideshowContent
 from image_sources.text import TextContent
 from image_sources.weather.weather import WeatherContent
 from screen import Screen
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen

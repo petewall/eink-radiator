@@ -1,4 +1,5 @@
 # pylint: disable=no-self-use,protected-access
+import logging
 import time
 import threading
 import traceback
@@ -34,9 +35,11 @@ class Screen:
     image_source = None
     image_size = None
     refresh_timer = None
+    logger = None
 
-    def __init__(self, size):
+    def __init__(self, size, name="Screen"):
         self.image_size = size
+        self.logger = logging.getLogger(name)
 
     def size(self):
         return self.image_size
@@ -44,6 +47,7 @@ class Screen:
     def set_image_source(self, image_source):
         self.cancel_refresh_timer()
         self.image_source = image_source
+        self.logger.info("image source is now {}".format(self.image_source))
         self.refresh()
 
     def generate_error_image(self, error_message):
