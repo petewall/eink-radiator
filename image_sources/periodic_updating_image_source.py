@@ -3,8 +3,10 @@ import time
 import threading
 from image_sources.image_source import ImageSource
 
+MINIMUM_INTERVAL = 60
+
 class PeriodicUpdatingImageSource(ImageSource):
-    interval = 10
+    interval = MINIMUM_INTERVAL
     next_refresh_time = 0
     cached_image = None
     lock = threading.Lock()
@@ -28,8 +30,8 @@ class PeriodicUpdatingImageSource(ImageSource):
         pass
 
     def get_image(self, size):
-        if self.interval <= 0:
-            raise ValueError('Interval must be greater than 0')
+        if self.interval < MINIMUM_INTERVAL:
+            raise ValueError('Interval must be greater than {}'.format(MINIMUM_INTERVAL))
 
         self.lock.acquire()
         try:
