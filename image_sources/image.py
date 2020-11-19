@@ -1,6 +1,8 @@
 from enum import Enum, auto
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 import urllib.request
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 from image_sources.image_source import ImageSource
 from image_sources.blank import White
@@ -20,6 +22,7 @@ class ImageContent(ImageSource):
     scale = ImageScale.scale
     image = None
     image_url = None
+    image_error = None
     white_background = White()
 
     def get_configuration(self):
@@ -32,17 +35,39 @@ class ImageContent(ImageSource):
             }
         }
 
+    def set_image_url(self, url):
+        self.image = None
+        self.image_error = None
+        self.image_url = url
+
+        protocol = urlparse(url).scheme
+        if protocol in ('http', 'https'):
+            try:
+                image_data = urllib.request.urlopen(self.image_url)
+                self.image = Image.open(image_data)
+            except HTTPError:
+                self.image_error = 'Failed to fetch image'
+            except UnidentifiedImageError:
+                self.image_error = 'URL is not an image'
+            except URLError:
+                self.image_error = 'Bad URL'
+        else:
+            self.image_error = 'URL must use http(s)'
+
+
     def set_configuration(self, params):
         super().set_configuration(params)
         if params.get('scale') is not None:
             self.scale = ImageScale[params.get('scale')]
         if params.get('url') is not None:
-            self.image_url = params.get('url')
-            self.image = Image.open(urllib.request.urlopen(self.image_url))
+            self.set_image_url(params.get('url'))
 
     def get_image(self, size):
-        if self.image is None:
+        if self.image_url is None:
             raise ValueError('Image URL is required')
+
+        if self.image is None:
+            raise ValueError(self.image_error)
 
         if self.scale == ImageScale.scale:
             return self.image.resize(size), None

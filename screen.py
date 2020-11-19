@@ -47,7 +47,7 @@ class Screen:
     def set_image_source(self, image_source):
         self.cancel_refresh_timer()
         self.image_source = image_source
-        self.logger.info("image source is now {}".format(self.image_source))
+        self.logger.info("image source is now %s", self.image_source)
         self.refresh()
 
     def generate_error_image(self, error_message):

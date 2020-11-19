@@ -1,5 +1,5 @@
 from behave import given, then, when # pylint: disable=no-name-in-module
-from hamcrest import assert_that, calling, is_, raises
+from hamcrest import assert_that, is_
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 import requests

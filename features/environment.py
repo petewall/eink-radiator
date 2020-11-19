@@ -14,6 +14,7 @@ from hamcrest import assert_that, instance_of, is_
 def start_service(port, url):
     env = os.environ.copy()
     env['PORT'] = str(port)
+    env['MINIMUM_PERIODIC_INTERVAL'] = '1'  # Allows for the slideshow to be set to very fast
 
     radiator_process = subprocess.Popen(
         ['python', 'radiator.py'],

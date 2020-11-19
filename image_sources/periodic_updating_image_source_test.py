@@ -1,3 +1,4 @@
+# pylint: disable=no-self-use
 import os
 from time import sleep
 import unittest
@@ -58,10 +59,9 @@ class TestPeriodicUpdatingImageSource(unittest.TestCase):
 
         assert_that(image1, is_(the_same_image_as(image2)))
 
-    
+
     def test_setting_interval_too_short_gives_exceptions(self):
         source = DummyImageSource({
             'interval': 0
         })
         assert_that(calling(source.get_image).with_args((400, 300)), raises(ValueError))
-

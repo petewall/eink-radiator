@@ -1,5 +1,7 @@
 # pylint: disable=no-self-use
 import os
+from io import BytesIO
+from urllib.error import HTTPError, URLError
 import unittest
 from unittest.mock import patch
 from hamcrest import assert_that, calling, has_entries, is_, none, raises
@@ -159,6 +161,49 @@ class TestImageContent(unittest.TestCase):
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'))
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
+
+
+    def test_only_http_and_https_protocols_are_allowed(self, _):
+        content = ImageContent({
+            'url': 'file:///Users/pwall/Desktop/secret_image.png'
+        })
+        assert_that(
+            calling(content.get_image).with_args((400, 300)),
+            raises(ValueError, r'URL must use http\(s\)')
+        )
+
+
+    def test_bad_urls_are_handled(self, urlopen):
+        urlopen.side_effect = URLError('that url\'s bad, yo')
+        content = ImageContent({
+            'url': 'http://fk4248q#$%^'
+        })
+        assert_that(
+            calling(content.get_image).with_args((400, 300)),
+            raises(ValueError, r'Bad URL')
+        )
+
+
+    def test_bad_responses_are_handled(self, urlopen):
+        urlopen.side_effect = HTTPError('https://this-always-500s', 500, 'told you', {}, None)
+        content = ImageContent({
+            'url': 'https://this-always-500s'
+        })
+        assert_that(
+            calling(content.get_image).with_args((400, 300)),
+            raises(ValueError, r'Failed to fetch image')
+        )
+
+
+    def test_responses_that_are_not_images_are_handled(self, urlopen):
+        urlopen.return_value = BytesIO(b'this is not an image')
+        content = ImageContent({
+            'url': 'https://this-always-500s'
+        })
+        assert_that(
+            calling(content.get_image).with_args((400, 300)),
+            raises(ValueError, r'URL is not an image')
+        )
 
 
     if __name__ == '__main__':
