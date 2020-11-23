@@ -4,7 +4,7 @@ import time
 import threading
 from image_sources.image_source import ImageSource
 
-MINIMUM_INTERVAL = int(os.getenv('MINIMUM_PERIODIC_INTERVAL', 60))
+MINIMUM_INTERVAL = int(os.getenv('MINIMUM_PERIODIC_INTERVAL', '60'))
 
 class PeriodicUpdatingImageSource(ImageSource):
     interval = MINIMUM_INTERVAL
