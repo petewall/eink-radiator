@@ -13,7 +13,8 @@ class TextContent(ImageSource):
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
     def get_configuration(self):
-        return super().get_configuration() | {
+        config = super().get_configuration()
+        config.update({
             'text': {
                 'type': 'textarea',
                 'value': self.text
@@ -28,7 +29,8 @@ class TextContent(ImageSource):
                 'value': self.background_color.name,
                 'options': Color.all_colors()
             }
-        }
+        })
+        return config
 
     def set_configuration(self, params):
         super().set_configuration(params)

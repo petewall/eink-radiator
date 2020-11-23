@@ -32,11 +32,12 @@ class WeatherContent(PeriodicUpdatingImageSource):
         super().__init__(params)
 
     def get_configuration(self):
-        return super().get_configuration() | {
-            'name': self.name,
+        config = super().get_configuration()
+        config.update({
             'api_key': self.api_key,
             'location': self.location
-        }
+        })
+        return config
 
     def set_configuration(self, params):
         super().set_configuration(params)

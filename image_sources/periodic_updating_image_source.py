@@ -13,9 +13,11 @@ class PeriodicUpdatingImageSource(ImageSource):
     lock = threading.Lock()
 
     def get_configuration(self):
-        return super().get_configuration() | {
+        config = super().get_configuration()
+        config.update({
             'interval': self.interval
-        }
+        })
+        return config
 
     def set_configuration(self, params):
         super().set_configuration(params)

@@ -4,7 +4,7 @@ clean:
 
 # Docker image targets
 build:
-	docker build --tag petewall/eink-radiator .
+	time docker build --tag petewall/eink-radiator .
 
 push:
 	docker push petewall/eink-radiator

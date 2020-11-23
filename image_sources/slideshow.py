@@ -7,12 +7,14 @@ class SlideshowContent(PeriodicUpdatingImageSource):
     image_index = 0
 
     def get_configuration(self):
-        return super().get_configuration() | {
+        config = super().get_configuration()
+        config.update({
             'images': {
                 'type': 'textarea',
                 'value': '\n'.join(map(lambda x: x.image_url, self.images))
             }
-        }
+        })
+        return config
 
     def set_configuration(self, params):
         super().set_configuration(params)

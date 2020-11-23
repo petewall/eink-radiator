@@ -6,7 +6,7 @@ sudo apt-get upgrade --fix-missing
 sudo apt autoremove
 
 # Install required software
-sudo apt-get install git jq libatlas-base-dev libffi-dev libssl-dev python-numpy python3-numpy python3-pip vim
+sudo apt-get install git jq libatlas-base-dev libffi-dev libssl-dev python3-pip vim
 pip3 install docker-compose yq
 
 # Install docker
