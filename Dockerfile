@@ -1,4 +1,4 @@
-FROM arm32v5/python:3.7.9-buster AS requirements_builder
+FROM arm32v5/python:3.9.0-buster AS requirements_builder
 
 RUN pip install pipenv
 
@@ -28,7 +28,7 @@ RUN echo "--no-binary Pillow # Using binaries " >> /tmp/requirements.txt
 
 RUN cat /tmp/requirements.txt
 
-FROM arm32v5/python:3.7.9-buster
+FROM arm32v5/python:3.9.0-buster
 
 WORKDIR /eink-radiator
 
