@@ -1,4 +1,4 @@
-FROM python:3.9.2
+FROM python:3.9.3
 
 ENV CI=true
 LABEL description="An image suitable for running feature tests"
