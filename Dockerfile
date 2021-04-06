@@ -1,4 +1,4 @@
-FROM arm32v5/python:3.9.2-buster AS requirements_builder
+FROM arm32v5/python:3.9.4-buster AS requirements_builder
 
 RUN pip install pipenv
 
@@ -13,7 +13,7 @@ RUN echo "inky==${INKY_VERSION}" >> /tmp/requirements.txt
 ARG RPI_GPIO_VERSION=0.7.0
 RUN echo "RPi.GPIO==${RPI_GPIO_VERSION}" >> /tmp/requirements.txt
 
-FROM arm32v5/python:3.9.2-buster
+FROM arm32v5/python:3.9.4-buster
 
 WORKDIR /eink-radiator
 
