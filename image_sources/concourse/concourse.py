@@ -62,7 +62,7 @@ class ConcourseContent(ImageSource):
                 pipelines[name] = False
         return pipelines
 
-    def get_image(self, size):
+    def make_image(self, size):
         if self.url is None or self.url == '':
             raise ValueError('Concourse URL is required')
         if self.username is None or self.username == '':
@@ -90,4 +90,4 @@ class ConcourseContent(ImageSource):
             image_canvas.text((5, y_pos), pipeline, fill=color.value, font=self.content_font)
             y_pos += 17
 
-        return image, None
+        return image

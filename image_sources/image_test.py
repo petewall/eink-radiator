@@ -79,16 +79,14 @@ class TestImageContent(unittest.TestCase):
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': 'scale'
         })
-        image, update_interval = content.get_image((200, 200))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((200, 200))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_scaled.png'))
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'))

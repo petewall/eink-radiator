@@ -20,7 +20,7 @@ class BlankContent(ImageSource):
         if params.get('color'):
             self.color = Color[params.get('color')]
 
-    def get_image(self, size):
+    def make_image(self, size):
         image = Image.new('P', size, self.color.value)
         image.putpalette(Color.palette())
         return image, None

@@ -62,7 +62,7 @@ class ImageContent(ImageSource):
         if params.get('url') is not None:
             self.set_image_url(params.get('url'))
 
-    def get_image(self, size):
+    def make_image(self, size):
         if self.image_url is None:
             raise ValueError('Image URL is required')
 

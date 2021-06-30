@@ -10,7 +10,6 @@ from flask import Flask, jsonify, make_response, render_template, request, send_
 from image_sources.blank import White, Black, Red
 # from image_sources.concourse.concourse import ConcourseContent
 from image_sources.image import ImageContent
-from image_sources.slideshow import SlideshowContent
 from image_sources.text import TextContent
 from image_sources.weather.weather import WeatherContent
 from screen import Screen
@@ -29,7 +28,6 @@ screen_size = screen.size()
 
 source_types = [
     ImageContent,
-    SlideshowContent,
     TextContent,
     WeatherContent
 ]

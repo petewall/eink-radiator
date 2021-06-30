@@ -7,22 +7,21 @@ from pillow_image_matcher import the_same_image_as
 
 
 class TestBlankContent(unittest.TestCase):
-    static_dir = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), '..', 'static'
+    test_fixtures = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures'
     )
 
     def test_get_image(self):
-        expected_image = Image.open(os.path.join(self.static_dir, 'white.png'))
+        expected_image = Image.open(os.path.join(self.test_fixtures, 'white-400x300.png'))
 
         content = BlankContent({})
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(expected_image)))
 
         expected_image.close()
 
     def test_set_configuration(self):
-        expected_image = Image.open(os.path.join(self.static_dir, 'red.png'))
+        expected_image = Image.open(os.path.join(self.test_fixtures, 'red-400x300.png'))
 
         content = BlankContent({})
         content.set_configuration({
@@ -39,8 +38,7 @@ class TestBlankContent(unittest.TestCase):
             }
         }))
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(expected_image)))
 
         expected_image.close()

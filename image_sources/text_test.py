@@ -23,8 +23,7 @@ class TestTextContent(unittest.TestCase):
         content = TextContent({
             'text': 'It is now safe to turn off your computer'
         })
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
 
         if os.getenv("SAVE_TEST_FIXTURES") == "true":
             image.save(os.path.join(self.test_fixtures_dir, 'text_1.png'))
@@ -62,8 +61,7 @@ class TestTextContent(unittest.TestCase):
             }
         }))
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
@@ -93,8 +91,7 @@ class TestTextContent(unittest.TestCase):
             }
         }))
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(expected_image)))
     if __name__ == '__main__':
         unittest.main()

@@ -48,8 +48,7 @@ class TestWeatherContent(unittest.TestCase):
                     json=json.load(forecast)
                 )
 
-                image, update_interval = content.get_image((400, 300))
-                assert_that(update_interval, is_(equal_to(3600)))
+                image = content.get_image((400, 300))
 
                 expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'weather.png'))
                 assert_that(image, is_(the_same_image_as(expected_image)))

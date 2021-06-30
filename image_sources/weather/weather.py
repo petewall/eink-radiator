@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 import requests
-from image_sources.periodic_updating_image_source import PeriodicUpdatingImageSource
+from image_sources.image_source import ImageSource
 from color import Color
 
 FONT_PATH = os.path.join(
@@ -16,7 +16,7 @@ def get_x_position(element_width, canvas_width, offset=0):
     return int((canvas_width - element_width) / 2) + offset
 
 
-class WeatherContent(PeriodicUpdatingImageSource):
+class WeatherContent(ImageSource):
     api_key = None
     location = None
     unit = 'imperial'
@@ -60,7 +60,7 @@ class WeatherContent(PeriodicUpdatingImageSource):
                 f'{forecast.status_code}: {forecast.text}')
         return current.json(), forecast.json()
 
-    def refresh_image(self, size):
+    def make_image(self, size):
         #pylint: disable=invalid-name,too-many-locals
         if self.api_key is None or self.api_key == '':
             raise ValueError('API key is required')

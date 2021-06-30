@@ -39,7 +39,7 @@ class TextContent(ImageSource):
         if params.get('background_color') is not None:
             self.background_color = Color[params.get('background_color')]
 
-    def get_image(self, size):
+    def make_image(self, size):
         if self.text is None:
             raise ValueError('Text is required')
 
@@ -52,4 +52,4 @@ class TextContent(ImageSource):
         text_y = int((size[1] - text_height) / 2)
         color = self.foreground_color.value
         image_canvas.text((text_x, text_y), self.text, fill=color, font=self.font, align='center')
-        return image, None
+        return image

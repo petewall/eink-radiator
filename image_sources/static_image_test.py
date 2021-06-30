@@ -22,14 +22,12 @@ class TestStaticImageContent(unittest.TestCase):
         content = StaticImageContent({
             'image_path': os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png')
         })
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(self.expected_image)))
 
     def test_set_configuration(self):
         content = StaticImageContent({})
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(none()))
 
         content.set_configuration({
@@ -41,8 +39,7 @@ class TestStaticImageContent(unittest.TestCase):
             'name': 'Test Static Image'
         }))
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(self.expected_image)))
 
     if __name__ == '__main__':
