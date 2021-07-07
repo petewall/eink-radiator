@@ -1,6 +1,6 @@
 import os
 import unittest
-from hamcrest import assert_that, has_entries, is_, none
+from hamcrest import assert_that, has_entries, is_
 from PIL import Image
 from image_sources.blank import BlankContent
 from pillow_image_matcher import the_same_image_as

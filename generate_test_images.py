@@ -12,42 +12,42 @@ from image_sources.weather.weather import WeatherContent
 
 def generate_blank():
     content = Red()
-    image, _ = content.get_image((400, 300))
+    image = content.get_image((400, 300))
     image.save(os.path.join('static', 'red.png'))
 
     content = White()
-    image, _ = content.get_image((400, 300))
+    image = content.get_image((400, 300))
     image.save(os.path.join('static', 'white.png'))
 
 def generate_image():
-    source_image = open(os.path.join('test_fixtures', 'InkywHAT-400x300.png'), 'rb')
-    with patch('urllib.request.urlopen', return_value=source_image):
-        content = ImageContent({
-            'url': 'http://www.example.com/images/InkywHAT-400x300.png',
-            'scale': 'contain'
-        })
-        image, _ = content.get_image((200, 300))
-        image.save(os.path.join('test_fixtures', 'image_contained_tall.png'))
+    with open(os.path.join('test_fixtures', 'InkywHAT-400x300.png'), 'rb') as source_image:
+        with patch('urllib.request.urlopen', return_value=source_image):
+            content = ImageContent({
+                'url': 'http://www.example.com/images/InkywHAT-400x300.png',
+                'scale': 'contain'
+            })
+            image = content.get_image((200, 300))
+            image.save(os.path.join('test_fixtures', 'image_contained_tall.png'))
 
-        image, _ = content.get_image((400, 200))
-        image.save(os.path.join('test_fixtures', 'image_contained_wide.png'))
+            image = content.get_image((400, 200))
+            image.save(os.path.join('test_fixtures', 'image_contained_wide.png'))
 
-        content.set_configuration({'scale': 'cover'})
-        image, _ = content.get_image((200, 300))
-        image.save(os.path.join('test_fixtures', 'image_covered_tall.png'))
+            content.set_configuration({'scale': 'cover'})
+            image = content.get_image((200, 300))
+            image.save(os.path.join('test_fixtures', 'image_covered_tall.png'))
 
-        image, _ = content.get_image((400, 200))
-        image.save(os.path.join('test_fixtures', 'image_covered_wide.png'))
+            image = content.get_image((400, 200))
+            image.save(os.path.join('test_fixtures', 'image_covered_wide.png'))
 
-        content.set_configuration({'scale': 'scale'})
-        image, _ = content.get_image((200, 200))
-        image.save(os.path.join('test_fixtures', 'image_scaled.png'))
+            content.set_configuration({'scale': 'scale'})
+            image = content.get_image((200, 200))
+            image.save(os.path.join('test_fixtures', 'image_scaled.png'))
 
 def generate_text():
     content = TextContent({
         'text': 'It is now safe to turn off your computer'
     })
-    image, _ = content.get_image((400, 300))
+    image = content.get_image((400, 300))
     image.save(os.path.join('test_fixtures', 'text_1.png'))
 
     content.set_configuration({
@@ -57,7 +57,7 @@ def generate_text():
         'background_color': 'black',
         'superfluous': 'not relevant'
     })
-    image, _ = content.get_image((400, 300))
+    image = content.get_image((400, 300))
     image.save(os.path.join('test_fixtures', 'text_2.png'))
 
     content.set_configuration({
@@ -65,7 +65,7 @@ def generate_text():
         'foreground_color': 'white',
         'background_color': 'black'
     })
-    image, _ = content.get_image((400, 300))
+    image = content.get_image((400, 300))
     image.save(os.path.join('test_fixtures', 'text_3.png'))
 
 def generate_weather():
@@ -84,7 +84,7 @@ def generate_weather():
                     'https://api.openweathermap.org/data/2.5/forecast?q=55901&units=imperial&appid=test',
                     json=json.load(forecast))
 
-                image, _ = content.get_image((400, 300))
+                image = content.get_image((400, 300))
                 image.save(os.path.join('test_fixtures', 'weather.png'))
 
 generate_blank()

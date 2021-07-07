@@ -60,7 +60,7 @@ class WeatherContent(ImageSource):
                 f'{forecast.status_code}: {forecast.text}')
         return current.json(), forecast.json()
 
-    def make_image(self, size):
+    def make_image(self, size) -> Image:
         #pylint: disable=invalid-name,too-many-locals
         if self.api_key is None or self.api_key == '':
             raise ValueError('API key is required')
@@ -70,7 +70,7 @@ class WeatherContent(ImageSource):
         current, forecast = self.get_weather()
 
         (width, height) = size
-        image = Image.new('P', (width, height), Color.white.value)
+        image = Image.new('P', (width, height), Color.WHITE.value)
         image.putpalette(Color.palette())
         image_canvas = ImageDraw.Draw(image)
 
@@ -78,21 +78,21 @@ class WeatherContent(ImageSource):
         text_width, text_height = image_canvas.textsize(city, font=self.location_font)
         x = get_x_position(text_width, width)
         y = 10
-        image_canvas.text((x, y), city, fill=Color.black.value, font=self.location_font)
+        image_canvas.text((x, y), city, fill=Color.BLACK.value, font=self.location_font)
 
         y += text_height + 10
-        image_canvas.line([(0, y), (width, y)], fill=Color.black.value, width=3)
+        image_canvas.line([(0, y), (width, y)], fill=Color.BLACK.value, width=3)
 
         current_temp = f'{int(current["main"]["temp"])}º'
         text_width, text_height = image_canvas.textsize(current_temp, font=self.temp_font)
         x = get_x_position(text_width, width)
-        image_canvas.text((x, y), current_temp, fill=Color.black.value, font=self.temp_font)
+        image_canvas.text((x, y), current_temp, fill=Color.BLACK.value, font=self.temp_font)
 
         description = current['weather'][0]['description']
         y += text_height + 15
         text_width, text_height = image_canvas.textsize(description, font=self.condition_font)
         x = get_x_position(text_width, width)
-        image_canvas.text((x, y), description, fill=Color.black.value, font=self.condition_font)
+        image_canvas.text((x, y), description, fill=Color.BLACK.value, font=self.condition_font)
 
         step = int(24 / 3)  # 3 hour forecast
         days_in_forecast = int(len(forecast['list']) / step)
@@ -110,19 +110,19 @@ class WeatherContent(ImageSource):
             text_width, text_height = image_canvas.textsize(low, font=self.forecast_font)
             x = get_x_position(text_width, column_width, column_offset)
             y = height - (text_height + 10)
-            image_canvas.text((x, y), low, fill=Color.black.value, font=self.forecast_font)
+            image_canvas.text((x, y), low, fill=Color.BLACK.value, font=self.forecast_font)
 
             y -= (text_height + 2)
             text_width, text_height = image_canvas.textsize(high, font=self.forecast_font)
             x = get_x_position(text_width, column_width, column_offset)
-            image_canvas.text((x, y), high, fill=Color.red.value, font=self.forecast_font)
+            image_canvas.text((x, y), high, fill=Color.RED.value, font=self.forecast_font)
 
             y -= (text_height + 2)
             text_width, text_height = image_canvas.textsize(day, font=self.forecast_font)
             x = get_x_position(text_width, column_width, column_offset)
-            image_canvas.text((x, y), day, fill=Color.black.value, font=self.forecast_font)
+            image_canvas.text((x, y), day, fill=Color.BLACK.value, font=self.forecast_font)
 
         y = height - 70
-        image_canvas.line([(0, y), (width, y)], fill=Color.black.value, width=3)
+        image_canvas.line([(0, y), (width, y)], fill=Color.BLACK.value, width=3)
 
         return image

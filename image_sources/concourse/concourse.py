@@ -62,7 +62,7 @@ class ConcourseContent(ImageSource):
                 pipelines[name] = False
         return pipelines
 
-    def make_image(self, size):
+    def make_image(self, size) -> Image:
         if self.url is None or self.url == '':
             raise ValueError('Concourse URL is required')
         if self.username is None or self.username == '':
@@ -70,15 +70,15 @@ class ConcourseContent(ImageSource):
         if self.password is None or self.password == '':
             raise ValueError('Concourse password is required')
 
-        image = Image.new('P', size, Color.black.value)
+        image = Image.new('P', size, Color.BLACK.value)
         image.putpalette(Color.palette())
 
         logo = Image.open("image_sources/concourse/logo.png")
         image.paste(logo, box=(5, 5, 40, 40), mask=logo)
 
         image_canvas = ImageDraw.Draw(image)
-        image_canvas.text((45, 3), 'Concourse', fill=Color.white.value, font=self.title_font)
-        image_canvas.line([(5, 47), (395, 47)], fill=Color.red.value, width=2)
+        image_canvas.text((45, 3), 'Concourse', fill=Color.WHITE.value, font=self.title_font)
+        image_canvas.line([(5, 47), (395, 47)], fill=Color.RED.value, width=2)
 
         pipelines = self.get_pipeline_status()
         pipeline_names = list(pipelines.keys())
@@ -86,7 +86,7 @@ class ConcourseContent(ImageSource):
         y_pos = 50
         for pipeline in pipeline_names:
             success = pipelines[pipeline]
-            color = Color.white if success else Color.red
+            color = Color.WHITE if success else Color.RED
             image_canvas.text((5, y_pos), pipeline, fill=color.value, font=self.content_font)
             y_pos += 17
 

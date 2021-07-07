@@ -1,12 +1,11 @@
 # pylint: disable=no-self-use,protected-access
+from image_sources.image_source import ImageSource
 import logging
-import time
-import threading
-import traceback
+from slideshow import Slideshow
 from PIL import Image
 from color import Color
 from image_sources.text import TextContent
-
+from slideshow import SlideshowObserver
 
 def quantize(image, palette):
     """Convert an RGB or L mode image to use a given P image's palette."""
@@ -25,11 +24,11 @@ def quantize(image, palette):
 
 error_image = TextContent({
     'name': 'Error Text',
-    'foreground_color': Color.red.name,
+    'foreground_color': Color.RED.name,
 })
 
 
-class Screen:
+class Screen(SlideshowObserver):
     busy = False
     image = None
     image_source = None
@@ -38,45 +37,19 @@ class Screen:
     logger = None
 
     def __init__(self, size, name="Screen"):
-        self.image_size = size
+        self.size = size
         self.logger = logging.getLogger(name)
-
-    def size(self):
-        return self.image_size
-
-    def set_image_source(self, image_source):
-        self.cancel_refresh_timer()
-        self.image_source = image_source
-        self.logger.info("image source is now %s", self.image_source)
-        self.refresh()
 
     def generate_error_image(self, error_message):
         message = f'Failed to generate image:\n{error_message}'
         error_image.set_configuration({'text': message})
-        return error_image.get_image(self.size())
+        return error_image.get_image(self.size)
 
-    def cancel_refresh_timer(self):
-        if self.refresh_timer is not None:
-            self.refresh_timer.cancel()
-            self.refresh_timer = None
+    def update(self, slideshow: Slideshow) -> None:
+        image_source = slideshow.get_active_image_source()
+        self.set_image(image_source.get_image(self.size))
 
-    def refresh(self):
-        if self.image_source is None:
-            return
-
-        refresh_interval = None
-        try:
-            image, refresh_interval = self.image_source.get_image(self.size())
-        except BaseException as exception:  # pylint: disable=broad-except
-            traceback.print_exc()
-            image, _ = self.generate_error_image(str(exception))
-
-        if refresh_interval is not None:
-            self.refresh_timer = threading.Timer(refresh_interval, self.refresh)
-            self.refresh_timer.start()
-        self.set_image(image)
-
-    def set_image(self, image):
+    def set_image(self, image: Image):
         if image != self.image:
             self.busy = True
 
@@ -96,8 +69,3 @@ class Screen:
 
     def show_image(self):
         pass
-
-    def get_image(self):
-        while self.busy:
-            time.sleep(0.5)
-        return self.image

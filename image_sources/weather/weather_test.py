@@ -3,7 +3,7 @@ import os
 import json
 import unittest
 import requests_mock
-from hamcrest import assert_that, calling, equal_to, is_, raises
+from hamcrest import assert_that, calling, is_, raises
 from PIL import Image
 from image_sources.weather.weather import WeatherContent
 from pillow_image_matcher import the_same_image_as

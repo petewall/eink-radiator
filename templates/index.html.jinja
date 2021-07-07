@@ -1,0 +1,68 @@
+<html>
+<head>
+  <title>eInk Radiator</title>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
+  <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
+  <style>
+    .ui.menu .item i {
+      margin-right: 1.5em;
+    }
+
+    .main.container {
+      margin-top: 7em;
+    }
+
+    .screen {
+      height: {{ height }}px;
+      width: {{ width }}px;
+    }
+
+    .thumbnail {
+      height: {{ height / 10 }}px;
+      width: {{ width / 10 }}px;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <div class="ui fixed inverted menu">
+    <div class="ui container">
+      <a href="#" class="header item">
+        <i class="inverted expand icon"></i>
+        eInk Radiator
+      </a>
+      <div class="ui simple dropdown item">
+        New Image Source <i class="dropdown icon"></i>
+        <div class="menu">
+          <a class="item" href="#">Blank</a>
+          <a class="item" href="#">Text</a>
+          <a class="item" href="#">Weather</a>
+          <a class="item" href="#">Image</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui main container">
+    <h2>Active Slides</h2>
+
+    <div class="ui middle aligned horizontal divided selection list">
+{% for image_source in slideshow.image_sources %}
+      <div class="slideshow item image{{ image_source.id}} ">
+        <img class="ui bordered thumbnail image" src="/image_sources/{{ image_source.id}}/image.png" />
+        <div class="content">
+          {{ image_source.name }}
+        </div>
+      </div>
+{% endfor %}
+    </div>
+
+    <div class="ui segment">
+      <img class="ui centered bordered screen image" src="/screen/image.png" />
+    </div>
+  </div>
+</body>
+</html>

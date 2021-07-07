@@ -9,9 +9,9 @@ from image_sources.blank import White
 
 
 class ImageScale(Enum):
-    scale = auto()
-    contain = auto()
-    cover = auto()
+    SCALE = auto()
+    CONTAIN = auto()
+    COVER = auto()
 
     @classmethod
     def all_types(cls):
@@ -19,7 +19,7 @@ class ImageScale(Enum):
 
 
 class ImageContent(ImageSource):
-    scale = ImageScale.scale
+    scale = ImageScale.SCALE
     image = None
     image_url = None
     image_error = None
@@ -43,8 +43,8 @@ class ImageContent(ImageSource):
         protocol = urlparse(url).scheme
         if protocol in ('http', 'https'):
             try:
-                image_data = urllib.request.urlopen(self.image_url)
-                self.image = Image.open(image_data)
+                with urllib.request.urlopen(self.image_url) as image_data:
+                    self.image = Image.open(image_data)
             except HTTPError:
                 self.image_error = 'Failed to fetch image'
             except UnidentifiedImageError:
@@ -69,10 +69,10 @@ class ImageContent(ImageSource):
         if self.image is None:
             raise ValueError(self.image_error)
 
-        if self.scale == ImageScale.scale:
+        if self.scale == ImageScale.SCALE:
             return self.image.resize(size), None
 
-        if self.scale == ImageScale.contain:
+        if self.scale == ImageScale.CONTAIN:
             scaled = self.image.copy()
             scaled.thumbnail(size)
             image = self.image.resize(size)
@@ -84,7 +84,7 @@ class ImageContent(ImageSource):
 
             return image, None
 
-        if self.scale == ImageScale.cover:
+        if self.scale == ImageScale.COVER:
             scale_factor = max(
                 size[0] / self.image.size[0],
                 size[1] / self.image.size[1]

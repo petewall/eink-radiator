@@ -19,12 +19,10 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen
     screen = InkyScreen()
-    preview_screen = Screen(screen.size())
+    preview_screen = Screen(screen.size)
 else:
     screen = Screen((400, 300))
     preview_screen = Screen((400, 300))
-
-screen_size = screen.size()
 
 source_types = [
     ImageContent,
@@ -59,17 +57,17 @@ data_file_path = os.environ.get('DATA_FILE_PATH') or os.path.join(os.getcwd(), '
 
 
 def save():
-    picklefile = open(data_file_path, 'wb')
-    pickle.dump(state, picklefile)
-    picklefile.close()
+    with open(data_file_path, 'wb') as picklefile:
+        pickle.dump(state, picklefile)
+        picklefile.close()
 
 
 def load():
     global state
     if os.path.isfile(data_file_path):
-        picklefile = open(data_file_path, 'rb')
-        state = pickle.load(picklefile)
-        picklefile.close()
+        with open(data_file_path, 'rb') as picklefile:
+            state = pickle.load(picklefile)
+            picklefile.close()
 
         screen.set_image_source(get_screen_image_source())
         preview_screen.set_image_source(get_preview_image_source())
@@ -82,8 +80,8 @@ app = Flask(__name__)
 def serve_controller_page():
     return render_template(
         'index.html',
-        height=screen_size[1],
-        width=screen_size[0],
+        height=screen.size[1],
+        width=screen.size[0],
         image_sources=state['image_sources'],
         preview_image_source=state['preview_image_source'],
         screen_image_source=state['screen_image_source'],
@@ -110,12 +108,12 @@ def image_response(image):
 
 @app.route('/preview-image.png', methods=['GET'])
 def serve_preview_image():
-    return image_response(preview_screen.get_image())
+    return image_response(preview_screen.image)
 
 
 @app.route('/radiator-image.png', methods=['GET'])
 def serve_screen_image():
-    return image_response(screen.get_image())
+    return image_response(screen.image)
 
 
 @app.route('/source', methods=['GET'])

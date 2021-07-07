@@ -4,7 +4,7 @@ from io import BytesIO
 from urllib.error import HTTPError, URLError
 import unittest
 from unittest.mock import patch
-from hamcrest import assert_that, calling, has_entries, is_, none, raises
+from hamcrest import assert_that, calling, has_entries, is_, raises
 from PIL import Image
 from image_sources.image import ImageContent
 from pillow_image_matcher import the_same_image_as
@@ -18,6 +18,7 @@ class TestImageContent(unittest.TestCase):
     )
 
     def setUp(self):
+        # pylint: disable=consider-using-with
         self.mock_image = open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'), 'rb')
 
     def tearDown(self):
@@ -37,8 +38,7 @@ class TestImageContent(unittest.TestCase):
         content = ImageContent({
             'url': 'http://www.example.com/images/InkywHAT-400x300.png'
         })
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'))
@@ -64,8 +64,7 @@ class TestImageContent(unittest.TestCase):
             },
         }))
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'))
@@ -101,8 +100,7 @@ class TestImageContent(unittest.TestCase):
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': 'contain'
         })
-        image, update_interval = content.get_image((400, 200))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 200))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(
@@ -111,8 +109,7 @@ class TestImageContent(unittest.TestCase):
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
-        image, update_interval = content.get_image((200, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((200, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(
@@ -121,8 +118,7 @@ class TestImageContent(unittest.TestCase):
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'))
@@ -136,24 +132,21 @@ class TestImageContent(unittest.TestCase):
             'url': 'http://www.example.com/images/InkywHAT-400x300.png',
             'scale': 'cover'
         })
-        image, update_interval = content.get_image((200, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((200, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_covered_tall.png'))
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
-        image, update_interval = content.get_image((400, 200))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 200))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'image_covered_wide.png'))
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
-        image, update_interval = content.get_image((400, 300))
-        assert_that(update_interval, is_(none()))
+        image = content.get_image((400, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
 
         expected_image = Image.open(os.path.join(self.test_fixtures_dir, 'InkywHAT-400x300.png'))

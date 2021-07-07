@@ -2,9 +2,9 @@ import enum
 
 
 class Color(enum.Enum):
-    white = 0
-    black = 1
-    red = 2
+    WHITE = 0
+    BLACK = 1
+    RED = 2
 
     @classmethod
     def all_colors(cls):

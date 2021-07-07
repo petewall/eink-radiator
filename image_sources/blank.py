@@ -4,7 +4,7 @@ from color import Color
 
 
 class BlankContent(ImageSource):
-    color = Color.white
+    color = Color.WHITE
 
     def get_configuration(self):
         return super().get_configuration() | {
@@ -20,22 +20,22 @@ class BlankContent(ImageSource):
         if params.get('color'):
             self.color = Color[params.get('color')]
 
-    def make_image(self, size):
+    def make_image(self, size) -> Image:
         image = Image.new('P', size, self.color.value)
         image.putpalette(Color.palette())
-        return image, None
+        return image
 
 
 class White(BlankContent):
     def __init__(self):
-        super().__init__({'name': 'White', 'color': 'white'})
+        super().__init__({'name': 'White', 'color': 'WHITE'})
 
 
 class Black(BlankContent):
     def __init__(self):
-        super().__init__({'name': 'Black', 'color': 'black'})
+        super().__init__({'name': 'Black', 'color': 'BLACK'})
 
 
 class Red(BlankContent):
     def __init__(self):
-        super().__init__({'name': 'Red', 'color': 'red'})
+        super().__init__({'name': 'Red', 'color': 'RED'})

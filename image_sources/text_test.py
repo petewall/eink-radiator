@@ -1,7 +1,7 @@
 # pylint: disable=no-self-use
 import os
 import unittest
-from hamcrest import assert_that, calling, has_entries, is_, none, raises
+from hamcrest import assert_that, calling, has_entries, is_, raises
 from PIL import Image
 from image_sources.text import TextContent
 from pillow_image_matcher import the_same_image_as
