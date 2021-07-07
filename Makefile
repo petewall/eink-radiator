@@ -38,6 +38,7 @@ lint: deps
 	pipenv run pylint \
 		--disable duplicate-code,missing-module-docstring,missing-class-docstring,missing-function-docstring\
 		*.py image_sources
+#		--indent-string='  '\
 
 JAVASCRIPT_SOURCES := $(shell find $$PWD/static -name '*.js')
 lint-js: $(JAVASCRIPT_SOURCES) js-deps

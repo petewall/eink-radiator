@@ -70,7 +70,7 @@ class ImageContent(ImageSource):
             raise ValueError(self.image_error)
 
         if self.scale == ImageScale.SCALE:
-            return self.image.resize(size), None
+            return self.image.resize(size)
 
         if self.scale == ImageScale.CONTAIN:
             scaled = self.image.copy()
@@ -82,7 +82,7 @@ class ImageContent(ImageSource):
                 int((size[1] - scaled.size[1]) / 2)
             ))
 
-            return image, None
+            return image
 
         if self.scale == ImageScale.COVER:
             scale_factor = max(
@@ -100,5 +100,5 @@ class ImageContent(ImageSource):
                 x_offset + new_width,
                 y_offset + new_height,
             ))
-            return cropped.resize(size), None
-        return None, None
+            return cropped.resize(size)
+        return None

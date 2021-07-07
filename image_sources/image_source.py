@@ -1,6 +1,6 @@
+# pylint: disable=invalid-name,too-few-public-methods
 from abc import abstractmethod, ABC
 from PIL import Image
-# pylint: disable=too-few-public-methods
 
 class ImageSource(ABC):
     name = "New image source"

@@ -69,8 +69,8 @@ def load():
             state = pickle.load(picklefile)
             picklefile.close()
 
-        screen.set_image_source(get_screen_image_source())
-        preview_screen.set_image_source(get_preview_image_source())
+        # screen.set_image_source(get_screen_image_source())
+        # preview_screen.set_image_source(get_preview_image_source())
 
 
 app = Flask(__name__)
@@ -139,7 +139,7 @@ def delete_image_source():
     if state['screen_image_source'] is not None:
         if state['screen_image_source'] == index:
             state['screen_image_source'] = None
-            screen.set_image_source(None)
+            # screen.set_image_source(None)
         if state['screen_image_source'] > index:
             state['screen_image_source'] -= 1
     save()
@@ -150,7 +150,7 @@ def delete_image_source():
 def set_source_config():
     config = request.json
     get_preview_image_source().set_configuration(config)
-    preview_screen.refresh()
+    # preview_screen.refresh()
     save()
     return make_response('', 200)
 
@@ -165,7 +165,7 @@ def select_source(index=None):
         return 'source index out of range', 400
 
     state['preview_image_source'] = index
-    preview_screen.set_image_source(get_preview_image_source())
+    # preview_screen.set_image_source(get_preview_image_source())
     save()
     return make_response('', 200)
 
@@ -175,7 +175,7 @@ def set_image_source():
     global state
     index = state['preview_image_source']
     state['screen_image_source'] = index
-    screen.set_image_source(get_screen_image_source())
+    # screen.set_image_source(get_screen_image_source())
     save()
     return '', 200
 

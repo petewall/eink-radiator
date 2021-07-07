@@ -1,11 +1,9 @@
 # pylint: disable=no-self-use,protected-access
-from image_sources.image_source import ImageSource
 import logging
-from slideshow import Slideshow
 from PIL import Image
 from color import Color
 from image_sources.text import TextContent
-from slideshow import SlideshowObserver
+from slideshow import Slideshow, SlideshowObserver
 
 def quantize(image, palette):
     """Convert an RGB or L mode image to use a given P image's palette."""

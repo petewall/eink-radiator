@@ -1,2 +1,0 @@
-from slideshow import Slideshow
-

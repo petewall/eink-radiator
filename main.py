@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from image_sources.text import TextContent
-from image_sources.blank import White, Black, Red
 import logging
 import os
+from image_sources.text import TextContent
+from image_sources.blank import White, Black, Red
 from screen import Screen
-from slideshow import Slideshow 
+from slideshow import Slideshow
 from ui import UI
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)

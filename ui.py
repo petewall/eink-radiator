@@ -1,40 +1,41 @@
+# pylint: disable=global-statement
 from io import BytesIO
 import logging
 import os
+from flask import Flask, make_response, render_template, send_file
 from screen import Screen
 from slideshow import Slideshow, SlideshowObserver
-from flask import Flask, make_response, render_template, send_file
 
 app = Flask(__name__)
-ui_instance = None
+UI_INSTANCE = None
 
 class UI(SlideshowObserver):
-  def __init__(self, slideshow: Slideshow, screen: Screen):
-    slideshow.add_subscriber(self)
-    self.slideshow = slideshow
-    self.screen = screen
+    def __init__(self, slideshow: Slideshow, screen: Screen):
+        slideshow.add_subscriber(self)
+        self.slideshow = slideshow
+        self.screen = screen
 
-  def update(self, slideshow: Slideshow) -> None:
-    pass
+    def update(self, slideshow: Slideshow) -> None:
+        pass
   #   with slideshow.get_image_source() as image_source:
   #       self.set_image(image_source.get_image())
 
-  def start(self, port: int) -> None:
-    global ui_instance
-    ui_instance = self
-    logging.info('Starting UI on port %d\n', port)
-    app.run(debug=os.environ.get('DEBUG', False), host='0.0.0.0', port=port)
+    def start(self, port: int) -> None:
+        global UI_INSTANCE
+        UI_INSTANCE = self
+        logging.info('Starting UI on port %d\n', port)
+        app.run(debug=os.environ.get('DEBUG', False), host='0.0.0.0', port=port)
 
 
 
 @app.route('/', methods=['GET'])
 def serve_ui():
-  return render_template(
-    'index.html.jinja',
-    height=ui_instance.screen.size[1],
-    width=ui_instance.screen.size[0],
-    slideshow=ui_instance.slideshow
-  )
+    return render_template(
+        'index.html.jinja',
+        height=UI_INSTANCE.screen.size[1],
+        width=UI_INSTANCE.screen.size[0],
+        slideshow=UI_INSTANCE.slideshow
+    )
 
 def image_response(image):
     if image is None:
@@ -49,13 +50,13 @@ def image_response(image):
 
 @app.route('/image_sources/<int:image_source_id>/image.png', methods=['GET'])
 def serve_image_source_image(image_source_id: int = None):
-  for image_source in ui_instance.slideshow.image_sources:
-    if image_source.id == image_source_id:
-      image = image_source.get_image(ui_instance.screen.size)
-      return image_response(image)
+    for image_source in UI_INSTANCE.slideshow.image_sources:
+        if image_source.id == image_source_id:
+            image = image_source.get_image(UI_INSTANCE.screen.size)
+            return image_response(image)
 
-  return make_response('image source not found', 404)
+    return make_response('image source not found', 404)
 
 @app.route('/screen/image.png', methods=['GET'])
 def serve_screen_image():
-  return image_response(ui_instance.screen.image)
+    return image_response(UI_INSTANCE.screen.image)
