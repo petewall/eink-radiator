@@ -2,7 +2,7 @@
 from io import BytesIO
 import logging
 import os
-from flask import Flask, make_response, render_template, send_file
+from flask import Flask, jsonify, make_response, render_template, send_file
 from screen import Screen
 from slideshow import Slideshow, SlideshowObserver
 
@@ -47,6 +47,14 @@ def image_response(image):
     response = make_response(send_file(img_buffer, mimetype='image/png'))
     response.headers['Cache-Control'] = 'no-cache'
     return response
+
+@app.route('/image_sources/<int:image_source_id>/configuration.json', methods=['GET'])
+def serve_image_source_configuration(image_source_id: int = None):
+    for image_source in UI_INSTANCE.slideshow.image_sources:
+        if image_source.id == image_source_id:
+            return jsonify(image_source.get_configuration())
+
+    return make_response('image source not found', 404)
 
 @app.route('/image_sources/<int:image_source_id>/image.png', methods=['GET'])
 def serve_image_source_image(image_source_id: int = None):

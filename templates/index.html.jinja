@@ -28,6 +28,20 @@
 </head>
 <body>
 
+  <div id="image_source_details" class="ui modal">
+    <div class="image content">
+      <img class="ui bordered screen image" src="">
+      <div class="ui configuration form">
+      </div>
+    </div>
+    <div class="actions">
+      <div class="ui positive right labeled icon button">
+        Done
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+  </div>
+
   <div class="ui fixed inverted menu">
     <div class="ui container">
       <a href="#" class="header item">
@@ -51,7 +65,7 @@
 
     <div class="ui middle aligned horizontal divided selection list">
 {% for image_source in slideshow.image_sources %}
-      <div class="slideshow item image{{ image_source.id}} ">
+      <div id="image_source_{{ image_source.id}}" class="image_source slideshow item">
         <img class="ui bordered thumbnail image" src="/image_sources/{{ image_source.id}}/image.png" />
         <div class="content">
           {{ image_source.name }}
@@ -64,5 +78,6 @@
       <img class="ui centered bordered screen image" src="/screen/image.png" />
     </div>
   </div>
+  <script src="/static/ui.js"></script>
 </body>
 </html>
