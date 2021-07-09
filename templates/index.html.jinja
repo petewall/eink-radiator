@@ -23,6 +23,10 @@
       height: {{ height / 10 }}px;
       width: {{ width / 10 }}px;
     }
+
+    .ui.selection.list>.selected.slideshow.item {
+      background-color: lightgrey;
+    }
     
   </style>
 </head>
@@ -65,7 +69,8 @@
 
     <div class="ui middle aligned horizontal divided selection list">
 {% for image_source in slideshow.image_sources %}
-      <div id="image_source_{{ image_source.id}}" class="image_source slideshow item">
+      <div id="image_source_{{ image_source.id}}"
+           class="image_source slideshow item {% if loop.index0 == slideshow.index %}selected{%endif%}">
         <img class="ui bordered thumbnail image" src="/image_sources/{{ image_source.id}}/image.png" />
         <div class="content">
           {{ image_source.name }}
