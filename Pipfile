@@ -13,8 +13,11 @@ requests-mock = "*"
 
 [packages]
 Pillow = "*"
-flask = "*"
+aiofiles = "*"
+fastapi = "*"
+jinja2 = "*"
 requests = "*"
+uvicorn = "*"
 
 [requires]
 python_version = "3.9"

@@ -25,6 +25,7 @@ class Slideshow():
 
     def start(self) -> None:
         self.timer = threading.Timer(self.interval, self.next)
+        self.timer.daemon = True
         self.timer.start()
 
     def stop(self) -> None:
