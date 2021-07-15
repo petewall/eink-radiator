@@ -1,5 +1,9 @@
 # pylint: disable=no-self-use,protected-access
+from __future__ import annotations
+from abc import ABC, abstractmethod
+import asyncio
 import logging
+from typing import List
 from PIL import Image
 from color import Color
 from image_sources.text import TextContent
@@ -25,6 +29,10 @@ error_image = TextContent({
     'foreground_color': Color.RED.name,
 })
 
+class ScreenObserver(ABC):
+    @abstractmethod
+    async def screen_update(self, screen: Screen) -> None:
+        pass
 
 class Screen(SlideshowObserver):
     busy = False
@@ -33,6 +41,7 @@ class Screen(SlideshowObserver):
     image_size = None
     refresh_timer = None
     logger = None
+    subscribers: List[ScreenObserver] = []
 
     def __init__(self, size, name="Screen"):
         self.size = size
@@ -43,13 +52,24 @@ class Screen(SlideshowObserver):
         error_image.set_configuration({'text': message})
         return error_image.get_image(self.size)
 
+    def add_subscriber(self, subscriber: ScreenObserver) -> None:
+        self.subscribers.append(subscriber)
+
+    def remove_subscriber(self, subscriber: ScreenObserver) -> None:
+        self.subscribers.remove(subscriber)
+
+    async def notify(self) -> None:
+        for subscriber in self.subscribers:
+            await subscriber.screen_update(self)
+
     async def slideshow_update(self, slideshow: Slideshow) -> None:
         image_source = slideshow.get_active_image_source()
-        self.set_image(image_source.get_image(self.size))
+        await self.set_image(image_source.get_image(self.size))
 
-    def set_image(self, image: Image):
+    async def set_image(self, image: Image):
         if image != self.image:
             self.busy = True
+            await self.notify()
 
             if image.mode == 'RGBA':
                 background = Image.new("RGB", image.size, 'white')
@@ -63,7 +83,9 @@ class Screen(SlideshowObserver):
 
             self.image = image
             self.show_image()
+            await asyncio.sleep(1)
             self.busy = False
+            await self.notify()
 
     def show_image(self):
         pass

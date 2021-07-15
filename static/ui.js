@@ -71,6 +71,11 @@ function showImageSourceDetails() {
   }, 'json')
 }
 
+function handleScreenEvent(data) {
+  $("#screen_content .dimmer").toggleClass("active", data.screen_busy)
+  $("#screen_content .dimmer").toggleClass("disabled", !data.screen_busy)
+}
+
 function handleSlideshowEvent(data) {
   $('.slideshow.item').removeClass('selected')
   $(`.slideshow.item:eq(${data.image_source_index})`).addClass('selected')
@@ -97,6 +102,9 @@ function startSocket() {
   socket.onmessage = (message) => {
     console.log('Got message from websocket:', message)
     const data = JSON.parse(message.data)
+    if (data.type == 'screen') {
+      handleScreenEvent(data)
+    }
     if (data.type == 'slideshow') {
       handleSlideshowEvent(data)
     }
