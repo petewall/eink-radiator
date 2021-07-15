@@ -1,7 +1,7 @@
 FROM python:3.9.6
 
 ENV CI=true
-LABEL description="An image suitable for running feature tests"
+LABEL description="An image suitable for testing the eInk Radiator project"
 LABEL maintainer="Pete Wall <pete@petewall.net>"
 
 # Install tools
