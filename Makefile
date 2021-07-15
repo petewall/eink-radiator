@@ -49,3 +49,6 @@ test-all: lint lint-js test
 # Misc targets
 ssh:
 	ssh pi@eink-radiator.local
+
+set-pipeline:
+	fly -t wallhouse set-pipeline --pipeline eink-radiator --config ci/pipeline.yaml --load-vars-from ../secrets/pipeline-creds.json
