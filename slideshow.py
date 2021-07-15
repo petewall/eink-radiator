@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import asyncio
 import logging
 import threading
 import image_sources
@@ -9,33 +10,29 @@ from image_sources.image_source import ImageSource
 # pylint: disable=too-few-public-methods
 class SlideshowObserver(ABC):
     @abstractmethod
-    def update(self, slideshow: Slideshow) -> None:
+    async def slideshow_update(self, slideshow: Slideshow) -> None:
         pass
 
 class Slideshow():
     index: int = 0
     image_sources: List[ImageSource] = []
 
-    timer: threading.Timer = None
     interval: int = 5
     subscribers: List[SlideshowObserver] = []
 
-    def __init__(self):
-        self.notify()
-
-    def start(self) -> None:
-        self.timer = threading.Timer(self.interval, self.next)
-        self.timer.daemon = True
-        self.timer.start()
+    running = True
+    sleep_handle: asyncio.Future = None 
+    async def loop(self) -> None:
+        while self.running:
+            await self.notify()
+            self.index = (self.index + 1) % len(self.image_sources)
+            logging.info(f'index is now {self.index}: {self.image_sources[self.index].name}')
+            self.sleep_handle = await asyncio.sleep(self.interval)
 
     def stop(self) -> None:
-        self.timer.cancel()
-
-    def next(self) -> None:
-        self.index = (self.index + 1) % len(self.image_sources)
-        logging.info(f'index is now {self.index}: {self.image_sources[self.index].name}')
-        self.notify()
-        self.start()
+        self.running = False
+        if self.sleep_handle is not None:
+            self.sleep_handle.cancel()
 
     def add_subscriber(self, subscriber: SlideshowObserver) -> None:
         self.subscribers.append(subscriber)
@@ -43,9 +40,9 @@ class Slideshow():
     def remove_subscriber(self, subscriber: SlideshowObserver) -> None:
         self.subscribers.remove(subscriber)
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         for subscriber in self.subscribers:
-            subscriber.update(self)
+            await subscriber.slideshow_update(self)
 
     def add_image_source(self, image_source: ImageSource, index: int = -1) -> None:
         if index < 0:

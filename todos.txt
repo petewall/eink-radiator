@@ -1,0 +1,7 @@
+To dos:
+
+* Clean up the socket code on both ends
+* Remove the global USERS structure
+* look into why slideshow.py's `self.sleep_handle.cancel()` isn't cancelling the sleep right away
+
+* start onto the next features: update the screen with events, too

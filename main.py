@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import asyncio
 import logging
 import os
 from image_sources.text import TextContent
@@ -24,7 +25,12 @@ slideshow.add_image_source(TextContent({"name": "Family", "text": "Pete\nBetsy\n
 
 ui = UI(slideshow, screen)
 
-if __name__ == '__main__':
-    slideshow.start()
+async def main():
     port = os.environ.get('PORT', 5000)
-    ui.start(port)
+    await asyncio.gather(
+        slideshow.loop(),
+        ui.start(port)
+    )
+
+if __name__ == '__main__':
+    asyncio.run(main())

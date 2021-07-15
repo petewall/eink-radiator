@@ -17,7 +17,7 @@ aiofiles = "*"
 fastapi = "*"
 jinja2 = "*"
 requests = "*"
-uvicorn = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [requires]
 python_version = "3.9"

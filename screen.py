@@ -43,7 +43,7 @@ class Screen(SlideshowObserver):
         error_image.set_configuration({'text': message})
         return error_image.get_image(self.size)
 
-    def update(self, slideshow: Slideshow) -> None:
+    async def slideshow_update(self, slideshow: Slideshow) -> None:
         image_source = slideshow.get_active_image_source()
         self.set_image(image_source.get_image(self.size))
 
