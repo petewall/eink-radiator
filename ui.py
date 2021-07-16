@@ -19,7 +19,6 @@ from slideshow import Slideshow, SlideshowObserver
 USERS: List[WebSocket] = []
 
 class UI(FastAPI, ScreenObserver, SlideshowObserver):
-    # users: List[WebSocket] = []
     templates = Jinja2Templates(directory='templates')
 
     def __init__(self, slideshow: Slideshow, screen: Screen):

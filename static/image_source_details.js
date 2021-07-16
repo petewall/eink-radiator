@@ -1,11 +1,3 @@
-// ws.onmessage = (event) => {
-//     var messages = document.getElementById('messages')
-//     var message = document.createElement('li')
-//     var content = document.createTextNode(event.data)
-//     message.appendChild(content)
-//     messages.appendChild(message)
-// };
-
 function buildSelectField(key, value) {
   let options = []
   for (let option of value.options) {
@@ -70,52 +62,3 @@ function showImageSourceDetails() {
     $('#image_source_details').modal('show')
   }, 'json')
 }
-
-function handleScreenEvent(data) {
-  $("#screen_content .dimmer").toggleClass("active", data.screen_busy)
-  $("#screen_content .dimmer").toggleClass("disabled", !data.screen_busy)
-  if (!data.screen_busy) {
-    $("#screen_content img").attr("src", `/screen/image.png?timestamp=${new Date().getTime()}`)
-  }
-}
-
-function handleSlideshowEvent(data) {
-  $('.slideshow.item').removeClass('selected')
-  $(`.slideshow.item:eq(${data.image_source_index})`).addClass('selected')
-}
-
-function startSocket() {
-  let socket = new WebSocket('ws://localhost:5000/ws');
-  socket.onopen = () => {
-    console.log("socket open")
-    socket.send('{"state": "connected"}')
-  }
-  socket.onerror = (err) => {
-    console.error('Websocket error: ', err);
-  }
-  socket.onclose = (event) => {
-    if (event.wasClean) {
-      console.error(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
-    } else {
-      // e.g. server process killed or network down
-      // event.code is usually 1006 in this case
-      console.error('[close] Connection died')
-    }
-  }
-  socket.onmessage = (message) => {
-    console.log('Got message from websocket:', message)
-    const data = JSON.parse(message.data)
-    if (data.type == 'screen') {
-      handleScreenEvent(data)
-    }
-    if (data.type == 'slideshow') {
-      handleSlideshowEvent(data)
-    }
-  }
-}
-
-$(document).ready(() => {
-  $('.slideshow.image_source.item').click(showImageSourceDetails)
-
-  $(startSocket)
-})

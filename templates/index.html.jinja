@@ -86,6 +86,15 @@
       <img class="ui centered bordered screen image" src="/screen/image.png" />
     </div>
   </div>
-  <script src="/static/ui.js"></script>
+  <script src="/static/image_source_details.js"></script>
+  <script src="/static/screen.js"></script>
+  <script src="/static/slideshow.js"></script>
+  <script src="/static/socket.js"></script>
+  <script>
+    $(document).ready(() => {
+      $('.slideshow.image_source.item').click(showImageSourceDetails)
+      openSocketConnection()
+    })
+  </script>
 </body>
 </html>
