@@ -17,7 +17,7 @@ aiofiles = "*"
 fastapi = "*"
 jinja2 = "*"
 requests = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+uvicorn = {extras = ["standard"], version = "*"}  # Standard is required for WebSocket support
 
 [requires]
-python_version = "3.9"
+python_version = "3.7"

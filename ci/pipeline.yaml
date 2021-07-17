@@ -61,34 +61,15 @@ jobs:
                 google_chrome_version=$(google-chrome --version | cut -d" " -f3 | cut -d"." -f1)
                 test "${chromedriver_version}" == "${google_chrome_version}"
 
-  # - name: lint-javascript
-  #   plan:
-  #     - get: source
-  #       trigger: true
-  #     - task: test
-  #       config:
-  #         platform: linux
-  #         image_resource:
-  #           type: docker-image
-  #           source:
-  #             repository: node
-  #             tag: 14
-  #         inputs:
-  #           - name: source
-  #         run:
-  #           dir: source
-  #           path: make
-  #           args: [lint-js]
-
-  - name: lint-python
+  - name: test
     plan:
       - in_parallel:
+        - get: source
+          trigger: true
         - get: testing-image
           passed:
             - build-testing-image
-        - get: source
-          trigger: true
-      - task: test
+      - task: lint-python
         image: testing-image
         config:
           platform: linux
@@ -98,6 +79,22 @@ jobs:
             dir: source
             path: make
             args: [lint]
+      - task: lint-javascript
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: node
+              tag: 14
+              username: ((dockerhub-username))
+              password: ((dockerhub-password))
+          inputs:
+            - name: source
+          run:
+            dir: source
+            path: make
+            args: [lint-js]
 
   # - name: test
   #   plan:
