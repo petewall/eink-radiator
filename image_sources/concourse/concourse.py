@@ -19,10 +19,13 @@ class ConcourseContent(ImageSource):
 
     def get_configuration(self):
         return {
-            'name': self.name,
-            'url': self.url,
-            'username': self.username,
-            'password': self.password
+            **super().get_configuration(),
+            **{
+                'name': self.name,
+                'url': self.url,
+                'username': self.username,
+                'password': self.password
+            }
         }
 
     def set_configuration(self, params):

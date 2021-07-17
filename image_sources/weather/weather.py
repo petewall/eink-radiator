@@ -32,10 +32,13 @@ class WeatherContent(ImageSource):
         super().__init__(params)
 
     def get_configuration(self):
-        return super().get_configuration() | {
-            'name': self.name,
-            'api_key': self.api_key,
-            'location': self.location
+        return {
+            **super().get_configuration(),
+            **{
+                'name': self.name,
+                'api_key': self.api_key,
+                'location': self.location
+            }
         }
 
     def set_configuration(self, params):

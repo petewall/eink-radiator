@@ -26,12 +26,15 @@ class ImageContent(ImageSource):
     white_background = White()
 
     def get_configuration(self):
-        return super().get_configuration() | {
-            'url': self.image_url,
-            'scale': {
-                'type': 'select',
-                'value': self.scale.name,
-                'options': ImageScale.all_types()
+        return {
+            **super().get_configuration(),
+            **{
+                'url': self.image_url,
+                'scale': {
+                    'type': 'select',
+                    'value': self.scale.name,
+                    'options': ImageScale.all_types()
+                }
             }
         }
 

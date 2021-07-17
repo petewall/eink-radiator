@@ -13,20 +13,23 @@ class TextContent(ImageSource):
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
     def get_configuration(self):
-        return super().get_configuration() | {
-            'text': {
-                'type': 'textarea',
-                'value': self.text
-            },
-            'foreground_color': {
-                'type': 'select',
-                'value': self.foreground_color.name,
-                'options': Color.all_colors()
-            },
-            'background_color': {
-                'type': 'select',
-                'value': self.background_color.name,
-                'options': Color.all_colors()
+        return {
+            **super().get_configuration(),
+            **{
+                'text': {
+                    'type': 'textarea',
+                    'value': self.text
+                },
+                'foreground_color': {
+                    'type': 'select',
+                    'value': self.foreground_color.name,
+                    'options': Color.all_colors()
+                },
+                'background_color': {
+                    'type': 'select',
+                    'value': self.background_color.name,
+                    'options': Color.all_colors()
+                }
             }
         }
 
