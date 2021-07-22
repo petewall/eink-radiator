@@ -18,6 +18,7 @@ fastapi = "*"
 jinja2 = "*"
 requests = "*"
 uvicorn = {extras = ["standard"], version = "*"}  # Standard is required for WebSocket support
+pydantic = "*"
 
 [requires]
 python_version = "3.7"
