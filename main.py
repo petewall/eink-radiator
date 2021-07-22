@@ -21,7 +21,7 @@ slideshow.add_subscriber(screen)
 slideshow.add_image_source(White())
 slideshow.add_image_source(Black())
 slideshow.add_image_source(Red())
-slideshow.add_image_source(TextContent({"name": "Family", "text": "Pete\nBetsy\nGrace\nZach"}))
+slideshow.add_image_source(TextContent('Family', 'Pete\nBetsy\nGrace\nZach'))
 
 ui = UI(slideshow, screen)
 

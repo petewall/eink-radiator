@@ -1,3 +1,4 @@
+from image_sources.configuration import new_color_configuration_field, new_textarea_configuration_field
 import os
 from PIL import Image, ImageDraw, ImageFont
 from image_sources.image_source import ImageSource
@@ -7,52 +8,27 @@ FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'RobotoSla
 
 
 class TextContent(ImageSource):
-    text = None
-    foreground_color = Color.BLACK
-    background_color = Color.WHITE
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
-    def get_configuration(self):
-        return {
-            **super().get_configuration(),
-            **{
-                'text': {
-                    'type': 'textarea',
-                    'value': self.text
-                },
-                'foreground_color': {
-                    'type': 'select',
-                    'value': self.foreground_color.name,
-                    'options': Color.all_colors()
-                },
-                'background_color': {
-                    'type': 'select',
-                    'value': self.background_color.name,
-                    'options': Color.all_colors()
-                }
-            }
-        }
-
-    def set_configuration(self, params):
-        super().set_configuration(params)
-        if params.get('text') is not None:
-            self.text = params.get('text')
-        if params.get('foreground_color') is not None:
-            self.foreground_color = Color[params.get('foreground_color')]
-        if params.get('background_color') is not None:
-            self.background_color = Color[params.get('background_color')]
+    def __init__(self, name: str = 'New Text Image Source', text: str = 'Lorem Ipsum', foreground_color: Color = Color.BLACK, background_color: Color = Color.WHITE):
+        super().__init__(name)
+        self.configuration.data['text'] = new_textarea_configuration_field(text)
+        self.configuration.data['foreground_color'] = new_color_configuration_field(foreground_color)
+        self.configuration.data['background_color'] = new_color_configuration_field(background_color)
 
     def make_image(self, size) -> Image:
-        if self.text is None:
+        text = self.configuration.data['text'].value
+        if text is None:
             raise ValueError('Text is required')
 
-        image = Image.new('P', size, self.background_color.value)
+        color = Color[self.configuration.data['background_color'].value].value
+        image = Image.new('P', size, color)
         image.putpalette(Color.palette())
         image_canvas = ImageDraw.Draw(image)
 
-        text_width, text_height = image_canvas.textsize(self.text, font=self.font)
+        text_width, text_height = image_canvas.textsize(text, font=self.font)
         text_x = int((size[0] - text_width) / 2)
         text_y = int((size[1] - text_height) / 2)
-        color = self.foreground_color.value
-        image_canvas.text((text_x, text_y), self.text, fill=color, font=self.font, align='center')
+        color = Color[self.configuration.data['foreground_color'].value].value
+        image_canvas.text((text_x, text_y), text, fill=color, font=self.font, align='center')
         return image

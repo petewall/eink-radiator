@@ -2,7 +2,6 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
 import logging
-import image_sources
 from typing import List
 from image_sources.image_source import ImageSource
 

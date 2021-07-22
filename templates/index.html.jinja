@@ -34,21 +34,19 @@
 
   <div id="image_source_details" class="ui modal">
     <div class="image content">
-      <img class="ui bordered screen image" src="">
-      <div class="ui configuration form">
+      <div class="ui segment">
+        <div class="ui disabled dimmer">
+          <div class="ui indeterminate text loader">Remaking image</div>
+        </div>
+        <img class="ui bordered screen image" src="">
       </div>
-    </div>
-    <div class="actions">
-      <div class="ui right labeled button">
-        Cancel
-      </div>
-      <div class="ui right labeled icon button">
-        Save
-        <i class="save icon"></i>
-      </div>
-      <div class="ui primary right labeled icon button">
-        Done
-        <i class="checkmark icon"></i>
+      <form class="ui equal width configuration form"></form>
+      <div class="actions">
+        <button class="ui primary right labeled icon save button" type="submit">Save</button>
+        <div class="ui positive right labeled icon done button">
+          Done
+          <i class="checkmark icon"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -100,6 +98,7 @@
   <script>
     $(document).ready(() => {
       $('.slideshow.image_source.item').click(showImageSourceDetails)
+      $('#image_source_details .save.button').click(saveImageSourceDetails)
       openSocketConnection()
     })
   </script>

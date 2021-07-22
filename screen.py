@@ -24,10 +24,7 @@ def quantize(image, palette):
     return image._new(converted_image)
 
 
-error_image = TextContent({
-    'name': 'Error Text',
-    'foreground_color': Color.RED.name,
-})
+error_image = TextContent('Error Text', 'An error occurred', Color.RED)
 
 class ScreenObserver(ABC):
     @abstractmethod
