@@ -33,7 +33,7 @@ class Configuration(BaseModel):
         for key in self.data:
             if self.data[key].value != new_configuration.data[key].value:
                 print(f'{key} changed: {self.data[key]} --> {new_configuration.data[key]}')
-                self.data[key].value != new_configuration.data[key].value
+                self.data[key].value = new_configuration.data[key].value
                 changed = True
 
         return changed
