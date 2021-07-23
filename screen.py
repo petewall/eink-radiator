@@ -40,9 +40,9 @@ class Screen(SlideshowObserver):
     logger = None
     subscribers: List[ScreenObserver] = []
 
-    def __init__(self, size, name="Screen"):
+    def __init__(self, size):
         self.size = size
-        self.logger = logging.getLogger(name)
+        self.logger = logging.getLogger('screen')
 
     def generate_error_image(self, error_message):
         message = f'Failed to generate image:\n{error_message}'

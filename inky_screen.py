@@ -6,9 +6,9 @@ from screen import Screen
 class InkyScreen(Screen):
     def __init__(self):
         physical_screen = InkyWHAT('red')
-        super().__init__(physical_screen.resolution, "InkyWHAT Screen")
-        self.screen = physical_screen
+        super().__init__(physical_screen.resolution)
+        self.hardware = physical_screen
 
     def show_image(self):
-        self.screen.set_image(self.image)
-        self.screen.show()
+        self.hardware.set_image(self.image)
+        self.hardware.show()

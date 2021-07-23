@@ -12,20 +12,26 @@ class SlideshowObserver(ABC):
         pass
 
 class Slideshow():
-    index: int = 0
+    index: int = -1  # Starting at -1 so the first time through the loop, it'll increment to 0
     image_sources: List[ImageSource] = []
 
     interval: int = 10 * 60  # ten minutes
     subscribers: List[SlideshowObserver] = []
 
     running = True
-    sleep_handle: asyncio.Future = None 
+    sleep_handle: asyncio.Task = None 
     async def loop(self) -> None:
         while self.running:
-            await self.notify()
             self.index = (self.index + 1) % len(self.image_sources)
             logging.info(f'index is now {self.index}: {self.image_sources[self.index].name}')
-            self.sleep_handle = await asyncio.sleep(self.interval)
+            await self.notify()
+
+            self.sleep_handle = asyncio.create_task(asyncio.sleep(self.interval))
+            try:
+                await self.sleep_handle
+            except asyncio.CancelledError:
+                pass
+            self.sleep_handle = None
 
     def stop(self) -> None:
         self.running = False
