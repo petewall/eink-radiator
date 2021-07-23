@@ -15,7 +15,7 @@ class Slideshow():
     index: int = 0
     image_sources: List[ImageSource] = []
 
-    interval: int = 5
+    interval: int = 10 * 60  # ten minutes
     subscribers: List[SlideshowObserver] = []
 
     running = True
