@@ -23,6 +23,6 @@ network={
  psk=\"${WIRELESS_PASSWORD}\"
 }" > /Volumes/boot/wpa_supplicant.conf
 
-# TODO: exit config.txt and uncomment dtparam=spi=on
+# TODO: edit config.txt and uncomment dtparam=spi=on
 
 echo "Done!"
