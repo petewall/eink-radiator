@@ -24,12 +24,11 @@ def quantize(image, palette):
     return image._new(converted_image)
 
 
-error_image = TextContent('Error Text', 'An error occurred', Color.RED)
-
 class ScreenObserver(ABC):
     @abstractmethod
     async def screen_update(self, screen: Screen) -> None:
         pass
+
 
 class Screen(SlideshowObserver):
     busy = False
@@ -44,16 +43,8 @@ class Screen(SlideshowObserver):
         self.size = size
         self.logger = logging.getLogger('screen')
 
-    def generate_error_image(self, error_message):
-        message = f'Failed to generate image:\n{error_message}'
-        error_image.set_configuration({'text': message})
-        return error_image.get_image(self.size)
-
     def add_subscriber(self, subscriber: ScreenObserver) -> None:
         self.subscribers.append(subscriber)
-
-    def remove_subscriber(self, subscriber: ScreenObserver) -> None:
-        self.subscribers.remove(subscriber)
 
     async def notify(self) -> None:
         for subscriber in self.subscribers:
@@ -61,7 +52,8 @@ class Screen(SlideshowObserver):
 
     async def slideshow_update(self, slideshow: Slideshow) -> None:
         image_source = slideshow.get_active_image_source()
-        await self.set_image(image_source.get_image(self.size))
+        new_image = await image_source.get_image(self.size)
+        await self.set_image(new_image)
 
     async def set_image(self, image: Image):
         if image != self.image:

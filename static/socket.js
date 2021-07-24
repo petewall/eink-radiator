@@ -18,8 +18,11 @@ function openSocketConnection() {
     }
   }
   socket.onmessage = (message) => {
-    // console.log('Got message from websocket:', message)
+    console.log('Got message from websocket:', message)
     const data = JSON.parse(message.data)
+    if (data.type == 'image_source') {
+      handleImageSourceEvent(data)
+    }
     if (data.type == 'screen') {
       handleScreenEvent(data)
     }

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import asyncio
 import logging
 from typing import List
-from image_sources.image_source import ImageSource
+from image_sources.image_source import ImageSource, ImageSourceObserver
 
 # pylint: disable=too-few-public-methods
 class SlideshowObserver(ABC):
@@ -11,7 +11,7 @@ class SlideshowObserver(ABC):
     async def slideshow_update(self, slideshow: Slideshow) -> None:
         pass
 
-class Slideshow():
+class Slideshow(ImageSourceObserver):
     index: int = -1  # Starting at -1 so the first time through the loop, it'll increment to 0
     image_sources: List[ImageSource] = []
 
@@ -41,18 +41,20 @@ class Slideshow():
     def add_subscriber(self, subscriber: SlideshowObserver) -> None:
         self.subscribers.append(subscriber)
 
-    def remove_subscriber(self, subscriber: SlideshowObserver) -> None:
-        self.subscribers.remove(subscriber)
-
     async def notify(self) -> None:
         for subscriber in self.subscribers:
             await subscriber.slideshow_update(self)
 
     def add_image_source(self, image_source: ImageSource, index: int = -1) -> None:
+        image_source.add_subscriber(self)
         if index < 0:
             self.image_sources.append(image_source)
         else:
             self.image_sources.insert(index, image_source)
+
+    async def image_source_update(self, image_source: ImageSource) -> None:
+        if self.get_active_image_source() == image_source:
+            self.notify()
 
     def get_active_image_source(self) -> ImageSource:
         return self.image_sources[self.index]

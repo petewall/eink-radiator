@@ -35,7 +35,7 @@ function buildConfigurationField(key, data) {
 
 function buildConfigurationForm(configuration) {
   let fields = [
-    $(`<input name="id" value="${configuration.id}" type="hidden" />`),
+    $(`<input name="id" class="field" value="${configuration.id}" type="hidden" />`),
     buildConfigurationField('name', {type: 'text', value: configuration.name})
   ]
   for (let key in configuration.data) {
@@ -47,14 +47,15 @@ function buildConfigurationForm(configuration) {
 /* exported showImageSourceDetails */
 function showImageSourceDetails() {
   const imageSourceId = $(this).attr('id').substring('image_source_'.length)
-  $('#image_source_details img.screen').attr('src', `/image_sources/${imageSourceId}/image.png`)
+  $('#image_source_details img.screen').attr('src', `/image_sources/${imageSourceId}/image.png?timestamp=${new Date().getTime()}`)
 
   $.get(`/image_sources/${imageSourceId}/configuration.json`, (configuration) => {
-    $('#image_source_details .configuration.form .field').remove()
-    $('#image_source_details .configuration.form').prepend(
+    $('#image_source_details .configuration.form').empty()
+    $('#image_source_details .configuration.form').append(
       buildConfigurationForm(configuration)
     )
     
+    toggleImageSourceDetailsLoader(false)
     $('#image_source_details').modal('show')
   }, 'json')
 }
@@ -95,4 +96,13 @@ function saveImageSourceDetails() {
     },
     dataType: 'json'
   })
+}
+
+function handleImageSourceEvent(data) {
+  const id = data.image_source_id
+  $(`#image_source_${id} img`).attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
+
+  // TODO: Only update the details if the updated image_source is the one open
+  $('#image_source_details img.screen').attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
+  toggleImageSourceDetailsLoader(false)
 }

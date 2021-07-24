@@ -1,5 +1,6 @@
 # pylint: disable=global-statement
 import asyncio
+import image_sources
 from routers.screen_router import ScreenRouter
 from routers.image_source_router import ImageSourceRouter
 from typing import Any, List
@@ -80,20 +81,28 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
                 if user.client_state == WebSocketState.CONNECTED:
                     await user.close()
 
-    async def screen_update(self, screen: Screen) -> None:
+    async def send_message(self, message: Any) -> None:
         for websocket in USERS:
-            await websocket.send_json({
-                'type': 'screen',
-                'screen_busy': screen.busy
-            })
+            await websocket.send_json(message)
+
+    async def image_source_update(self, image_source: image_sources) -> None:
+        await self.send_message({
+            'type': 'image_source',
+            'image_source_id': image_source.id
+        })
+
+    async def screen_update(self, screen: Screen) -> None:
+        await self.send_message({
+            'type': 'screen',
+            'screen_busy': screen.busy
+        })
 
     async def slideshow_update(self, slideshow: Slideshow) -> None:
-        for websocket in USERS:
-            await websocket.send_json({
-                'type': 'slideshow',
-                'image_source_index': slideshow.index,
-                'image_source_id': slideshow.get_active_image_source().id
-            })
+        await self.send_message({
+            'type': 'slideshow',
+            'image_source_index': slideshow.index,
+            'image_source_id': slideshow.get_active_image_source().id
+        })
 
     async def start(self, port: int) -> None:
         logging.info('Starting UI on port %d\n', port)

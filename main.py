@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import asyncio
+from typing import List
+from image_sources.image_source import ImageSource
 import logging
 import os
 from image_sources.text import TextContent
@@ -18,12 +20,18 @@ else:
 
 slideshow = Slideshow()
 slideshow.add_subscriber(screen)
-slideshow.add_image_source(White())
-slideshow.add_image_source(Black())
-slideshow.add_image_source(Red())
-slideshow.add_image_source(TextContent('Family', 'Pete\nBetsy\nGrace\nZach'))
 
+image_sources: List[ImageSource] = [
+    White(),
+    Black(),
+    Red(),
+    TextContent('Family', 'Pete\nBetsy\nGrace\nZach')
+]
 ui = UI(slideshow, screen)
+
+for image_source in image_sources:
+    slideshow.add_image_source(image_source)
+    image_source.add_subscriber(ui)
 
 async def main():
     port = os.environ.get('PORT', 5000)
