@@ -106,6 +106,6 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
 
     async def start(self, port: int) -> None:
         logging.info('Starting UI on port %d\n', port)
-        config = uvicorn.Config(app=self, loop=asyncio.get_running_loop(), port=port, debug=True)
+        config = uvicorn.Config(app=self, loop=asyncio.get_running_loop(), host='0.0.0.0', port=port, debug=True)
         server = uvicorn.Server(config)
         await server.serve()
