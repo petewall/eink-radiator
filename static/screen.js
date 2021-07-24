@@ -1,3 +1,5 @@
+/* eslint-env browser, jquery */
+
 function handleScreenEvent(data) {
   $("#screen_content .dimmer").toggleClass("active", data.screen_busy)
   $("#screen_content .dimmer").toggleClass("disabled", !data.screen_busy)

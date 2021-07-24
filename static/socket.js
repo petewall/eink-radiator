@@ -1,5 +1,8 @@
+/* eslint-env browser, jquery */
+
 function openSocketConnection() {
-  const socket = new WebSocket('ws://localhost:5000/ws');
+  const host = $(location).attr('host')
+  const socket = new WebSocket(`ws://${host}/ws`);
   socket.onopen = () => {
     socket.send('{"state": "connected"}')
   }
