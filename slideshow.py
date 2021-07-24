@@ -54,7 +54,7 @@ class Slideshow(ImageSourceObserver):
 
     async def image_source_update(self, image_source: ImageSource) -> None:
         if self.get_active_image_source() == image_source:
-            self.notify()
+            await self.notify()
 
     def get_active_image_source(self) -> ImageSource:
         return self.image_sources[self.index]
