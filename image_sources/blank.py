@@ -1,5 +1,5 @@
-from image_sources.configuration import new_color_configuration_field
 from PIL import Image
+from image_sources.configuration import new_color_configuration_field
 from image_sources.image_source import ImageSource
 from color import Color
 

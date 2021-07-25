@@ -28,15 +28,6 @@ class ConcourseContent(ImageSource):
             }
         }
 
-    def set_configuration(self, params):
-        super().set_configuration(params)
-        if params.get('url') is not None:
-            self.url = params.get('url')
-        if params.get('username') is not None:
-            self.username = params.get('username')
-        if params.get('password') is not None:
-            self.password = params.get('password')
-
     def auth(self):
         session = requests.Session()
         session.auth = ('fly', 'Zmx5')

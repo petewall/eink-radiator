@@ -1,8 +1,8 @@
-from image_sources.configuration import new_color_configuration_field, new_textarea_configuration_field
 import os
 from PIL import Image, ImageDraw, ImageFont
-from image_sources.image_source import ImageSource
 from color import Color
+from image_sources.configuration import new_color_configuration_field, new_textarea_configuration_field
+from image_sources.image_source import ImageSource
 
 FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'RobotoSlab-Regular.ttf')
 

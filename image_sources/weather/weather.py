@@ -41,13 +41,6 @@ class WeatherContent(ImageSource):
             }
         }
 
-    def set_configuration(self, params):
-        super().set_configuration(params)
-        if params.get('api_key') is not None:
-            self.api_key = params.get('api_key')
-        if params.get('location') is not None:
-            self.location = params.get('location')
-
     def build_weather_url(self, path):
         return f'https://api.openweathermap.org/data/2.5/{path}' + \
             f'?q={self.location}&units={self.unit}&appid={self.api_key}'

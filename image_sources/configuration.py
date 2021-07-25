@@ -1,9 +1,9 @@
 from __future__ import annotations
-from color import Color
 from typing import Dict, List, Optional
 from pydantic import BaseModel
-from typing_extensions import TypedDict
+from color import Color
 
+#pylint: disable=too-few-public-methods
 class ConfigurationField(BaseModel):
     type: Optional[str]
     value: str
@@ -18,6 +18,7 @@ def new_text_configuration_field(value: str) -> ConfigurationField:
 def new_textarea_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='textarea', value=value)
 
+#pylint: disable=too-few-public-methods
 class Configuration(BaseModel):
     id: Optional[int]
     name: Optional[str]
@@ -26,13 +27,11 @@ class Configuration(BaseModel):
     def update(self, new_configuration: Configuration) -> bool:
         changed = False
         if self.name != new_configuration.name:
-            print(f'name changed: {self.name} --> {new_configuration.name}')
             self.name = new_configuration.name
             changed = True
 
         for key in self.data:
             if self.data[key].value != new_configuration.data[key].value:
-                print(f'{key} changed: {self.data[key]} --> {new_configuration.data[key]}')
                 self.data[key].value = new_configuration.data[key].value
                 changed = True
 

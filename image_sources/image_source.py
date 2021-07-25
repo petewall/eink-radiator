@@ -1,10 +1,10 @@
 # pylint: disable=invalid-name,too-few-public-methods
 from __future__ import annotations
 from abc import abstractmethod, ABC
+import logging
 from typing import List
-from image_sources import configuration
-from image_sources.configuration import Configuration
 from PIL import Image
+from image_sources.configuration import Configuration
 
 class ImageSourceObserver(ABC):
     @abstractmethod
@@ -22,16 +22,20 @@ class ImageSource(ABC):
     def __init__(self, name: str = 'New Image Source'):
         self.id = id(self)
         self.name = name
+        self.logger = logging.getLogger(f'image_source_%{self.id}')
 
         self.configuration = Configuration()
-        self.configuration.id = self.id
+        self.configuration.id = id(self)
         self.configuration.name = self.name
 
     def get_configuration(self) -> Configuration:
         return self.configuration
 
     def set_configuration(self, config: Configuration) -> bool:
-        return self.configuration.update(config)
+        changed = self.configuration.update(config)
+        if changed:
+            self.logger.info('Configuration updated: {config}', config=self.configuration.json())
+        return changed
 
     def add_subscriber(self, subscriber: ImageSourceObserver) -> None:
         self.subscribers.append(subscriber)

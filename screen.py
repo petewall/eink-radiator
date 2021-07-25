@@ -6,7 +6,6 @@ import logging
 from typing import List
 from PIL import Image
 from color import Color
-from image_sources.text import TextContent
 from slideshow import Slideshow, SlideshowObserver
 
 def quantize(image, palette):
@@ -24,6 +23,7 @@ def quantize(image, palette):
     return image._new(converted_image)
 
 
+#pylint: disable=too-few-public-methods
 class ScreenObserver(ABC):
     @abstractmethod
     async def screen_update(self, screen: Screen) -> None:

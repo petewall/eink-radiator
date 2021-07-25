@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 import asyncio
-from typing import List
-from image_sources.image_source import ImageSource
 import logging
 import os
-from image_sources.text import TextContent
+from typing import List
 from image_sources.blank import White, Black, Red
+from image_sources.image_source import ImageSource
+from image_sources.text import TextContent
 from screen import Screen
 from slideshow import Slideshow
 from ui import UI
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen

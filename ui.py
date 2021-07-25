@@ -1,25 +1,26 @@
 # pylint: disable=global-statement
 import asyncio
-import image_sources
-from routers.screen_router import ScreenRouter
-from routers.image_source_router import ImageSourceRouter
+import logging
 from typing import Any, List
 
 from starlette.endpoints import WebSocketEndpoint
 from starlette.websockets import WebSocketState
-import logging
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
 
+import image_sources
+from routers.screen_router import ScreenRouter
+from routers.image_source_router import ImageSourceRouter
 from screen import Screen, ScreenObserver
 from slideshow import Slideshow, SlideshowObserver
 
 USERS: List[WebSocket] = []
 
 class UI(FastAPI, ScreenObserver, SlideshowObserver):
+    logger = logging.getLogger('ui')
     templates = Jinja2Templates(directory='templates')
 
     def __init__(self, slideshow: Slideshow, screen: Screen):
@@ -59,20 +60,20 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
 
         @self.websocket_route("/ws", name="ws")
         class ClientSocketHandler(WebSocketEndpoint):
+            logger = logging.getLogger('websocket')
             encoding: str = "json"
 
             async def on_connect(self, websocket):
-                logging.info("Connecting new user...")
+                self.logger.info('Connecting new user...')
                 await websocket.accept()
                 USERS.append(websocket)
 
             async def on_disconnect(self, websocket: WebSocket, close_code: int):
-                logging.info("Disconnecting user...")
+                self.logger.info('User disconnected ({close_code})', close_code=close_code)
                 USERS.remove(websocket)
 
-            async def on_receive(self, websocket: WebSocket, msg: Any):
-                logging.info("message received")
-                logging.info(msg)
+            async def on_receive(self, websocket: WebSocket, data: Any):
+                self.logger.info('Message received: {data}', data=data)
 
         @self.on_event('shutdown')
         async def shutdown():
@@ -105,7 +106,13 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         })
 
     async def start(self, port: int) -> None:
-        logging.info('Starting UI on port %d\n', port)
-        config = uvicorn.Config(app=self, loop=asyncio.get_running_loop(), host='0.0.0.0', port=port, debug=True)
+        self.logger.info('Starting UI on port %d\n', port)
+        config = uvicorn.Config(
+            app=self,
+            loop=asyncio.get_running_loop(),
+            host='0.0.0.0',
+            port=port,
+            debug=True
+        )
         server = uvicorn.Server(config)
         await server.serve()

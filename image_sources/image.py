@@ -58,13 +58,6 @@ class ImageContent(ImageSource):
             self.image_error = 'URL must use http(s)'
 
 
-    def set_configuration(self, params):
-        super().set_configuration(params)
-        if params.get('scale') is not None:
-            self.scale = ImageScale[params.get('scale')]
-        if params.get('url') is not None:
-            self.set_image_url(params.get('url'))
-
     def make_image(self, size):
         if self.image_url is None:
             raise ValueError('Image URL is required')

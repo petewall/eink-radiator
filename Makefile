@@ -27,7 +27,8 @@ test: test-units test-features
 
 lint: deps
 	pipenv run pylint \
-		--disable duplicate-code,missing-module-docstring,missing-class-docstring,missing-function-docstring\
+		--disable duplicate-code,line-too-long,missing-module-docstring,missing-class-docstring,missing-function-docstring\
+		--extension-pkg-whitelist='pydantic'\
 		*.py image_sources
 
 JAVASCRIPT_SOURCES := $(shell find $$PWD/static -name '*.js')
