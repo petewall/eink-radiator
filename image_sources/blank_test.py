@@ -1,6 +1,7 @@
+from image_sources.configuration import Configuration, new_color_configuration_field
 import os
 import unittest
-from hamcrest import assert_that, has_entries, is_
+from hamcrest import assert_that, equal_to, is_
 from PIL import Image
 from color import Color
 from image_sources.blank import BlankContent
@@ -12,32 +13,29 @@ class TestBlankContent(unittest.TestCase):
         os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures'
     )
 
-    def test_get_image(self):
+    async def test_get_image(self):
+        image_source = BlankContent(name='White', color=Color.WHITE)
+        image = await image_source.get_image((400, 300))
+        
         expected_image = Image.open(os.path.join(self.test_fixtures, 'white-400x300.png'))
-
-        content = BlankContent(name='White', color=Color.WHITE)
-        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(expected_image)))
-
         expected_image.close()
 
-    def test_set_configuration(self):
+    async def test_get_configuration(self):
+
+        image_source = BlankContent(name='blank test', color=Color.WHITE)
+
+        new_config = Configuration(name='blank test', data={'color': new_color_configuration_field(Color.RED)})
+        changed = image_source.set_configuration(new_config)
+        assert_that(changed, is_(equal_to(True)))
+
+        config = image_source.get_configuration()
+        assert_that(config.name, is_(equal_to('blank test')))
+        assert_that(config.data['color'].type, is_(equal_to('select')))
+        assert_that(config.data['color'].value, is_(equal_to('RED')))
+        assert_that(config.data['color'].options, is_(equal_to(Color.all_colors())))
+
+        image = await image_source.get_image((400, 300))
         expected_image = Image.open(os.path.join(self.test_fixtures, 'red-400x300.png'))
-
-        content = BlankContent(name='Red', color=Color.RED)
-        assert_that(content.get_configuration(), has_entries({
-            'name': 'Red',
-            'color': {
-                'type': 'select',
-                'value': 'red',
-                'options': ['white', 'black', 'red']
-            }
-        }))
-
-        image = content.get_image((400, 300))
         assert_that(image, is_(the_same_image_as(expected_image)))
-
         expected_image.close()
-
-    if __name__ == '__main__':
-        unittest.main()

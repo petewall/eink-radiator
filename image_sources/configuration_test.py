@@ -28,7 +28,7 @@ class TestConfiguration(unittest.TestCase):
             'name': new_text_configuration_field('pete')
         })
         new_config = Configuration(data={
-            'name': new_text_configuration_field('pete')
+            'name': new_text_configuration_field('peter wall')
         })
 
         changed = config.update(config)
