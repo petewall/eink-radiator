@@ -36,3 +36,4 @@ class TestConfiguration(unittest.TestCase):
 
         changed = config.update(new_config)
         assert_that(changed, is_(equal_to(True)))
+        assert_that(config.data['name'].value, is_(equal_to('peter wall')))

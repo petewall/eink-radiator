@@ -1,15 +1,26 @@
 #pylint: disable=no-self-use
+import asyncio
 import unittest
-from hamcrest import assert_that, equal_to, is_
+from PIL import Image
+from hamcrest import assert_that, equal_to, is_, none
 from image_sources.blank import Red
 from image_sources.image_source import ImageSource
 
-TEST_IMAGE = Red().make_image((400, 300))
+def async_test(coroutine):
+    def wrapper(*args, **kwargs):
+        loop = asyncio.new_event_loop()
+        try:
+            return loop.run_until_complete(coroutine(*args, **kwargs))
+        finally:
+            loop.close()
+    return wrapper
 
 class DummyImageSource(ImageSource):
-    def make_image(self, size):
+    test_image: Image = None
+
+    async def make_image(self, size):
         assert_that(size, is_(equal_to((400, 300))))
-        return TEST_IMAGE
+        return await Red().make_image((400, 300))
 
 
 class TestImageSource(unittest.TestCase):
@@ -20,20 +31,19 @@ class TestImageSource(unittest.TestCase):
     def test_configuration(self):
         image_source = DummyImageSource('test image source')
         assert_that(image_source.name, is_(equal_to('test image source')))
-    
-        # content.set_configuration({
-        #     'name': 'new name'
-        # })
-        # assert_that(content.name, is_(equal_to('new name')))
 
-    def test_get_image_returns_the_same(self):
-        pass
-    #     content = DummyImageSource({})
-    #     assert_that(content.cached_image, is_(none()))
+        config = image_source.configuration
+        assert_that(config.data['id'].type, is_(equal_to('hidden')))
+        assert_that(config.data['name'].type, is_(equal_to('text')))
+        assert_that(config.data['name'].value, is_(equal_to('test image source')))
 
-    #     image = content.get_image((400, 300))
-    #     assert_that(image, is_(equal_to(TEST_IMAGE)))
-    #     assert_that(content.cached_image, is_(equal_to(TEST_IMAGE)))
+    @async_test
+    async def test_get_image_returns_the_same(self):
+        image_source = DummyImageSource()
+        assert_that(image_source.cached_image, is_(none()))
 
-    #     image = content.get_image((400, 300))
-    #     assert_that(image, is_(equal_to(TEST_IMAGE)))
+        image = await image_source.get_image((400, 300))
+        assert_that(image_source.cached_image, is_(equal_to(image)))
+
+        image2 = await image_source.get_image((400, 300))
+        assert_that(image, is_(equal_to(image2)))

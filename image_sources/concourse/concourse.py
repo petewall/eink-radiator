@@ -56,7 +56,7 @@ class ConcourseContent(ImageSource):
                 pipelines[name] = False
         return pipelines
 
-    def make_image(self, size) -> Image:
+    async def make_image(self, size) -> Image:
         if self.url is None or self.url == '':
             raise ValueError('Concourse URL is required')
         if self.username is None or self.username == '':

@@ -9,7 +9,7 @@ class BlankContent(ImageSource):
         super().__init__(name)
         self.configuration.data['color'] = new_color_configuration_field(color)
 
-    def make_image(self, size) -> Image:
+    async def make_image(self, size) -> Image:
         color = Color[self.configuration.data['color'].value]
         image = Image.new('P', size, color.value)
         image.putpalette(Color.palette())

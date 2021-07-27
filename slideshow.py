@@ -25,7 +25,7 @@ class Slideshow(ImageSourceObserver):
     async def loop(self) -> None:
         while self.running:
             self.index = (self.index + 1) % len(self.image_sources)
-            self.logger.info('index is now {index}: {name}', index=self.index, name=self.image_sources[self.index].name)
+            self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name)
             await self.notify()
 
             self.sleep_handle = asyncio.create_task(asyncio.sleep(self.interval))

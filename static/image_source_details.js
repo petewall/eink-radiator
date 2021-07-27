@@ -1,5 +1,9 @@
 /* eslint-env browser, jquery */
 
+function buildHiddenField(key, data) {
+  return $(`<input name="${key}" class="field" value="${data.value}" type="hidden" />`)
+}
+
 function buildSelectField(key, data) {
   let dropdown = $(`<select name="${key}" class="ui selection dropdown">`)
   for (let option of data.options) {
@@ -23,7 +27,10 @@ function buildTextField(key, data) {
 function buildConfigurationField(key, data) {
   let field = $('<div class="field">')
   field.append($('<label>').text(key))
-  if (data.type === 'select') {
+  if (data.type === 'hidden') {
+    field.empty()
+    field.append(buildHiddenField(key, data))
+  } else if (data.type === 'select') {
     field.append(buildSelectField(key, data))
   } else if (data.type === 'text') {
     field.append(buildTextField(key, data))
@@ -34,10 +41,7 @@ function buildConfigurationField(key, data) {
 }
 
 function buildConfigurationForm(configuration) {
-  let fields = [
-    $(`<input name="id" class="field" value="${configuration.id}" type="hidden" />`),
-    buildConfigurationField('name', {type: 'text', value: configuration.name})
-  ]
+  let fields = []
   for (let key in configuration.data) {
     fields.push(buildConfigurationField(key, configuration.data[key]))
   }

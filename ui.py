@@ -19,6 +19,23 @@ from slideshow import Slideshow, SlideshowObserver
 
 USERS: List[WebSocket] = []
 
+class ClientSocketHandler(WebSocketEndpoint):
+    logger = logging.getLogger('websocket')
+    encoding: str = "json"
+
+    async def on_connect(self, websocket):
+        self.logger.info('Connecting new user...')
+        await websocket.accept()
+        USERS.append(websocket)
+
+    async def on_disconnect(self, websocket: WebSocket, close_code: int):
+        self.logger.info('User disconnected (%d)', close_code)
+        USERS.remove(websocket)
+
+    async def on_receive(self, websocket: WebSocket, data: Any):
+        self.logger.info('Message received: %s', data)
+
+
 class UI(FastAPI, ScreenObserver, SlideshowObserver):
     logger = logging.getLogger('ui')
     templates = Jinja2Templates(directory='templates')
@@ -34,19 +51,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         self.slideshow.add_subscriber(self)
         self.include_router(ImageSourceRouter(self.screen, self.slideshow))
         self.include_router(ScreenRouter(self.screen))
-
-        # class UserListMiddleware:
-        #     def __init__(self, app: UI):
-        #         self._app = app
-        #         self._users = app.users
-
-        #     async def __call__(self, scope: Scope, receive: Receive, send: Send):
-        #         if scope["type"] in ("lifespan", "http", "websocket"):
-        #             scope["users"] = self._users
-        #         await self._app(scope, receive, send)
-
-        # self.add_middleware(UserListMiddleware)
-
+        self.router.add_websocket_route("/ws", ClientSocketHandler, name="ws")
 
         @self.get('/', response_class=HTMLResponse)
         def serve_ui(request: Request):
@@ -57,23 +62,6 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
                 'slideshow': self.slideshow
             }
             return self.templates.TemplateResponse('index.html.jinja', template_data)
-
-        @self.websocket_route("/ws", name="ws")
-        class ClientSocketHandler(WebSocketEndpoint):
-            logger = logging.getLogger('websocket')
-            encoding: str = "json"
-
-            async def on_connect(self, websocket):
-                self.logger.info('Connecting new user...')
-                await websocket.accept()
-                USERS.append(websocket)
-
-            async def on_disconnect(self, websocket: WebSocket, close_code: int):
-                self.logger.info('User disconnected ({close_code})', close_code=close_code)
-                USERS.remove(websocket)
-
-            async def on_receive(self, websocket: WebSocket, data: Any):
-                self.logger.info('Message received: {data}', data=data)
 
         @self.on_event('shutdown')
         async def shutdown():
@@ -106,7 +94,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         })
 
     async def start(self, port: int) -> None:
-        self.logger.info('Starting UI on port %d\n', port)
+        self.logger.info('Starting UI on port %d', port)
         config = uvicorn.Config(
             app=self,
             loop=asyncio.get_running_loop(),

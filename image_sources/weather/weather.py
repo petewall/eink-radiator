@@ -56,7 +56,7 @@ class WeatherContent(ImageSource):
                 f'{forecast.status_code}: {forecast.text}')
         return current.json(), forecast.json()
 
-    def make_image(self, size) -> Image:
+    async def make_image(self, size) -> Image:
         #pylint: disable=invalid-name,too-many-locals
         if self.api_key is None or self.api_key == '':
             raise ValueError('API key is required')

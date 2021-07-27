@@ -58,7 +58,7 @@ class ImageContent(ImageSource):
             self.image_error = 'URL must use http(s)'
 
 
-    def make_image(self, size):
+    async def make_image(self, size):
         if self.image_url is None:
             raise ValueError('Image URL is required')
 

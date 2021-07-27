@@ -16,7 +16,7 @@ class TextContent(ImageSource):
         self.configuration.data['foreground_color'] = new_color_configuration_field(foreground_color)
         self.configuration.data['background_color'] = new_color_configuration_field(background_color)
 
-    def make_image(self, size) -> Image:
+    async def make_image(self, size) -> Image:
         text = self.configuration.data['text'].value
         if text is None:
             raise ValueError('Text is required')

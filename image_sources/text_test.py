@@ -13,7 +13,7 @@ class TestTextContent(unittest.TestCase):
     )
 
     def test_missing_text(self):
-        content = TextContent({})
+        content = TextContent()
         assert_that(
             calling(content.get_image).with_args((1, 1)),
             raises(ValueError, "Text is required")

@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 import logging
 from typing import List
 from PIL import Image
-from image_sources.configuration import Configuration
+from image_sources.configuration import Configuration, new_hidden_configuration_field, new_text_configuration_field
 
 class ImageSourceObserver(ABC):
     @abstractmethod
@@ -25,8 +25,8 @@ class ImageSource(ABC):
         self.logger = logging.getLogger(f'image_source_%{self.id}')
 
         self.configuration = Configuration()
-        self.configuration.id = id(self)
-        self.configuration.name = self.name
+        self.configuration.data['id'] = new_hidden_configuration_field(id(self))
+        self.configuration.data['name'] = new_text_configuration_field(self.name)
 
     def get_configuration(self) -> Configuration:
         return self.configuration
@@ -34,7 +34,7 @@ class ImageSource(ABC):
     def set_configuration(self, config: Configuration) -> bool:
         changed = self.configuration.update(config)
         if changed:
-            self.logger.info('Configuration updated: {config}', config=self.configuration.json())
+            self.logger.info('Configuration updated: %s', self.configuration.json())
         return changed
 
     def add_subscriber(self, subscriber: ImageSourceObserver) -> None:
@@ -45,11 +45,11 @@ class ImageSource(ABC):
             await subscriber.image_source_update(self)
 
     @abstractmethod
-    def make_image(self, size) -> Image:
+    async def make_image(self, size) -> Image:
         pass
 
     async def get_image(self, size, refresh: bool = False) -> Image:
         if refresh or self.cached_image is None or self.cached_image.size != size:
-            self.cached_image = self.make_image(size)
+            self.cached_image = await self.make_image(size)
             await self.notify()
         return self.cached_image

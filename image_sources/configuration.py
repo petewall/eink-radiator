@@ -15,24 +15,21 @@ def new_color_configuration_field(value: Color) -> ConfigurationField:
 def new_text_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='text', value=value)
 
+def new_hidden_configuration_field(value: str) -> ConfigurationField:
+    return ConfigurationField(type='hidden', value=value)
+
 def new_textarea_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='textarea', value=value)
 
 #pylint: disable=too-few-public-methods
 class Configuration(BaseModel):
-    id: Optional[int]
-    name: Optional[str]
-    data: Optional[Dict[str, ConfigurationField]] = {}
+    data: Dict[str, ConfigurationField] = {}
 
     def update(self, new_configuration: Configuration) -> bool:
         changed = False
-        if self.name != new_configuration.name:
-            self.name = new_configuration.name
-            changed = True
-
-        for key in self.data:
-            if self.data[key].value != new_configuration.data[key].value:
-                self.data[key].value = new_configuration.data[key].value
+        for key, config_field in self.data.items():
+            if config_field.value != new_configuration.data[key].value:
+                config_field.value = new_configuration.data[key].value
                 changed = True
 
         return changed
