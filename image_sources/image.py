@@ -1,13 +1,11 @@
-from color import Color
 from enum import Enum, auto
-from image_sources.configuration import ConfigurationField, new_color_configuration_field, new_text_configuration_field
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 import urllib.request
 from PIL import Image, UnidentifiedImageError
-
+from color import Color
+from image_sources.configuration import ConfigurationField, new_color_configuration_field, new_text_configuration_field
 from image_sources.image_source import ImageSource
-from image_sources.blank import White
 
 
 class ImageScale(Enum):
@@ -21,46 +19,43 @@ class ImageScale(Enum):
 
 
 class ImageContent(ImageSource):
-    image: Image = None
-    white_background = White()
-
     def __init__(self, name: str = 'New Image Source', background_color: Color = Color.WHITE):
         super().__init__(name)
         self.configuration.data['scale'] = ConfigurationField(type='select', value=ImageScale.SCALE.name, options=ImageScale.all_types())
         self.configuration.data['url'] = new_text_configuration_field('url')
         self.configuration.data['background_color'] = new_color_configuration_field(background_color)
 
-    def set_image_url(self, url):
-        self.image = None
-        self.image_error = None
-        self.image_url = url
+    def load_image(self):
+        # TODO: load the raw image and cache.
+        # Re-load only if the url changes
+        # if only the scale or background changes, don't re-fetch the image
+
+        url = self.configuration.data['url'].data
+        if url is None:
+            raise ValueError('Image URL is required')
 
         protocol = urlparse(url).scheme
         if protocol in ('http', 'https'):
             try:
                 with urllib.request.urlopen(self.image_url) as image_data:
-                    self.image = Image.open(image_data)
+                    return Image.open(image_data)
             except HTTPError:
-                self.image_error = 'Failed to fetch image'
+                raise ValueError('Failed to fetch image')
             except UnidentifiedImageError:
-                self.image_error = 'URL is not an image'
+                raise ValueError('URL is not an image')
             except URLError:
-                self.image_error = 'Bad URL'
+                raise ValueError('Bad URL')
         else:
-            self.image_error = 'URL must use http(s)'
-
+            raise ValueError(f'Unsupported protocol ({protocol})')
 
     async def make_image(self, size):
-        if self.image_url is None:
-            raise ValueError('Image URL is required')
+        image = self.load_image()
 
-        if self.image is None:
-            raise ValueError(self.image_error)
-
-        if self.scale == ImageScale.SCALE:
+        scale = ImageScale(self.configuration.data['scale'].data)
+        if scale == ImageScale.SCALE:
             return self.image.resize(size)
 
-        if self.scale == ImageScale.CONTAIN:
+        if scale == ImageScale.CONTAIN:
             scaled = self.image.copy()
             scaled.thumbnail(size)
             image = self.image.resize(size)
@@ -72,7 +67,7 @@ class ImageContent(ImageSource):
 
             return image
 
-        if self.scale == ImageScale.COVER:
+        if scale == ImageScale.COVER:
             scale_factor = max(
                 size[0] / self.image.size[0],
                 size[1] / self.image.size[1]
