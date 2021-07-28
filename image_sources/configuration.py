@@ -28,7 +28,7 @@ class Configuration(BaseModel):
     def update(self, new_configuration: Configuration) -> bool:
         changed = False
         for key, config_field in self.data.items():
-            if config_field.value != new_configuration.data[key].value:
+            if key in new_configuration.data and config_field.value != new_configuration.data[key].value:
                 config_field.value = new_configuration.data[key].value
                 changed = True
 

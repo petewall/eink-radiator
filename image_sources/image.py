@@ -1,4 +1,6 @@
+from color import Color
 from enum import Enum, auto
+from image_sources.configuration import ConfigurationField, new_color_configuration_field, new_text_configuration_field
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 import urllib.request
@@ -19,24 +21,14 @@ class ImageScale(Enum):
 
 
 class ImageContent(ImageSource):
-    scale = ImageScale.SCALE
-    image = None
-    image_url = None
-    image_error = None
+    image: Image = None
     white_background = White()
 
-    def get_configuration(self):
-        return {
-            **super().get_configuration(),
-            **{
-                'url': self.image_url,
-                'scale': {
-                    'type': 'select',
-                    'value': self.scale.name,
-                    'options': ImageScale.all_types()
-                }
-            }
-        }
+    def __init__(self, name: str = 'New Image Source', background_color: Color = Color.WHITE):
+        super().__init__(name)
+        self.configuration.data['scale'] = ConfigurationField(type='select', value=ImageScale.SCALE.name, options=ImageScale.all_types())
+        self.configuration.data['url'] = new_text_configuration_field('url')
+        self.configuration.data['background_color'] = new_color_configuration_field(background_color)
 
     def set_image_url(self, url):
         self.image = None

@@ -6,6 +6,7 @@ from color import Color
 from image_sources.blank import BlankContent
 from image_sources.configuration import Configuration, new_color_configuration_field
 from pillow_image_matcher import the_same_image_as
+from test_helpers import async_test
 
 
 class TestBlankContent(unittest.TestCase):
@@ -13,6 +14,7 @@ class TestBlankContent(unittest.TestCase):
         os.path.dirname(os.path.realpath(__file__)), '..', 'test_fixtures'
     )
 
+    @async_test
     async def test_get_image(self):
         image_source = BlankContent(name='White', color=Color.WHITE)
         image = await image_source.get_image((400, 300))
@@ -21,6 +23,7 @@ class TestBlankContent(unittest.TestCase):
         assert_that(image, is_(the_same_image_as(expected_image)))
         expected_image.close()
 
+    @async_test
     async def test_get_configuration(self):
         image_source = BlankContent(name='blank test', color=Color.WHITE)
 

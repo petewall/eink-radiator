@@ -5,15 +5,7 @@ from PIL import Image
 from hamcrest import assert_that, equal_to, is_, none
 from image_sources.blank import Red
 from image_sources.image_source import ImageSource
-
-def async_test(coroutine):
-    def wrapper(*args, **kwargs):
-        loop = asyncio.new_event_loop()
-        try:
-            return loop.run_until_complete(coroutine(*args, **kwargs))
-        finally:
-            loop.close()
-    return wrapper
+from test_helpers import async_test
 
 class DummyImageSource(ImageSource):
     test_image: Image = None
