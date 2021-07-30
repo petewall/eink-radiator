@@ -3,7 +3,9 @@ import asyncio
 import logging
 import os
 from typing import List
+from color import Color
 from image_sources.blank import White, Black, Red
+from image_sources.image import ImageContent, ImageScale
 from image_sources.image_source import ImageSource
 from image_sources.text import TextContent
 from screen import Screen
@@ -25,7 +27,13 @@ image_sources: List[ImageSource] = [
     White(),
     Black(),
     Red(),
-    TextContent('Family', 'Pete\nBetsy\nGrace\nZach')
+    TextContent('Family', 'Pete\nBetsy\nGrace\nZach'),
+    ImageContent(
+        name='The Boys',
+        url='https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz',
+        scale=ImageScale.CONTAIN,
+        background_color=Color.BLACK
+    )
 ]
 ui = UI(slideshow, screen)
 

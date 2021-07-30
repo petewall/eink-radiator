@@ -1,5 +1,4 @@
 #pylint: disable=no-self-use
-import asyncio
 import unittest
 from PIL import Image
 from hamcrest import assert_that, equal_to, is_, none

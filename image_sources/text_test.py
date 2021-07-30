@@ -1,10 +1,10 @@
 # pylint: disable=no-self-use
-from color import Color
-from image_sources.configuration import Configuration, new_color_configuration_field, new_text_configuration_field, new_textarea_configuration_field
 import os
 import unittest
-from hamcrest import assert_that, equal_to, has_entries, has_key, is_, not_
+from hamcrest import assert_that, equal_to, has_key, is_, not_
 from PIL import Image
+from color import Color
+from image_sources.configuration import Configuration, new_color_configuration_field, new_text_configuration_field, new_textarea_configuration_field
 from image_sources.text import TextContent
 from pillow_image_matcher import the_same_image_as
 from test_helpers import async_test
