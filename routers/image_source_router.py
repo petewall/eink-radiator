@@ -34,7 +34,7 @@ class ImageSourceRouter(APIRouter):
             changed = image_source.set_configuration(configuration)
             if changed:
                 await image_source.get_image(self.screen.size, refresh=True)
-                return Response(status_code=HTTPStatus.OK)
+                return image_source.get_configuration()
             else:
                 return Response(status_code=HTTPStatus.NO_CONTENT)
 

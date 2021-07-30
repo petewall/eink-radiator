@@ -78,7 +78,7 @@
            class="image_source slideshow item {% if loop.index0 == slideshow.index %}selected{%endif%}">
         <img class="ui bordered thumbnail image" src="/image_sources/{{ image_source.id}}/image.png" />
         <div class="content">
-          {{ image_source.name }}
+          {{ image_source.configuration.data.name.value }}
         </div>
       </div>
 {% endfor %}

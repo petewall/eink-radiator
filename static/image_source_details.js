@@ -65,15 +65,11 @@ function showImageSourceDetails() {
 }
 
 function prepareData(array) {
-  let result = {
+  const result = {
     data: {}
   }
   for (const field of array) {
-    if (field.name == 'id' || field.name == 'name') {
-      result[field.name] = field.value
-    } else {
-      result.data[field.name] = { value: field.value }
-    }
+    result.data[field.name] = { value: field.value }
   }
   return result
 }
@@ -88,14 +84,20 @@ function saveImageSourceDetails() {
   toggleImageSourceDetailsLoader(true)
 
   let data = prepareData($('#image_source_details form').serializeArray())
+  const image_source_id = data.data.id.value
   $.ajax({
     type: 'POST',
-    url: `/image_sources/${data.id}/configuration.json`,
+    url: `/image_sources/${image_source_id}/configuration.json`,
     contentType: 'application/json',
     data: JSON.stringify(data),
+    error: (xhr, status, error) => {
+      console.error(`failed to save configuration: ${status}: ${error}`)
+    },
     success: (result, status) => {
       if (status == 'nocontent') {
         toggleImageSourceDetailsLoader(false)
+      } else if (status == 'success') {
+        $(`#image_source_${image_source_id} .content`).text(result.data.name.value)
       }
     },
     dataType: 'json'
