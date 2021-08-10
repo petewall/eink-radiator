@@ -1,6 +1,7 @@
 # pylint: disable=global-statement
 import asyncio
 import logging
+from routers.slideshow_router import SlideshowRouter
 from typing import Any, List
 
 from starlette.endpoints import WebSocketEndpoint
@@ -12,8 +13,8 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 
 import image_sources
-from routers.screen_router import ScreenRouter
 from routers.image_source_router import ImageSourceRouter
+from routers.screen_router import ScreenRouter
 from screen import Screen, ScreenObserver
 from slideshow import Slideshow, SlideshowObserver
 
@@ -51,6 +52,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         self.slideshow.add_subscriber(self)
         self.include_router(ImageSourceRouter(self.screen, self.slideshow))
         self.include_router(ScreenRouter(self.screen))
+        self.include_router(SlideshowRouter(slideshow))
         self.router.add_websocket_route("/ws", ClientSocketHandler, name="ws")
 
         @self.get('/', response_class=HTMLResponse)

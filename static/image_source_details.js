@@ -112,3 +112,8 @@ function handleImageSourceEvent(data) {
   $('#image_source_details img.screen').attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
   toggleImageSourceDetailsLoader(false)
 }
+
+$(document).ready(() => {
+  $('.slideshow.image_source.item').click(showImageSourceDetails)
+  $('#image_source_details .save.button').click(saveImageSourceDetails)
+})

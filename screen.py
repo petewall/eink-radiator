@@ -71,10 +71,10 @@ class Screen(SlideshowObserver):
                 image = quantize(image, palette)
 
             self.image = image
-            self.show_image()
-            await asyncio.sleep(1)
+            await self.show_image()
             self.busy = False
             await self.notify()
 
-    def show_image(self):
-        pass
+    async def show_image(self):
+        await asyncio.sleep(1)
+        # pass

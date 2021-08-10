@@ -34,3 +34,7 @@ function openSocketConnection() {
     }
   }
 }
+
+$(document).ready(() => {
+  openSocketConnection()
+})

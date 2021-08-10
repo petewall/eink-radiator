@@ -24,9 +24,7 @@ class Slideshow(ImageSourceObserver):
     sleep_handle: asyncio.Task = None
     async def loop(self) -> None:
         while self.running:
-            self.index = (self.index + 1) % len(self.image_sources)
-            self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name)
-            await self.notify()
+            await self.next()
 
             self.sleep_handle = asyncio.create_task(asyncio.sleep(self.interval))
             try:
@@ -34,6 +32,18 @@ class Slideshow(ImageSourceObserver):
             except asyncio.CancelledError:
                 pass
             self.sleep_handle = None
+
+    async def next(self) -> None:
+        self.index = (self.index + 1) % len(self.image_sources)
+        self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name)
+        await self.notify()
+
+    async def previous(self) -> None:
+        self.index = self.index - 1
+        if self.index < 0:
+            self.index = len(self.image_sources) - 1
+        self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name)
+        await self.notify()
 
     def stop(self) -> None:
         self.running = False

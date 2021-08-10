@@ -70,7 +70,19 @@
   </div>
 
   <div class="ui main container">
-    <h2>Active Slides</h2>
+    <h2 class="ui header">Active Slides</h2>
+
+    <div class="ui controls content">
+      <button class="ui icon previous button">
+        <i class="step backward icon"></i>
+      </button>
+      <button class="ui disabled icon button">
+        <i class="pause icon"></i>
+      </button>
+      <button class="ui icon next button">
+        <i class="step forward icon"></i>
+      </button>
+    </div>
 
     <div class="ui middle aligned horizontal divided selection list">
 {% for image_source in slideshow.image_sources %}
@@ -95,12 +107,5 @@
   <script src="/static/screen.js"></script>
   <script src="/static/slideshow.js"></script>
   <script src="/static/socket.js"></script>
-  <script>
-    $(document).ready(() => {
-      $('.slideshow.image_source.item').click(showImageSourceDetails)
-      $('#image_source_details .save.button').click(saveImageSourceDetails)
-      openSocketConnection()
-    })
-  </script>
 </body>
 </html>

@@ -7,7 +7,6 @@ class ScreenRouter(APIRouter):
         super().__init__()
         self.screen = screen
 
-        @self.route('/screen/image.png', methods=['GET'])
+        @self.get('/screen/image.png')
         def serve_screen_image(request: Request):
             return image_response(self.screen.image)
-
