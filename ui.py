@@ -1,7 +1,6 @@
 # pylint: disable=global-statement
 import asyncio
 import logging
-from routers.slideshow_router import SlideshowRouter
 from typing import Any, List
 
 from starlette.endpoints import WebSocketEndpoint
@@ -15,6 +14,7 @@ import uvicorn
 import image_sources
 from routers.image_source_router import ImageSourceRouter
 from routers.screen_router import ScreenRouter
+from routers.slideshow_router import SlideshowRouter
 from screen import Screen, ScreenObserver
 from slideshow import Slideshow, SlideshowObserver
 
