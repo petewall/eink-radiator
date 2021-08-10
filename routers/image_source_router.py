@@ -17,9 +17,18 @@ class ImageSourceRouter(APIRouter):
         self.screen = screen
         self.slideshow = slideshow
 
+        @self.post('/image_sources/{image_source_id}/activate')
+        async def choose_slide(image_source_id: int):
+            index, image_source = self.find_image_source_by_id(image_source_id)
+            if image_source is None:
+                return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
+
+            await self.slideshow.activate_slide(index)
+            return Response(status_code=HTTPStatus.OK)
+
         @self.get('/image_sources/{image_source_id}/configuration.json')
         async def serve_image_source_configuration(image_source_id: int):
-            image_source = self.find_image_source_by_id(image_source_id)
+            _, image_source = self.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
@@ -27,7 +36,7 @@ class ImageSourceRouter(APIRouter):
 
         @self.post('/image_sources/{image_source_id}/configuration.json')
         async def update_image_source_configuration(image_source_id: int, configuration: Configuration):
-            image_source = self.find_image_source_by_id(image_source_id)
+            _, image_source = self.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
@@ -41,7 +50,7 @@ class ImageSourceRouter(APIRouter):
 
         @self.get('/image_sources/{image_source_id}/image.png', response_class=StreamingResponse)
         async def serve_image_source_image(image_source_id: int = None):
-            image_source = self.find_image_source_by_id(image_source_id)
+            _, image_source = self.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
@@ -49,8 +58,8 @@ class ImageSourceRouter(APIRouter):
             return image_response(image)
 
     def find_image_source_by_id(self, image_source_id: int) -> ImageSource:
-        for image_source in self.slideshow.image_sources:
+        for index, image_source in enumerate(self.slideshow.image_sources):
             if image_source.id == image_source_id:
-                return image_source
-        return None
+                return index, image_source
+        return None, None
 

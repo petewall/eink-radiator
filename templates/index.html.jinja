@@ -32,6 +32,7 @@
 </head>
 <body>
 
+  <!-- Image source details -->
   <div id="image_source_details" class="ui modal">
     <div class="image content">
       <div class="ui segment">
@@ -42,7 +43,14 @@
       </div>
       <form class="ui equal width configuration form"></form>
       <div class="actions">
-        <button class="ui primary right labeled icon save button" type="submit">Save</button>
+        <button class="ui right labeled icon show button" type="submit">
+          Show
+          <i class="window maximize outline icon"></i>
+        </button>
+        <button class="ui primary right labeled icon save button" type="submit">
+          Save
+          <i class="save icon"></i>
+        </button>
         <div class="ui positive right labeled icon done button">
           Done
           <i class="checkmark icon"></i>
@@ -51,6 +59,7 @@
     </div>
   </div>
 
+  <!-- Menu bar -->
   <div class="ui fixed inverted menu">
     <div class="ui container">
       <a href="#" class="header item">
@@ -69,6 +78,7 @@
     </div>
   </div>
 
+  <!-- Slideshow controls -->
   <div class="ui main container">
     <h2 class="ui header">Active Slides</h2>
 
@@ -84,6 +94,7 @@
       </button>
     </div>
 
+    <!-- Slides -->
     <div class="ui middle aligned horizontal divided selection list">
 {% for image_source in slideshow.image_sources %}
       <div id="image_source_{{ image_source.id}}"
@@ -96,6 +107,7 @@
 {% endfor %}
     </div>
 
+    <!-- Slides -->
     <div id="screen_content" class="ui segment">
       <div class="ui disabled dimmer">
         <div class="ui indeterminate text loader">Screen is busy</div>

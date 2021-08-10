@@ -38,6 +38,14 @@ class Slideshow(ImageSourceObserver):
         self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name)
         await self.notify()
 
+    async def activate_slide(self, index: int) -> None:
+        if index < 0 or index >= len(self.image_sources):
+            return
+
+        self.index = index
+        self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name)
+        await self.notify()
+
     async def previous(self) -> None:
         self.index = self.index - 1
         if self.index < 0:
