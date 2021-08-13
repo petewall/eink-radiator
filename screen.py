@@ -31,17 +31,13 @@ class ScreenObserver(ABC):
 
 
 class Screen(SlideshowObserver):
-    busy = False
-    image = None
-    image_source = None
-    image_size = None
-    refresh_timer = None
-    logger = None
-    subscribers: List[ScreenObserver] = []
+    logger = logging.getLogger('ui')
 
     def __init__(self, size):
+        self.busy = False
+        self.image = None
+        self.subscribers: List[ScreenObserver] = []
         self.size = size
-        self.logger = logging.getLogger('screen')
 
     def add_subscriber(self, subscriber: ScreenObserver) -> None:
         self.subscribers.append(subscriber)
@@ -77,4 +73,3 @@ class Screen(SlideshowObserver):
 
     async def show_image(self):
         await asyncio.sleep(1)
-        # pass

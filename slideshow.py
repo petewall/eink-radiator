@@ -14,14 +14,16 @@ class SlideshowObserver(ABC):
 class Slideshow(ImageSourceObserver):
     logger = logging.getLogger('slideshow')
 
-    index: int = -1  # Starting at -1 so the first time through the loop, it'll increment to 0
-    image_sources: List[ImageSource] = []
+    def __init__(self):
+        self.index: int = -1  # Starting at -1 so the first time through the loop, it'll increment to 0
+        self.image_sources: List[ImageSource] = []
 
-    interval: int = 1 * 60  # ten minutes
-    subscribers: List[SlideshowObserver] = []
+        self.interval: int = 1 * 60  # ten minutes
+        self.subscribers: List[SlideshowObserver] = []
 
-    running = True
-    sleep_handle: asyncio.Task = None
+        self.running = True
+        self.sleep_handle: asyncio.Task = None
+
     async def loop(self) -> None:
         while self.running:
             await self.next()

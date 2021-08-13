@@ -12,21 +12,18 @@ class ImageSourceObserver(ABC):
         pass
 
 class ImageSource(ABC):
-    id: int
-    name: str
-
-    cached_image = None
-    configuration: Configuration
-    subscribers: List[ImageSourceObserver] = []
-
     def __init__(self, name: str = 'New Image Source'):
-        self.id = id(self)
-        self.name = name
+        self.id: int = id(self)
+        self.name: str = name
         self.logger = logging.getLogger(f'image_source_%{self.id}')
 
-        self.configuration = Configuration()
+        self.cached_image: Image = None
+
+        self.configuration: Configuration = Configuration()
         self.configuration.data['id'] = new_hidden_configuration_field(id(self))
         self.configuration.data['name'] = new_text_configuration_field(self.name)
+
+        self.subscribers: List[ImageSourceObserver] = []
 
     def get_configuration(self) -> Configuration:
         return self.configuration

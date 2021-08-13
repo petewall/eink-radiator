@@ -24,14 +24,13 @@ def new_scale_configuration_field(value: ImageScale) -> ConfigurationField:
 
 
 class ImageContent(ImageSource):
-    original_image: Image = None
-    loaded_image_url: str = ''
-
     def __init__(self, name: str = 'New Image Source', url: str = '', scale: ImageScale = ImageScale.SCALE, background_color: Color = Color.WHITE):
         super().__init__(name)
         self.configuration.data['scale'] = new_scale_configuration_field(scale)
         self.configuration.data['url'] = new_text_configuration_field(url)
         self.configuration.data['background_color'] = new_color_configuration_field(background_color)
+        self.loaded_image_url: str = ''
+        self.original_image: Image = None
 
     def load_image(self) -> Image:
         url = self.configuration.data['url'].value
