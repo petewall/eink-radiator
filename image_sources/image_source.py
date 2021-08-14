@@ -12,16 +12,13 @@ class ImageSourceObserver(ABC):
         pass
 
 class ImageSource(ABC):
-    def __init__(self, name: str = 'New Image Source'):
+    def __init__(self, config: Configuration):
         self.id: int = id(self)
-        self.name: str = name
         self.logger = logging.getLogger(f'image_source_%{self.id}')
 
         self.cached_image: Image = None
-
-        self.configuration: Configuration = Configuration()
+        self.configuration = config
         self.configuration.data['id'] = new_hidden_configuration_field(id(self))
-        self.configuration.data['name'] = new_text_configuration_field(self.name)
 
         self.subscribers: List[ImageSourceObserver] = []
 
@@ -33,6 +30,9 @@ class ImageSource(ABC):
         if changed:
             self.logger.info('Configuration updated: %s', self.configuration.json())
         return changed
+
+    def name(self) -> str:
+        return self.configuration.data['name'].value
 
     def add_subscriber(self, subscriber: ImageSourceObserver) -> None:
         self.subscribers.append(subscriber)

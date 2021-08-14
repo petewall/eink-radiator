@@ -1,13 +1,16 @@
 from PIL import Image
-from image_sources.configuration import new_color_configuration_field
+from image_sources.configuration import Configuration, new_color_configuration_field, new_text_configuration_field
 from image_sources.image_source import ImageSource
 from color import Color
 
 
 class BlankContent(ImageSource):
-    def __init__(self, name: str, color: Color):
-        super().__init__(name)
-        self.configuration.data['color'] = new_color_configuration_field(color)
+    @classmethod
+    def configuration(cls, name: str, color: Color) -> Configuration:
+        return Configuration(type=cls.__name__, data={
+            'name': new_text_configuration_field(name),
+            'color': new_color_configuration_field(color)
+        })
 
     async def make_image(self, size) -> Image:
         color = Color[self.configuration.data['color'].value]
@@ -18,14 +21,14 @@ class BlankContent(ImageSource):
 
 class White(BlankContent):
     def __init__(self):
-        super().__init__('White', Color.WHITE)
+        super().__init__(BlankContent.configuration('White', Color.WHITE))
 
 
 class Black(BlankContent):
     def __init__(self):
-        super().__init__('Black', Color.BLACK)
+        super().__init__(BlankContent.configuration('Black', Color.BLACK))
 
 
 class Red(BlankContent):
     def __init__(self):
-        super().__init__('Red', Color.RED)
+        super().__init__(BlankContent.configuration('Red', Color.RED))

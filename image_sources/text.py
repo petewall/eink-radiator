@@ -1,20 +1,28 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 from color import Color
-from image_sources.configuration import new_color_configuration_field, new_textarea_configuration_field
+from image_sources.configuration import Configuration, new_color_configuration_field, new_text_configuration_field, new_textarea_configuration_field
 from image_sources.image_source import ImageSource
 
 FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'RobotoSlab-Regular.ttf')
 
+def new_text_content_configuration(name: str = 'New Text Image Source', text: str = 'Lorem Ipsum', foreground_color: Color = Color.BLACK, background_color: Color = Color.WHITE) -> Configuration:
+    config = Configuration(name=name, type='text_content')
+    config.data['text'] = new_textarea_configuration_field(text)
+    config.data['foreground_color'] = new_color_configuration_field(foreground_color)
+    config.data['background_color'] = new_color_configuration_field(background_color)
 
 class TextContent(ImageSource):
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
-    def __init__(self, name: str = 'New Text Image Source', text: str = 'Lorem Ipsum', foreground_color: Color = Color.BLACK, background_color: Color = Color.WHITE):
-        super().__init__(name)
-        self.configuration.data['text'] = new_textarea_configuration_field(text)
-        self.configuration.data['foreground_color'] = new_color_configuration_field(foreground_color)
-        self.configuration.data['background_color'] = new_color_configuration_field(background_color)
+    @classmethod
+    def configuration(cls, name: str = 'New Text Image Source', text: str = 'Lorem Ipsum', foreground_color: Color = Color.BLACK, background_color: Color = Color.WHITE) -> Configuration:
+        return Configuration(type=cls.__name__, data={
+            'name': new_text_configuration_field(name),
+            'text': new_textarea_configuration_field(text),
+            'foreground_color': new_color_configuration_field(foreground_color),
+            'background_color': new_color_configuration_field(background_color)
+        })
 
     async def make_image(self, size) -> Image:
         text = self.configuration.data['text'].value

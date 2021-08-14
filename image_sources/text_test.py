@@ -17,7 +17,11 @@ class TestTextContent(unittest.TestCase):
 
     @async_test
     async def test_get_image(self):
-        image_source = TextContent(text='It is now safe to turn off your computer')
+        image_source = TextContent(
+            TextContent.configuration(
+                text='It is now safe to turn off your computer'
+            )
+        )
         image = await image_source.get_image((400, 300))
 
         if os.getenv('SAVE_TEST_FIXTURES') == 'true':
@@ -28,7 +32,7 @@ class TestTextContent(unittest.TestCase):
 
     @async_test
     async def test_image_with_different_background(self):
-        image_source = TextContent()
+        image_source = TextContent(TextContent.configuration())
         changed = image_source.set_configuration(Configuration(data={
             'name': new_text_configuration_field('Test Image'),
             'text': new_textarea_configuration_field('Shields up! Rrrrred alert!'),
@@ -50,9 +54,11 @@ class TestTextContent(unittest.TestCase):
     @async_test
     async def test_multiline_string(self):
         image_source = TextContent(
-            text='Docker engineers\ndo it in a container',
-            foreground_color=Color.WHITE,
-            background_color=Color.BLACK
+            TextContent.configuration(
+                text='Docker engineers\ndo it in a container',
+                foreground_color=Color.WHITE,
+                background_color=Color.BLACK
+            )
         )
 
         image = await image_source.get_image((400, 300))

@@ -23,6 +23,7 @@ def new_textarea_configuration_field(value: str) -> ConfigurationField:
 
 #pylint: disable=too-few-public-methods
 class Configuration(BaseModel):
+    type: Optional[str]
     data: Dict[str, ConfigurationField] = {}
 
     def update(self, new_configuration: Configuration) -> bool:

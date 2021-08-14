@@ -5,7 +5,7 @@ import urllib.request
 from PIL import Image, UnidentifiedImageError
 from color import Color
 from image_sources.blank import BlankContent
-from image_sources.configuration import ConfigurationField, new_color_configuration_field, new_text_configuration_field
+from image_sources.configuration import Configuration, ConfigurationField, new_color_configuration_field, new_text_configuration_field
 from image_sources.image_source import ImageSource
 
 
@@ -24,13 +24,17 @@ def new_scale_configuration_field(value: ImageScale) -> ConfigurationField:
 
 
 class ImageContent(ImageSource):
-    def __init__(self, name: str = 'New Image Source', url: str = '', scale: ImageScale = ImageScale.SCALE, background_color: Color = Color.WHITE):
-        super().__init__(name)
-        self.configuration.data['scale'] = new_scale_configuration_field(scale)
-        self.configuration.data['url'] = new_text_configuration_field(url)
-        self.configuration.data['background_color'] = new_color_configuration_field(background_color)
-        self.loaded_image_url: str = ''
-        self.original_image: Image = None
+    loaded_image_url: str = ''
+    original_image: Image = None
+
+    @classmethod
+    def configuration(cls, name: str = 'New Image Source', url: str = '', scale: ImageScale = ImageScale.SCALE, background_color: Color = Color.WHITE):
+        return Configuration(type=cls.__name__, data={
+            'name': new_text_configuration_field(name),
+            'scale': new_scale_configuration_field(scale),
+            'url': new_text_configuration_field(url),
+            'background_color': new_color_configuration_field(background_color),
+        })
 
     def load_image(self) -> Image:
         url = self.configuration.data['url'].value
@@ -62,7 +66,12 @@ class ImageContent(ImageSource):
             raise ValueError(f'Unsupported protocol ({parsed_url.scheme})')
 
     async def make_background(self, size) -> Image:
-        image_source = BlankContent(name='background', color=Color[self.configuration.data['background_color'].value])
+        image_source = BlankContent(
+            BlankContent.configuration(
+                name='background',
+                color=Color[self.configuration.data['background_color'].value]
+            )
+        )
         return await image_source.make_image(size)
 
     def make_scaled_image(self, size) -> Image:

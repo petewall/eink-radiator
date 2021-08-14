@@ -1,4 +1,5 @@
 #pylint: disable=no-self-use
+import json
 import unittest
 from hamcrest import assert_that, equal_to, is_
 from color import Color
@@ -37,3 +38,24 @@ class TestConfiguration(unittest.TestCase):
         changed = config.update(new_config)
         assert_that(changed, is_(equal_to(True)))
         assert_that(config.data['name'].value, is_(equal_to('peter wall')))
+
+    def test_serialization(self):
+        config = Configuration(data={
+            'name': new_text_configuration_field('pete')
+        })
+
+        serialized = config.json(exclude_none=True)
+        assert_that(serialized, is_(equal_to('{"data": {"name": {"type": "text", "value": "pete"}}}')))
+
+    def test_deserialization(self):
+        serialized = json.dumps({
+            'data': {
+                'name': {
+                    'type': 'text',
+                    'value': 'pete'
+                }
+            }
+        })
+
+        config = Configuration.parse_raw(serialized)
+        assert_that(config.data['name'].value, is_(equal_to('pete')))

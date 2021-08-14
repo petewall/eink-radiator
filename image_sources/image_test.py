@@ -27,7 +27,7 @@ class TestImageContent(unittest.TestCase):
         self.mock_image.close()
 
     def test_load_image_missing_url(self, urlopen):
-        image_source = ImageContent()
+        image_source = ImageContent(ImageContent.configuration())
         assert_that(
             calling(image_source.load_image),
             raises(ValueError, "Image URL is required")
@@ -36,8 +36,10 @@ class TestImageContent(unittest.TestCase):
 
     def test_load_image_only_http_and_https_protocols_are_allowed(self, _):
         image_source = ImageContent(
-            name='image test',
-            url='ftp://myserver.com/secret_image.png'
+            ImageContent.configuration(
+                name='image test',
+                url='ftp://myserver.com/secret_image.png'
+            )
         )
         assert_that(
             calling(image_source.load_image),
@@ -47,8 +49,10 @@ class TestImageContent(unittest.TestCase):
     def test_load_image_bad_urls_are_handled(self, urlopen):
         urlopen.side_effect = URLError('that url\'s bad, yo')
         image_source = ImageContent(
-            name='image test',
-            url='http://fk4248q#$%^'
+            ImageContent.configuration(
+                name='image test',
+                url='http://fk4248q#$%^'
+            )
         )
         assert_that(
             calling(image_source.load_image),
@@ -58,8 +62,10 @@ class TestImageContent(unittest.TestCase):
     def test_load_image_bad_responses_are_handled(self, urlopen):
         urlopen.side_effect = HTTPError('https://this-always-500s', 500, 'told you', {}, None)
         image_source = ImageContent(
-            name='image test',
-            url='https://this-always-500s'
+            ImageContent.configuration(
+                name='image test',
+                url='https://this-always-500s'
+            )
         )
         assert_that(
             calling(image_source.load_image),
@@ -69,8 +75,10 @@ class TestImageContent(unittest.TestCase):
     def test_load_image_responses_that_are_not_images_are_handled(self, urlopen):
         urlopen.return_value = BytesIO(b'this is not an image')
         image_source = ImageContent(
-            name='image test',
-            url='https://this-always-500s'
+            ImageContent.configuration(
+                name='image test',
+                url='https://this-always-500s'
+            )
         )
         assert_that(
             calling(image_source.load_image),
@@ -79,8 +87,10 @@ class TestImageContent(unittest.TestCase):
 
     def test_load_image_from_file(self, urlopen):
         image_source = ImageContent(
-            name='image test',
-            url='file://' + self.mock_image_path
+            ImageContent.configuration(
+                name='image test',
+                url='file://' + self.mock_image_path
+            )
         )
 
         image = image_source.load_image()
@@ -95,8 +105,10 @@ class TestImageContent(unittest.TestCase):
         urlopen.return_value = self.mock_image
 
         image_source = ImageContent(
-            name='image test',
-            url='http://www.example.com/images/InkywHAT-400x300.png'
+            ImageContent.configuration(
+                name='image test',
+                url='http://www.example.com/images/InkywHAT-400x300.png'
+            )
         )
 
         image = image_source.load_image()
@@ -111,8 +123,10 @@ class TestImageContent(unittest.TestCase):
         urlopen.return_value = self.mock_image
 
         image_source = ImageContent(
-            name='image test',
-            url='http://www.example.com/images/InkywHAT-400x300.png'
+            ImageContent.configuration(
+                name='image test',
+                url='http://www.example.com/images/InkywHAT-400x300.png'
+            )
         )
 
         image = await image_source.get_image((400, 300))
@@ -127,8 +141,10 @@ class TestImageContent(unittest.TestCase):
         urlopen.return_value = self.mock_image
 
         image_source = ImageContent(
-            name='image test',
-            url='http://www.example.com/images/InkywHAT-400x300.png',
+            ImageContent.configuration(
+                name='image test',
+                url='http://www.example.com/images/InkywHAT-400x300.png',
+            )
         )
         image = await image_source.get_image((200, 200))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
@@ -149,9 +165,11 @@ class TestImageContent(unittest.TestCase):
         urlopen.return_value = self.mock_image
 
         image_source = ImageContent(
-            name='image test',
-            url='http://www.example.com/images/InkywHAT-400x300.png',
-            scale=ImageScale.CONTAIN
+            ImageContent.configuration(
+                name='image test',
+                url='http://www.example.com/images/InkywHAT-400x300.png',
+                scale=ImageScale.CONTAIN
+            )
         )
         image = await image_source.get_image((400, 200))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
@@ -183,9 +201,11 @@ class TestImageContent(unittest.TestCase):
         urlopen.return_value = self.mock_image
 
         image_source = ImageContent(
-            name='image test',
-            url='http://www.example.com/images/InkywHAT-400x300.png',
-            scale=ImageScale.COVER
+            ImageContent.configuration(
+                name='image test',
+                url='http://www.example.com/images/InkywHAT-400x300.png',
+                scale=ImageScale.COVER
+            )
         )
         image = await image_source.get_image((200, 300))
         urlopen.assert_called_with('http://www.example.com/images/InkywHAT-400x300.png')
