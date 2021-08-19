@@ -1,3 +1,4 @@
+# pylint: disable=method-hidden
 import os
 from PIL import Image, ImageDraw, ImageFont
 from color import Color
@@ -6,11 +7,14 @@ from image_sources.image_source import ImageSource
 
 FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'RobotoSlab-Regular.ttf')
 
-def new_text_content_configuration(name: str = 'New Text Image Source', text: str = 'Lorem Ipsum', foreground_color: Color = Color.BLACK, background_color: Color = Color.WHITE) -> Configuration:
-    config = Configuration(name=name, type='text_content')
-    config.data['text'] = new_textarea_configuration_field(text)
-    config.data['foreground_color'] = new_color_configuration_field(foreground_color)
-    config.data['background_color'] = new_color_configuration_field(background_color)
+async def make_error_image(message: str, size) -> Image:
+    source = TextContent(TextContent.configuration(
+        name='error message',
+        text=message,
+        foreground_color=Color.RED,
+        background_color=Color.WHITE
+    ))
+    return await source.make_image(size)
 
 class TextContent(ImageSource):
     font = ImageFont.truetype(font=FONT_PATH, size=30)

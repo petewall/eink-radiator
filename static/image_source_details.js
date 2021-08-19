@@ -56,6 +56,7 @@ function showImageSourceDetails() {
   $.get(`/image_sources/${imageSourceId}/configuration.json`, (configuration) => {
     $('#image_source_details .configuration.form').empty()
     $('#image_source_details .configuration.form').append(
+      buildHiddenField('id', {value: imageSourceId}),
       buildConfigurationForm(configuration)
     )
     
@@ -112,10 +113,14 @@ function showImageSource() {
 function handleImageSourceEvent(data) {
   const id = data.image_source_id
   $(`#image_source_${id} img`).attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
+  
 
   // TODO: Only update the details if the updated image_source is the one open
   $('#image_source_details img.screen').attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
-  toggleImageSourceDetailsLoader(false)
+  $('#image_source_details img.screen').off('load')
+  $('#image_source_details img.screen').on('load', () => {
+    toggleImageSourceDetailsLoader(false)
+  })
 }
 
 $(document).ready(() => {

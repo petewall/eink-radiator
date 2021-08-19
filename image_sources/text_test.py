@@ -33,7 +33,7 @@ class TestTextContent(unittest.TestCase):
     @async_test
     async def test_image_with_different_background(self):
         image_source = TextContent(TextContent.configuration())
-        changed = image_source.set_configuration(Configuration(data={
+        changed = await image_source.set_configuration(Configuration(data={
             'name': new_text_configuration_field('Test Image'),
             'text': new_textarea_configuration_field('Shields up! Rrrrred alert!'),
             'foreground_color': new_color_configuration_field(Color.RED),

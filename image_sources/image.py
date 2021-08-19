@@ -1,3 +1,4 @@
+# pylint: disable=method-hidden
 from enum import Enum, auto
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
@@ -36,6 +37,12 @@ class ImageContent(ImageSource):
             'background_color': new_color_configuration_field(background_color),
         })
 
+    async def set_configuration(self, config: Configuration) -> bool:
+        changed = await super().set_configuration(config)
+        if changed and self.configuration.data['url'].value != self.loaded_image_url:
+            self.loaded_image_url = ''
+        return changed
+
     def load_image(self) -> Image:
         url = self.configuration.data['url'].value
         if url is None or url == '':
@@ -43,18 +50,19 @@ class ImageContent(ImageSource):
 
         if url == self.loaded_image_url:
             return self.original_image
-        self.loaded_image_url = url
 
         parsed_url = urlparse(url)
         if parsed_url.scheme == 'file':
             self.original_image = Image.open(parsed_url.path)
             self.original_image.load()
+            self.loaded_image_url = url
             return self.original_image
         if parsed_url.scheme in ('http', 'https'):
             try:
                 with urllib.request.urlopen(url) as image_data:
                     self.original_image = Image.open(image_data)
                     self.original_image.load()
+                    self.loaded_image_url = url
                     return self.original_image
             except HTTPError as http_error:
                 raise ValueError('Failed to fetch image') from http_error

@@ -57,7 +57,7 @@ class Screen(SlideshowObserver):
             await self.notify()
 
             if image.mode == 'RGBA':
-                background = Image.new("RGB", image.size, 'white')
+                background = Image.new('RGB', image.size, 'white')
                 background.paste(image, mask=image.split()[3])
                 image = background
 

@@ -1,3 +1,4 @@
+# pylint: disable=method-hidden
 from PIL import Image
 from image_sources.configuration import Configuration, new_color_configuration_field, new_text_configuration_field
 from image_sources.image_source import ImageSource

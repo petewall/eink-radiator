@@ -3,12 +3,17 @@ import unittest
 from PIL import Image
 from hamcrest import assert_that, equal_to, is_, none
 from image_sources.blank import Red
-from image_sources.configuration import Configuration
+from image_sources.configuration import Configuration, new_text_configuration_field
 from image_sources.image_source import ImageSource, ImageSourceObserver
 from test_helpers import async_test
 
 class DummyImageSource(ImageSource):
     test_image: Image = None
+
+    def __init__(self):
+        super().__init__(Configuration(data={
+            'name': new_text_configuration_field('dummy image source')
+        }))
 
     async def make_image(self, size):
         assert_that(size, is_(equal_to((400, 300))))
@@ -20,14 +25,9 @@ class TestImageSource(unittest.TestCase, ImageSourceObserver):
     def tearDown(self):
         self.image_source_updated = None
 
-    def test_configuration(self):
-        image_source = DummyImageSource(Configuration())
-        config = image_source.configuration
-        assert_that(config.data['id'].type, is_(equal_to('hidden')))
-
     @async_test
     async def test_get_image_returns_the_same(self):
-        image_source = DummyImageSource(Configuration())
+        image_source = DummyImageSource()
         assert_that(image_source.cached_image, is_(none()))
 
         image = await image_source.get_image((400, 300))
@@ -41,9 +41,11 @@ class TestImageSource(unittest.TestCase, ImageSourceObserver):
 
     @async_test
     async def test_subscriptions(self):
-        image_source = DummyImageSource(Configuration())
+        image_source = DummyImageSource()
         image_source.add_subscriber(self)
 
         assert_that(self.image_source_updated, is_(none()))
-        await image_source.get_image((400, 300))
+        config = image_source.get_configuration()
+        config.data['name'].value = 'new name'
+        await image_source.set_configuration(config)
         assert_that(self.image_source_updated, is_(image_source))

@@ -1,10 +1,11 @@
 # pylint: disable=invalid-name,too-few-public-methods
 from __future__ import annotations
 from abc import abstractmethod, ABC
+from copy import deepcopy
 import logging
 from typing import List
 from PIL import Image
-from image_sources.configuration import Configuration, new_hidden_configuration_field, new_text_configuration_field
+from image_sources.configuration import Configuration
 
 class ImageSourceObserver(ABC):
     @abstractmethod
@@ -14,21 +15,22 @@ class ImageSourceObserver(ABC):
 class ImageSource(ABC):
     def __init__(self, config: Configuration):
         self.id: int = id(self)
-        self.logger = logging.getLogger(f'image_source_%{self.id}')
+        self.logger = logging.getLogger(f'image_source_{self.id}')
 
         self.cached_image: Image = None
         self.configuration = config
-        self.configuration.data['id'] = new_hidden_configuration_field(id(self))
 
         self.subscribers: List[ImageSourceObserver] = []
 
     def get_configuration(self) -> Configuration:
-        return self.configuration
+        return deepcopy(self.configuration)
 
-    def set_configuration(self, config: Configuration) -> bool:
+    async def set_configuration(self, config: Configuration) -> bool:
         changed = self.configuration.update(config)
         if changed:
             self.logger.info('Configuration updated: %s', self.configuration.json())
+            self.cached_image = None
+            await self.notify()
         return changed
 
     def name(self) -> str:
@@ -48,5 +50,4 @@ class ImageSource(ABC):
     async def get_image(self, size, refresh: bool = False) -> Image:
         if refresh or self.cached_image is None or self.cached_image.size != size:
             self.cached_image = await self.make_image(size)
-            await self.notify()
         return self.cached_image

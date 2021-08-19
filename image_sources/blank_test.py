@@ -30,7 +30,7 @@ class TestBlankContent(unittest.TestCase):
         new_config = Configuration(data={
             'color': new_color_configuration_field(Color.RED)
         })
-        changed = image_source.set_configuration(new_config)
+        changed = await image_source.set_configuration(new_config)
         assert_that(changed, is_(equal_to(True)))
 
         config = image_source.get_configuration()

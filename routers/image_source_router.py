@@ -1,3 +1,4 @@
+from image_sources.text import make_error_image
 from typing import Dict
 
 from fastapi import APIRouter
@@ -40,9 +41,8 @@ class ImageSourceRouter(APIRouter):
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
-            changed = image_source.set_configuration(configuration)
+            changed = await image_source.set_configuration(configuration)
             if changed:
-                await image_source.get_image(self.screen.size, refresh=True)
                 return image_source.get_configuration()
             else:
                 return Response(status_code=HTTPStatus.NO_CONTENT)
@@ -54,7 +54,10 @@ class ImageSourceRouter(APIRouter):
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
-            image = await image_source.get_image(self.screen.size)
+            try:
+                image = await image_source.get_image(self.screen.size)
+            except ValueError as e:
+                image = await make_error_image(str(e), self.screen.size)
             return image_response(image)
 
     def find_image_source_by_id(self, image_source_id: int) -> ImageSource:

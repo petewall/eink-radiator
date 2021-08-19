@@ -12,4 +12,4 @@ class Color(enum.Enum):
 
     @classmethod
     def palette(cls):
-        return (255, 255, 255, 0, 0, 0, 255, 0, 0) + (0, 0, 0) * 252
+        return (255, 255, 255, 0, 0, 0, 255, 0, 0) + (0, 0, 0) * 253
