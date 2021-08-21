@@ -1,8 +1,8 @@
 # pylint: disable=no-self-use,protected-access
 from __future__ import annotations
 from abc import ABC, abstractmethod
-import asyncio
 import logging
+from time import sleep 
 from typing import List
 from PIL import Image
 from color import Color
@@ -67,9 +67,9 @@ class Screen(SlideshowObserver):
                 image = quantize(image, palette)
 
             self.image = image
-            await self.show_image()
+            self.show_image()
             self.busy = False
             await self.notify()
 
-    async def show_image(self):
-        await asyncio.sleep(1)
+    def show_image(self):
+        sleep(5)

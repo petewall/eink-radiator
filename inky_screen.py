@@ -9,6 +9,6 @@ class InkyScreen(Screen):
         super().__init__(physical_screen.resolution)
         self.hardware = physical_screen
 
-    async def show_image(self):
+    def show_image(self):
         self.hardware.set_image(self.image)
         self.hardware.show()
