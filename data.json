@@ -4,11 +4,13 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "White"
+        "value": "White",
+        "options": null
       },
       "color": {
         "type": "color",
-        "value": "WHITE"
+        "value": "WHITE",
+        "options": null
       }
     }
   },
@@ -17,11 +19,13 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "Noir"
+        "value": "Noir",
+        "options": null
       },
       "color": {
         "type": "color",
-        "value": "BLACK"
+        "value": "BLACK",
+        "options": null
       }
     }
   },
@@ -30,11 +34,13 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "Rouge"
+        "value": "Rouge",
+        "options": null
       },
       "color": {
         "type": "color",
-        "value": "RED"
+        "value": "RED",
+        "options": null
       }
     }
   },
@@ -43,19 +49,23 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "Family"
+        "value": "Family",
+        "options": null
       },
       "text": {
         "type": "textarea",
-        "value": "Peter\r\nBetsy\r\nGrace\r\nZach"
+        "value": "Peter\r\nBetsy\r\nGrace\r\nZach",
+        "options": null
       },
       "foreground_color": {
         "type": "color",
-        "value": "BLACK"
+        "value": "BLACK",
+        "options": null
       },
       "background_color": {
         "type": "color",
-        "value": "WHITE"
+        "value": "WHITE",
+        "options": null
       }
     }
   },
@@ -64,7 +74,8 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "The Boys"
+        "value": "The Girls",
+        "options": null
       },
       "scale": {
         "type": "select",
@@ -77,11 +88,42 @@
       },
       "url": {
         "type": "text",
-        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz"
+        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/TvCYfpb-RECDNTT_521RiQ?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=OMpqB1THRLqityK5kag5Jg.PD0hP87W38VLdYTyOR8STb",
+        "options": null
       },
       "background_color": {
         "type": "color",
-        "value": "BLACK"
+        "value": "BLACK",
+        "options": null
+      }
+    }
+  },
+  {
+    "type": "ImageContent",
+    "data": {
+      "name": {
+        "type": "text",
+        "value": "The Boys",
+        "options": null
+      },
+      "scale": {
+        "type": "select",
+        "value": "CONTAIN",
+        "options": [
+          "SCALE",
+          "CONTAIN",
+          "COVER"
+        ]
+      },
+      "url": {
+        "type": "text",
+        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz",
+        "options": null
+      },
+      "background_color": {
+        "type": "color",
+        "value": "BLACK",
+        "options": null
       }
     }
   }

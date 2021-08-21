@@ -21,7 +21,7 @@ class PersistenceFile():
             return image_source_configs
 
     def save(self, image_source_configs: List[Configuration]):
-        data = [config.dict(exlude_unset=True) for config in image_source_configs]
+        data = [config.dict() for config in image_source_configs]
         with open(self.file, 'w', encoding='UTF-8') as file:
             json.dump(obj=data, fp=file, indent=2)
             file.close()
