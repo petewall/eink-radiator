@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
 
+from color import Color
 import image_sources
 from routers.image_source_router import ImageSourceRouter
 from routers.screen_router import ScreenRouter
@@ -59,6 +60,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         def serve_ui(request: Request):
             template_data = {
                 'request': request,
+                'palette': Color.all_colors(),
                 'height': self.screen.size[1],
                 'width': self.screen.size[0],
                 'slideshow': self.slideshow

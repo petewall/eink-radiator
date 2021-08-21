@@ -1,7 +1,7 @@
 <html>
 <head>
   <title>eInk Radiator</title>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
   <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
   <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
@@ -26,6 +26,12 @@
 
     .ui.selection.list>.selected.slideshow.item {
       background-color: lightgrey;
+    }
+
+    .menu .palette i {
+      border: 1px solid grey;
+      height: 1em;
+      width: 1em;
     }
     
   </style>
@@ -75,6 +81,15 @@
           <a class="item" href="#">Image</a>
         </div>
       </div>
+
+      <div class="right item">
+        {{ width }} &times; {{ height }}
+      </div>
+      <div class="right palette item">
+{% for color in palette %}
+        <i style="background-color: {{ color }};"></i>
+{% endfor %}
+      </div>
     </div>
   </div>
 
@@ -115,6 +130,9 @@
       <img class="ui centered bordered screen image" src="/screen/image.png" />
     </div>
   </div>
+  <script>
+    const palette = [{% for color in palette %}'{{ color }}',{% endfor %}]
+  </script>
   <script src="/static/image_source_details.js"></script>
   <script src="/static/screen.js"></script>
   <script src="/static/slideshow.js"></script>

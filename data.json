@@ -4,17 +4,11 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "White",
-        "options": null
+        "value": "White"
       },
       "color": {
-        "type": "select",
-        "value": "WHITE",
-        "options": [
-          "WHITE",
-          "BLACK",
-          "RED"
-        ]
+        "type": "color",
+        "value": "WHITE"
       }
     }
   },
@@ -23,17 +17,11 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "Noir",
-        "options": null
+        "value": "Noir"
       },
       "color": {
-        "type": "select",
-        "value": "BLACK",
-        "options": [
-          "WHITE",
-          "BLACK",
-          "RED"
-        ]
+        "type": "color",
+        "value": "BLACK"
       }
     }
   },
@@ -42,17 +30,11 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "Rouge",
-        "options": null
+        "value": "Rouge"
       },
       "color": {
-        "type": "select",
-        "value": "RED",
-        "options": [
-          "WHITE",
-          "BLACK",
-          "RED"
-        ]
+        "type": "color",
+        "value": "RED"
       }
     }
   },
@@ -61,31 +43,19 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "Family",
-        "options": null
+        "value": "Family"
       },
       "text": {
         "type": "textarea",
-        "value": "Peter\r\nBetsy\r\nGrace\r\nZach",
-        "options": null
+        "value": "Peter\r\nBetsy\r\nGrace\r\nZach"
       },
       "foreground_color": {
-        "type": "select",
-        "value": "BLACK",
-        "options": [
-          "WHITE",
-          "BLACK",
-          "RED"
-        ]
+        "type": "color",
+        "value": "BLACK"
       },
       "background_color": {
-        "type": "select",
-        "value": "WHITE",
-        "options": [
-          "WHITE",
-          "BLACK",
-          "RED"
-        ]
+        "type": "color",
+        "value": "WHITE"
       }
     }
   },
@@ -94,8 +64,7 @@
     "data": {
       "name": {
         "type": "text",
-        "value": "The Boys",
-        "options": null
+        "value": "The Boys"
       },
       "scale": {
         "type": "select",
@@ -108,17 +77,11 @@
       },
       "url": {
         "type": "text",
-        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz",
-        "options": null
+        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz"
       },
       "background_color": {
-        "type": "select",
-        "value": "BLACK",
-        "options": [
-          "WHITE",
-          "BLACK",
-          "RED"
-        ]
+        "type": "color",
+        "value": "BLACK"
       }
     }
   }

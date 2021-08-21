@@ -10,13 +10,16 @@ class ConfigurationField(BaseModel):
     options: Optional[List[str]]
 
 def new_color_configuration_field(value: Color) -> ConfigurationField:
-    return ConfigurationField(type='select', value=value.name, options=Color.all_colors())
-
-def new_text_configuration_field(value: str) -> ConfigurationField:
-    return ConfigurationField(type='text', value=value)
+    return ConfigurationField(type='color', value=value.name)
 
 def new_hidden_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='hidden', value=value)
+
+def new_select_configuration_field(value: str, options: List[str]) -> ConfigurationField:
+    return ConfigurationField(type='select', value=value, options=options)
+
+def new_text_configuration_field(value: str) -> ConfigurationField:
+    return ConfigurationField(type='text', value=value)
 
 def new_textarea_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='textarea', value=value)

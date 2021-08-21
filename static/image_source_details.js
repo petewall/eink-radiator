@@ -1,5 +1,15 @@
 /* eslint-env browser, jquery */
 
+function buildColorField(key, data) {
+  const dropdown = $(`<select name="${key}" class="ui selection dropdown">`)
+  for (const color of palette) {
+    dropdown.append($(`<option value="${color}">${color}</option>`).attr('selected', color == data.value))
+  }
+
+  dropdown.dropdown()
+  return dropdown
+}
+
 function buildHiddenField(key, data) {
   return $(`<input name="${key}" class="field" value="${data.value}" type="hidden" />`)
 }
@@ -30,6 +40,8 @@ function buildConfigurationField(key, data) {
   if (data.type === 'hidden') {
     field.empty()
     field.append(buildHiddenField(key, data))
+  } else if (data.type === 'color') {
+    field.append(buildColorField(key, data))
   } else if (data.type === 'select') {
     field.append(buildSelectField(key, data))
   } else if (data.type === 'text') {
@@ -113,7 +125,6 @@ function showImageSource() {
 function handleImageSourceEvent(data) {
   const id = data.image_source_id
   $(`#image_source_${id} img`).attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
-  
 
   // TODO: Only update the details if the updated image_source is the one open
   $('#image_source_details img.screen').attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)

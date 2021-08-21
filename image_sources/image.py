@@ -6,7 +6,7 @@ import urllib.request
 from PIL import Image, UnidentifiedImageError
 from color import Color
 from image_sources.blank import BlankContent
-from image_sources.configuration import Configuration, ConfigurationField, new_color_configuration_field, new_text_configuration_field
+from image_sources.configuration import Configuration, new_color_configuration_field, new_select_configuration_field, new_text_configuration_field
 from image_sources.image_source import ImageSource
 
 
@@ -20,10 +20,6 @@ class ImageScale(Enum):
         return list(map(lambda x: x.name, list(cls)))
 
 
-def new_scale_configuration_field(value: ImageScale) -> ConfigurationField:
-    return ConfigurationField(type='select', value=value.name, options=ImageScale.all_types())
-
-
 class ImageContent(ImageSource):
     loaded_image_url: str = ''
     original_image: Image = None
@@ -32,7 +28,7 @@ class ImageContent(ImageSource):
     def configuration(cls, name: str = 'New Image Source', url: str = '', scale: ImageScale = ImageScale.SCALE, background_color: Color = Color.WHITE):
         return Configuration(type=cls.__name__, data={
             'name': new_text_configuration_field(name),
-            'scale': new_scale_configuration_field(scale),
+            'scale': new_select_configuration_field(scale.name, ImageScale.all_types()),
             'url': new_text_configuration_field(url),
             'background_color': new_color_configuration_field(background_color),
         })

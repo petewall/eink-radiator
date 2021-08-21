@@ -2,7 +2,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import logging
-from time import sleep 
+from time import sleep
 from typing import List
 from PIL import Image
 from color import Color

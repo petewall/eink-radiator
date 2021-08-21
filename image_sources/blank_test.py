@@ -36,9 +36,8 @@ class TestBlankContent(unittest.TestCase):
         config = image_source.get_configuration()
         assert_that(config.data['name'].type, is_(equal_to('text')))
         assert_that(config.data['name'].value, is_(equal_to('White')))
-        assert_that(config.data['color'].type, is_(equal_to('select')))
+        assert_that(config.data['color'].type, is_(equal_to('color')))
         assert_that(config.data['color'].value, is_(equal_to('RED')))
-        assert_that(config.data['color'].options, is_(equal_to(Color.all_colors())))
 
         image = await image_source.get_image((400, 300))
         expected_image = Image.open(os.path.join(self.test_fixtures, 'red-400x300.png'))

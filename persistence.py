@@ -15,15 +15,14 @@ class PersistenceFile():
         self.file = filename
 
     def load(self) -> List[Configuration]:
-        with open(self.file, 'r') as file:
+        with open(self.file, 'r', encoding='UTF-8') as file:
             raw_configs = json.load(file)
             image_source_configs = [Configuration.parse_obj(config) for config in raw_configs]
             return image_source_configs
 
-
     def save(self, image_source_configs: List[Configuration]):
-        data = [config.dict() for config in image_source_configs]
-        with open(self.file, 'w') as file:
+        data = [config.dict(exlude_unset=True) for config in image_source_configs]
+        with open(self.file, 'w', encoding='UTF-8') as file:
             json.dump(obj=data, fp=file, indent=2)
             file.close()
 

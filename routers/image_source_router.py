@@ -33,7 +33,7 @@ class ImageSourceRouter(APIRouter):
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
-            return image_source.get_configuration()
+            return image_source.get_configuration().dict(exclude_unset=True)
 
         @self.post('/image_sources/{image_source_id}/configuration.json')
         async def update_image_source_configuration(image_source_id: int, configuration: Configuration):
@@ -43,7 +43,7 @@ class ImageSourceRouter(APIRouter):
 
             changed = await image_source.set_configuration(configuration)
             if changed:
-                return image_source.get_configuration()
+                return image_source.get_configuration().dict(exclude_unset=True)
             else:
                 return Response(status_code=HTTPStatus.NO_CONTENT)
 

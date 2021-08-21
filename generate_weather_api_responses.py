@@ -12,9 +12,9 @@ content = WeatherContent({
 })
 
 current_weather = requests.get(content.build_weather_url('weather'))
-with open(os.path.join('test_fixtures', 'current_weather.json'), 'w') as f:
+with open(os.path.join('test_fixtures', 'current_weather.json'), 'w', encoding='UTF-8') as f:
     json.dump(current_weather.json(), f)
 
 forecast = requests.get(content.build_weather_url('forecast'))
-with open(os.path.join('test_fixtures', 'forecast.json'), 'w') as f:
+with open(os.path.join('test_fixtures', 'forecast.json'), 'w', encoding='UTF-8') as f:
     json.dump(forecast.json(), f)

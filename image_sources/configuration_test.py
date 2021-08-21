@@ -9,9 +9,8 @@ from image_sources.configuration import Configuration, new_color_configuration_f
 class TestConfigurationField(unittest.TestCase):
     def test_new_color_configuration_field(self):
         field = new_color_configuration_field(Color.RED)
-        assert_that(field.type, is_(equal_to('select')))
+        assert_that(field.type, is_(equal_to('color')))
         assert_that(field.value, is_(equal_to('RED')))
-        assert_that(field.options, is_(equal_to(Color.all_colors())))
 
     def test_new_text_configuration_field(self):
         field = new_text_configuration_field('pete')
