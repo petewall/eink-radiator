@@ -15,7 +15,7 @@ class Slideshow(ImageSourceObserver):
     logger = logging.getLogger('slideshow')
 
     def __init__(self):
-        self.index: int = -1  # Starting at -1 so the first time through the loop, it'll increment to 0
+        self.index: int = 0
         self.image_sources: List[ImageSource] = []
 
         self.interval: int = 1 * 60  # ten minutes
@@ -26,37 +26,43 @@ class Slideshow(ImageSourceObserver):
 
     async def loop(self) -> None:
         while self.running:
-            await self.next()
-
             self.sleep_handle = asyncio.create_task(asyncio.sleep(self.interval))
             try:
                 await self.sleep_handle
+                await self.next()
             except asyncio.CancelledError:
                 pass
             self.sleep_handle = None
 
     async def next(self) -> None:
         self.index = (self.index + 1) % len(self.image_sources)
-        self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name())
         await self.notify()
+        self.reset()
 
     async def activate_slide(self, index: int) -> None:
         if index < 0 or index >= len(self.image_sources):
             return
 
         self.index = index
-        self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name())
         await self.notify()
+        self.reset()
 
     async def previous(self) -> None:
         self.index = self.index - 1
         if self.index < 0:
             self.index = len(self.image_sources) - 1
-        self.logger.info('index is now %d: %s', self.index, self.image_sources[self.index].name())
         await self.notify()
+        self.reset()
+
+    async def start(self) -> None:
+        await self.notify()
+        await self.loop()
 
     def stop(self) -> None:
         self.running = False
+        self.reset()
+
+    def reset(self) -> None:
         if self.sleep_handle is not None:
             self.sleep_handle.cancel()
 
@@ -64,6 +70,7 @@ class Slideshow(ImageSourceObserver):
         self.subscribers.append(subscriber)
 
     async def notify(self) -> None:
+        self.logger.info('Slide #%d active: %s', self.index, self.image_sources[self.index].name())
         for subscriber in self.subscribers:
             await subscriber.slideshow_update(self)
 

@@ -25,7 +25,7 @@ persistence.load()
 async def main():
     port = os.environ.get('PORT', 5000)
     await asyncio.gather(
-        slideshow.loop(),
+        slideshow.start(),
         ui.start(port)
     )
 
