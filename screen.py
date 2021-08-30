@@ -69,8 +69,11 @@ class Screen(SlideshowObserver):
                 palette.putpalette(Color.palette())
                 image = quantize(image, palette)
 
+            self.image = image
+
             loop = asyncio.get_event_loop()
             await loop.run_in_executor(None, self.show_image)
+            
             self.busy = False
             await self.notify()
 
