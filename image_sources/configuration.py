@@ -15,6 +15,9 @@ def new_color_configuration_field(value: Color) -> ConfigurationField:
 def new_hidden_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='hidden', value=value)
 
+def new_number_configuration_field(value: int) -> ConfigurationField:
+    return ConfigurationField(type='number', value=str(value))
+
 def new_select_configuration_field(value: str, options: List[str]) -> ConfigurationField:
     return ConfigurationField(type='select', value=value, options=options)
 
@@ -37,3 +40,7 @@ class Configuration(BaseModel):
                 changed = True
 
         return changed
+
+    def get(self, key: str) -> str:
+        if self.data[key] is not None:
+            return self.data[key].value

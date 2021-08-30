@@ -1,5 +1,6 @@
 # pylint: disable=global-statement
 import asyncio
+from datetime import datetime
 import logging
 from typing import Any, List
 
@@ -63,7 +64,8 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
                 'palette': Color.all_colors(),
                 'height': self.screen.size[1],
                 'width': self.screen.size[0],
-                'slideshow': self.slideshow
+                'slideshow': self.slideshow,
+                'time_remaining': int(self.slideshow.seconds_remaining())
             }
             return self.templates.TemplateResponse('index.html.jinja', template_data)
 
@@ -94,7 +96,8 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         await self.send_message({
             'type': 'slideshow',
             'image_source_index': slideshow.index,
-            'image_source_id': slideshow.get_active_image_source().id
+            'image_source_id': slideshow.get_active_image_source().id,
+            'interval': slideshow.current_interval
         })
 
     async def start(self, port: int) -> None:

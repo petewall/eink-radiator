@@ -85,6 +85,27 @@
       <div class="right item">
         {{ width }} &times; {{ height }}
       </div>
+      <div class="ui simple dropdown item">
+        <i class="wrench icon"></i><i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="item">
+            <i class="genderless icon"></i>
+            <span class="text">Normal</span>
+          </div>
+          <div class="item">
+            <i class="arrows alternate vertical icon"></i>
+            <span class="text">Flip Vertical</span>
+          </div>
+          <div class="item">
+            <i class="arrows alternate horizontal icon"></i>
+            <span class="text">Flip Horizontal</span>
+          </div>
+          <div class="item">
+            <i class="retweet icon"></i>
+            <span class="text">Rotate 180°</span>
+          </div>
+        </div>
+      </div>
       <div class="right palette item">
 {% for color in palette %}
         <i style="background-color: {{ color }};"></i>
@@ -98,6 +119,7 @@
     <h2 class="ui header">Active Slides</h2>
 
     <div class="ui controls content">
+      <h3 class="ui right floated header" id="slideshow_timer">00:00:00</h3>
       <button class="ui icon previous button">
         <i class="step backward icon"></i>
       </button>
@@ -132,6 +154,8 @@
   </div>
   <script>
     const palette = [{% for color in palette %}'{{ color }}',{% endfor %}]
+    let interval = {{ slideshow.current_interval }}
+    let time_remaining = {{ time_remaining }}
   </script>
   <script src="/static/image_source_details.js"></script>
   <script src="/static/screen.js"></script>

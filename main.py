@@ -2,6 +2,7 @@
 import asyncio
 import logging
 import os
+
 from persistence import Persistence
 from screen import Screen
 from slideshow import Slideshow
@@ -9,14 +10,14 @@ from ui import UI
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-
 if os.environ.get('EINK_SCREEN_PRESENT'):
     from inky_screen import InkyScreen
     screen = InkyScreen()
 else:
     screen = Screen((400, 300))
 
-slideshow = Slideshow()
+slideshow_config = Slideshow.configuration(interval=1*60)
+slideshow = Slideshow(config=slideshow_config)
 slideshow.add_subscriber(screen)
 ui = UI(slideshow, screen)
 persistence = Persistence(slideshow, ui)

@@ -1,10 +1,13 @@
 # pylint: disable=no-self-use,protected-access
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import asyncio
 import logging
 from time import sleep
 from typing import List
+
 from PIL import Image
+
 from color import Color
 from slideshow import Slideshow, SlideshowObserver
 
@@ -31,7 +34,7 @@ class ScreenObserver(ABC):
 
 
 class Screen(SlideshowObserver):
-    logger = logging.getLogger('ui')
+    logger = logging.getLogger('screen')
 
     def __init__(self, size):
         self.busy = False
@@ -66,10 +69,10 @@ class Screen(SlideshowObserver):
                 palette.putpalette(Color.palette())
                 image = quantize(image, palette)
 
-            self.image = image
-            self.show_image()
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, self.show_image)
             self.busy = False
             await self.notify()
 
     def show_image(self):
-        sleep(5)
+        sleep(1)

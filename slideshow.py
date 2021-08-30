@@ -1,8 +1,11 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
+from datetime import datetime
 import logging
 from typing import List
+
+from image_sources.configuration import Configuration, new_number_configuration_field
 from image_sources.image_source import ImageSource, ImageSourceObserver
 
 # pylint: disable=too-few-public-methods
@@ -12,13 +15,22 @@ class SlideshowObserver(ABC):
         pass
 
 class Slideshow(ImageSourceObserver):
+    @classmethod
+    def configuration(cls, interval: int = 10*60):
+        return Configuration(type=cls.__name__, data={
+            'interval': new_number_configuration_field(interval)
+        })
+
     logger = logging.getLogger('slideshow')
 
-    def __init__(self):
+    def __init__(self, config: Configuration):
+        self.configuration = config
+
         self.index: int = 0
         self.image_sources: List[ImageSource] = []
 
-        self.interval: int = 1 * 60  # ten minutes
+        self.current_slide_start_time = datetime.now()
+        self.current_interval = int(self.configuration.get('interval'))
         self.subscribers: List[SlideshowObserver] = []
 
         self.running = True
@@ -26,7 +38,9 @@ class Slideshow(ImageSourceObserver):
 
     async def loop(self) -> None:
         while self.running:
-            self.sleep_handle = asyncio.create_task(asyncio.sleep(self.interval))
+            self.current_slide_start_time = datetime.now()
+            self.current_interval = int(self.configuration.get('interval'))
+            self.sleep_handle = asyncio.create_task(asyncio.sleep(self.current_interval))
             try:
                 await self.sleep_handle
                 await self.next()
@@ -65,6 +79,12 @@ class Slideshow(ImageSourceObserver):
     def reset(self) -> None:
         if self.sleep_handle is not None:
             self.sleep_handle.cancel()
+
+    def second_elapsed(self):
+        return (datetime.now() - self.current_slide_start_time).total_seconds()
+
+    def seconds_remaining(self):
+        return self.current_interval - self.second_elapsed()
 
     def add_subscriber(self, subscriber: SlideshowObserver) -> None:
         self.subscribers.append(subscriber)
