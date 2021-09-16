@@ -9,8 +9,8 @@ class Transpose(enum.Enum):
     # ROTATE_90 = Image.ROTATE_90
     ROTATE_180 = Image.ROTATE_180
     # ROTATE_270 = Image.ROTATE_270
-    TRANSPOSE = Image.TRANSPOSE
-    TRANSVERSE = Image.TRANSVERSE
+    # TRANSPOSE = Image.TRANSPOSE
+    # TRANSVERSE = Image.TRANSVERSE
 
     @classmethod
     def all_methods(cls):

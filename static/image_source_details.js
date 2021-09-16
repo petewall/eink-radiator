@@ -34,6 +34,16 @@ function buildTextField(key, data) {
   return $(`<input name="${key}" value="${data.value}" type="text" />`)
 }
 
+function buildTransformField(key, data) {
+  const dropdown = $(`<select name="${key}" class="ui selection dropdown">`)
+  for (const transform of transforms) {
+    dropdown.append($(`<option value="${transform}">${transform}</option>`).attr('selected', transform == data.value))
+  }
+
+  dropdown.dropdown()
+  return dropdown
+}
+
 function buildConfigurationField(key, data) {
   const field = $('<div class="field">')
   field.append($('<label>').text(key))
@@ -48,6 +58,8 @@ function buildConfigurationField(key, data) {
     field.append(buildTextField(key, data))
   } else if (data.type === 'textarea') {
     field.append(buildTextArea(key, data))
+  } else if (data.type === 'transform') {
+    field.append(buildTransformField(key, data))
   }
   return field
 }

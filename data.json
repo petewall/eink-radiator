@@ -76,6 +76,11 @@
         "type": "color",
         "value": "WHITE",
         "options": null
+      },
+      "transform": {
+        "type": "transform",
+        "value": "FLIP_LEFT_RIGHT",
+        "options": null
       }
     }
   },

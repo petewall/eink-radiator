@@ -159,6 +159,7 @@
   </div>
   <script>
     const palette = [{% for color in palette %}'{{ color }}',{% endfor %}]
+    const transforms = [{% for transform in transforms %}'{{ transform }}',{% endfor %}]
     let interval = {{ slideshow.current_interval }}
     let time_remaining = {{ time_remaining }}
   </script>

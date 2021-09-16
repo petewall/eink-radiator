@@ -1,4 +1,5 @@
 from __future__ import annotations
+from transpose import Transpose
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 from color import Color
@@ -26,6 +27,9 @@ def new_text_configuration_field(value: str) -> ConfigurationField:
 
 def new_textarea_configuration_field(value: str) -> ConfigurationField:
     return ConfigurationField(type='textarea', value=value)
+
+def new_transform_configuration_field(value: Transpose) -> ConfigurationField:
+    return ConfigurationField(type='transform', value=value.name)
 
 #pylint: disable=too-few-public-methods
 class Configuration(BaseModel):

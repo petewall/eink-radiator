@@ -1,6 +1,7 @@
 # pylint: disable=global-statement
 import asyncio
 import logging
+from transpose import Transpose
 from typing import Any, List
 
 from starlette.endpoints import WebSocketEndpoint
@@ -61,6 +62,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
             template_data = {
                 'request': request,
                 'palette': Color.all_colors(),
+                'transforms': Transpose.all_methods(),
                 'height': self.screen.size[1],
                 'width': self.screen.size[0],
                 'slideshow': self.slideshow,
