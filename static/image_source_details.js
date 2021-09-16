@@ -71,7 +71,7 @@ function showImageSourceDetails() {
       buildHiddenField('id', {value: imageSourceId}),
       buildConfigurationForm(configuration)
     )
-    
+
     toggleImageSourceDetailsLoader(false)
     $('#image_source_details').modal('show')
   }, 'json')

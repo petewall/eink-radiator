@@ -44,3 +44,4 @@ class Configuration(BaseModel):
     def get(self, key: str) -> str:
         if self.data[key] is not None:
             return self.data[key].value
+        return ''

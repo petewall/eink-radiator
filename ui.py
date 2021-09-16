@@ -1,6 +1,5 @@
 # pylint: disable=global-statement
 import asyncio
-from datetime import datetime
 import logging
 from typing import Any, List
 
@@ -92,7 +91,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
             'screen_busy': screen.busy
         })
 
-    async def slideshow_update(self, slideshow: Slideshow) -> None:
+    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
         await self.send_message({
             'type': 'slideshow',
             'image_source_index': slideshow.index,

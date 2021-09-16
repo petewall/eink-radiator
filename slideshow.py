@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
+from copy import deepcopy
 from datetime import datetime
 import logging
 from typing import List
@@ -11,20 +12,19 @@ from image_sources.image_source import ImageSource, ImageSourceObserver
 # pylint: disable=too-few-public-methods
 class SlideshowObserver(ABC):
     @abstractmethod
-    async def slideshow_update(self, slideshow: Slideshow) -> None:
+    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
         pass
 
-class Slideshow(ImageSourceObserver):
-    @classmethod
-    def configuration(cls, interval: int = 10*60):
-        return Configuration(type=cls.__name__, data={
-            'interval': new_number_configuration_field(interval)
-        })
+DEFAULT_INTERVAL = 10*60
 
+# pylint: disable=too-many-instance-attributes
+class Slideshow(ImageSourceObserver):
     logger = logging.getLogger('slideshow')
 
-    def __init__(self, config: Configuration):
-        self.configuration = config
+    def __init__(self):
+        self.configuration = Configuration(type=Slideshow.__name__, data={
+            'interval': new_number_configuration_field(DEFAULT_INTERVAL)
+        })
 
         self.index: int = 0
         self.image_sources: List[ImageSource] = []
@@ -50,7 +50,7 @@ class Slideshow(ImageSourceObserver):
 
     async def next(self) -> None:
         self.index = (self.index + 1) % len(self.image_sources)
-        await self.notify()
+        await self.notify(slide_changed=True)
         self.reset()
 
     async def activate_slide(self, index: int) -> None:
@@ -58,18 +58,18 @@ class Slideshow(ImageSourceObserver):
             return
 
         self.index = index
-        await self.notify()
+        await self.notify(slide_changed=True)
         self.reset()
 
     async def previous(self) -> None:
         self.index = self.index - 1
         if self.index < 0:
             self.index = len(self.image_sources) - 1
-        await self.notify()
+        await self.notify(slide_changed=True)
         self.reset()
 
     async def start(self) -> None:
-        await self.notify()
+        await self.notify(slide_changed=True)
         await self.loop()
 
     def stop(self) -> None:
@@ -86,13 +86,24 @@ class Slideshow(ImageSourceObserver):
     def seconds_remaining(self):
         return self.current_interval - self.second_elapsed()
 
+    def get_configuration(self) -> Configuration:
+        return deepcopy(self.configuration)
+
+    async def set_configuration(self, config: Configuration) -> bool:
+        changed = self.configuration.update(config)
+        if changed:
+            self.logger.info('Configuration updated: %s', self.configuration.json())
+            await self.notify(config_changed=True)
+        return changed
+
     def add_subscriber(self, subscriber: SlideshowObserver) -> None:
         self.subscribers.append(subscriber)
 
-    async def notify(self) -> None:
-        self.logger.info('Slide #%d active: %s', self.index, self.image_sources[self.index].name())
+    async def notify(self, slide_changed=False, config_changed=False) -> None:
+        if slide_changed:
+            self.logger.info('Slide #%d active: %s', self.index, self.image_sources[self.index].name())
         for subscriber in self.subscribers:
-            await subscriber.slideshow_update(self)
+            await subscriber.slideshow_update(self, slide_changed, config_changed)
 
     def add_image_source(self, image_source: ImageSource, index: int = -1) -> None:
         image_source.add_subscriber(self)
@@ -103,7 +114,7 @@ class Slideshow(ImageSourceObserver):
 
     async def image_source_update(self, image_source: ImageSource) -> None:
         if self.get_active_image_source() == image_source:
-            await self.notify()
+            await self.notify(slide_changed=True)
 
     def get_active_image_source(self) -> ImageSource:
         return self.image_sources[self.index]

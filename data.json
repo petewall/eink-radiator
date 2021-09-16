@@ -1,5 +1,15 @@
 [
   {
+    "type": "Slideshow",
+    "data": {
+      "interval": {
+        "type": "number",
+        "value": "300",
+        "options": null
+      }
+    }
+  },
+  {
     "type": "BlankContent",
     "data": {
       "name": {

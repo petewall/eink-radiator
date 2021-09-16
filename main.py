@@ -16,8 +16,7 @@ if os.environ.get('EINK_SCREEN_PRESENT'):
 else:
     screen = Screen((400, 300))
 
-slideshow_config = Slideshow.configuration(interval=1*60)
-slideshow = Slideshow(config=slideshow_config)
+slideshow = Slideshow()
 slideshow.add_subscriber(screen)
 ui = UI(slideshow, screen)
 persistence = Persistence(slideshow, ui)

@@ -49,10 +49,11 @@ class Screen(SlideshowObserver):
         for subscriber in self.subscribers:
             await subscriber.screen_update(self)
 
-    async def slideshow_update(self, slideshow: Slideshow) -> None:
-        image_source = slideshow.get_active_image_source()
-        new_image = await image_source.get_image(self.size)
-        await self.set_image(new_image)
+    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
+        if slide_changed:
+            image_source = slideshow.get_active_image_source()
+            new_image = await image_source.get_image(self.size)
+            await self.set_image(new_image)
 
     async def set_image(self, image: Image):
         if image != self.image:
@@ -73,7 +74,7 @@ class Screen(SlideshowObserver):
 
             loop = asyncio.get_event_loop()
             await loop.run_in_executor(None, self.show_image)
-            
+
             self.busy = False
             await self.notify()
 

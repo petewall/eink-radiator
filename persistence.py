@@ -37,13 +37,16 @@ class Persistence(ImageSourceObserver, SlideshowObserver):
 
     def load(self) -> None:
         self.logger.info('Loading data from...')
-        image_source_configs = self.file.load()
+        configs = self.file.load()
 
-        for config in image_source_configs:
-            image_source = self.deserialize_image_source(config)
-            image_source.add_subscriber(self)
-            image_source.add_subscriber(self.ui)
-            self.slideshow.add_image_source(image_source)
+        for config in configs:
+            if config.type == Slideshow.__name__:
+                self.slideshow.configuration.update(config)
+            else:
+                image_source = self.deserialize_image_source(config)
+                image_source.add_subscriber(self)
+                image_source.add_subscriber(self.ui)
+                self.slideshow.add_image_source(image_source)
 
     @classmethod
     def deserialize_image_source(cls, config: Configuration) -> ImageSource:
@@ -58,11 +61,12 @@ class Persistence(ImageSourceObserver, SlideshowObserver):
     def save(self) -> None:
         self.logger.info('Saving...')
         configs = [image_source.configuration for image_source in self.slideshow.image_sources]
+        configs.insert(0, self.slideshow.get_configuration())
         self.file.save(configs)
 
     async def image_source_update(self, image_source: ImageSource) -> None:
         self.save()
 
-    async def slideshow_update(self, slideshow: Slideshow) -> None:
-        pass # Do not need to update just because the active slide changed
-    #     self.save()
+    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
+        if config_changed:
+            self.save()
