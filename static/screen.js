@@ -1,6 +1,6 @@
 /* eslint-env browser, jquery */
 
-function handleScreenEvent(data) {
+export function handleScreenEvent(data) {
   $(".controls .previous.button").toggleClass("disabled", data.screen_busy)
   $(".controls .next.button").toggleClass("disabled", data.screen_busy)
 

@@ -1,4 +1,5 @@
 /* eslint-env browser, jquery */
+/*global palette, transforms */
 
 function buildColorField(key, data) {
   const dropdown = $(`<select name="${key}" class="ui selection dropdown">`)
@@ -134,7 +135,7 @@ function showImageSource() {
   $.post(`/image_sources/${data.data.id.value}/activate`)
 }
 
-function handleImageSourceEvent(data) {
+export function handleImageSourceEvent(data) {
   const id = data.image_source_id
   $(`#image_source_${id} img`).attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
 

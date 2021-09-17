@@ -1,6 +1,11 @@
 /* eslint-env browser, jquery */
+/*global initial_time_remaining */
 
-function handleSlideshowEvent(data) {
+import { prepareData } from './image_source_details'
+
+var time_remaining = initial_time_remaining
+
+export function handleSlideshowEvent(data) {
   $('.slideshow.item').removeClass('selected')
   $(`.slideshow.item:eq(${data.image_source_index})`).addClass('selected')
   time_remaining = data.interval

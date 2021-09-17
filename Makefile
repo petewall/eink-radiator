@@ -1,5 +1,5 @@
 clean:
-	rm -rf temp
+	rm -rf node_modules temp
 
 # Code targets
 temp/make-targets/deps: Pipfile Pipfile.lock
@@ -25,7 +25,7 @@ test-features: deps
 
 test: test-units test-features
 
-lint: deps
+lint-python: deps
 	pipenv run pylint \
 		--disable duplicate-code,line-too-long,missing-module-docstring,missing-class-docstring,missing-function-docstring\
 		--extension-pkg-whitelist='pydantic'\
@@ -34,6 +34,8 @@ lint: deps
 JAVASCRIPT_SOURCES := $(shell find $$PWD/static -name '*.js')
 lint-js: $(JAVASCRIPT_SOURCES) js-deps
 	yarn run eslint static
+
+lint: lint-python lint-js
 
 test-all: lint lint-js test
 

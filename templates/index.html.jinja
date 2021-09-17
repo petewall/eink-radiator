@@ -160,8 +160,7 @@
   <script>
     const palette = [{% for color in palette %}'{{ color }}',{% endfor %}]
     const transforms = [{% for transform in transforms %}'{{ transform }}',{% endfor %}]
-    let interval = {{ slideshow.current_interval }}
-    let time_remaining = {{ time_remaining }}
+    const initial_time_remaining = {{ time_remaining }}
   </script>
   <script src="/static/image_source_details.js"></script>
   <script src="/static/screen.js"></script>

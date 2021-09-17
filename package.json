@@ -1,5 +1,12 @@
 {
-  "dependencies": {
-    "eslint": "^7.30.0"
+  "name": "eink-radiator",
+  "version": "1.0.0",
+  "description": "UI for the eInk Radiator",
+  "repository": "git@github.com:petewall/eink-radiator.git",
+  "author": "Pete Wall <pete@petewall.net>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.32.0"
   }
 }
