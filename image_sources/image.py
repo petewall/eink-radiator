@@ -3,11 +3,14 @@ from enum import Enum, auto
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 import urllib.request
+
 from PIL import Image, UnidentifiedImageError
+
 from color import Color
 from image_sources.blank import BlankContent
-from image_sources.configuration import Configuration, new_color_configuration_field, new_select_configuration_field, new_text_configuration_field
+from image_sources.configuration import Configuration, new_color_configuration_field, new_select_configuration_field, new_text_configuration_field, new_transform_configuration_field
 from image_sources.image_source import ImageSource
+from transpose import Transpose
 
 
 class ImageScale(Enum):
@@ -24,13 +27,15 @@ class ImageContent(ImageSource):
     loaded_image_url: str = ''
     original_image: Image = None
 
+    # pylint: disable=too-many-arguments
     @classmethod
-    def configuration(cls, name: str = 'New Image Source', url: str = '', scale: ImageScale = ImageScale.SCALE, background_color: Color = Color.WHITE):
+    def configuration(cls, name: str = 'New Image Source', url: str = '', scale: ImageScale = ImageScale.SCALE, background_color: Color = Color.WHITE, transform: Transpose = Transpose.NONE):
         return Configuration(type=cls.__name__, data={
             'name': new_text_configuration_field(name),
             'scale': new_select_configuration_field(scale.name, ImageScale.all_types()),
             'url': new_text_configuration_field(url),
             'background_color': new_color_configuration_field(background_color),
+            'transform': new_transform_configuration_field(transform)
         })
 
     async def set_configuration(self, config: Configuration) -> bool:
@@ -116,11 +121,14 @@ class ImageContent(ImageSource):
         return cropped.resize(size)
 
     async def make_image(self, size) -> Image:
+        image = None
         scale = self.configuration.data['scale'].value
         if scale == ImageScale.SCALE.name:
-            return self.make_scaled_image(size)
+            image = self.make_scaled_image(size)
         if scale == ImageScale.CONTAIN.name:
-            return await self.make_contained_image(size)
+            image = await self.make_contained_image(size)
         if scale == ImageScale.COVER.name:
-            return self.make_covered_image(size)
-        return None
+            image = self.make_covered_image(size)
+
+        transform = Transpose[self.configuration.data['transform'].value]
+        return transform.apply(image)

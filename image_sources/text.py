@@ -1,10 +1,12 @@
 # pylint: disable=method-hidden
 import os
-from transpose import Transpose
+
 from PIL import Image, ImageDraw, ImageFont
+
 from color import Color
 from image_sources.configuration import Configuration, new_color_configuration_field, new_text_configuration_field, new_textarea_configuration_field, new_transform_configuration_field
 from image_sources.image_source import ImageSource
+from transpose import Transpose
 
 FONT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'RobotoSlab-Regular.ttf')
 
@@ -20,6 +22,7 @@ async def make_error_image(message: str, size) -> Image:
 class TextContent(ImageSource):
     font = ImageFont.truetype(font=FONT_PATH, size=30)
 
+    # pylint: disable=too-many-arguments
     @classmethod
     def configuration(cls, name: str = 'New Text Image Source', text: str = 'Lorem Ipsum', foreground_color: Color = Color.BLACK, background_color: Color = Color.WHITE, transform: Transpose = Transpose.NONE) -> Configuration:
         return Configuration(type=cls.__name__, data={

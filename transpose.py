@@ -17,6 +17,8 @@ class Transpose(enum.Enum):
         return list(map(lambda x: x.name, list(cls)))
 
     def apply(self, image: Image) -> Image:
+        if image is None:
+            return None
         if self == Transpose.NONE:
             return image
 

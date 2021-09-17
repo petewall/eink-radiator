@@ -1,15 +1,14 @@
 # pylint: disable=global-statement
 import asyncio
 import logging
-from transpose import Transpose
 from typing import Any, List
 
-from starlette.endpoints import WebSocketEndpoint
-from starlette.websockets import WebSocketState
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.endpoints import WebSocketEndpoint
+from starlette.websockets import WebSocketState
 import uvicorn
 
 from color import Color
@@ -19,6 +18,7 @@ from routers.screen_router import ScreenRouter
 from routers.slideshow_router import SlideshowRouter
 from screen import Screen, ScreenObserver
 from slideshow import Slideshow, SlideshowObserver
+from transpose import Transpose
 
 USERS: List[WebSocket] = []
 

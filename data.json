@@ -110,6 +110,11 @@
         "type": "color",
         "value": "BLACK",
         "options": null
+      },
+      "transform": {
+        "type": "transform",
+        "value": "NONE",
+        "options": null
       }
     }
   },
@@ -138,6 +143,11 @@
       "background_color": {
         "type": "color",
         "value": "BLACK",
+        "options": null
+      },
+      "transform": {
+        "type": "transform",
+        "value": "NONE",
         "options": null
       }
     }

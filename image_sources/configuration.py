@@ -1,8 +1,10 @@
 from __future__ import annotations
-from transpose import Transpose
 from typing import Dict, List, Optional
+
 from pydantic import BaseModel
+
 from color import Color
+from transpose import Transpose
 
 #pylint: disable=too-few-public-methods
 class ConfigurationField(BaseModel):
