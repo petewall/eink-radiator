@@ -72,8 +72,10 @@ class Screen(SlideshowObserver):
 
             self.image = image
 
+            self.logger.info('Setting new screen image')
             loop = asyncio.get_event_loop()
             await loop.run_in_executor(None, self.show_image)
+            self.logger.info('Finished setting new screen image')
 
             self.busy = False
             await self.notify()
