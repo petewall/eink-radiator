@@ -1,7 +1,5 @@
 /* eslint-env browser, jquery */
-import { handleImageSourceEvent } from './image_source_details.js'
-import { handleScreenEvent } from './screen'
-import { handleSlideshowEvent } from './slideshow'
+/* global handleImageSourceEvent, handleScreenEvent, handleSlideshowEvent */
 
 function openSocketConnection() {
   const host = $(location).attr('host')

@@ -1,14 +1,15 @@
 /* eslint-env browser, jquery */
-/*global initial_time_remaining */
-
-import { prepareData } from './image_source_details'
+/* exported handleSlideshowEvent */
+/*global initial_time_remaining, prepareData */
 
 var time_remaining = initial_time_remaining
 
-export function handleSlideshowEvent(data) {
-  $('.slideshow.item').removeClass('selected')
-  $(`.slideshow.item:eq(${data.image_source_index})`).addClass('selected')
-  time_remaining = data.interval
+function handleSlideshowEvent(data) {
+  if (data.slide_changed) {
+    $('.slideshow.item').removeClass('selected')
+    $(`.slideshow.item:eq(${data.image_source_index})`).addClass('selected')
+    time_remaining = data.interval
+  }
 }
 
 function secondsToHHMMDD(seconds) {
@@ -56,7 +57,7 @@ $(document).ready(() => {
   $('#slideshow_details .save.button').click(saveSlideshowDetails)
 
   updateSlideshowDurationLabel()
-  $('#slideshow_details input').change(updateSlideshowDurationLabel)
+  $('#slideshow_details input').keyup(updateSlideshowDurationLabel)
 
   setInterval(() => {
     if (time_remaining > 0) {

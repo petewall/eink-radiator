@@ -98,7 +98,9 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
             'type': 'slideshow',
             'image_source_index': slideshow.index,
             'image_source_id': slideshow.get_active_image_source().id,
-            'interval': slideshow.current_interval
+            'interval': slideshow.current_interval,
+            'slide_changed': slide_changed,
+            'config_changed': config_changed
         })
 
     async def start(self, port: int) -> None:

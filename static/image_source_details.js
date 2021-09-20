@@ -135,7 +135,8 @@ function showImageSource() {
   $.post(`/image_sources/${data.data.id.value}/activate`)
 }
 
-export function handleImageSourceEvent(data) {
+/* exported handleImageSourceEvent */
+function handleImageSourceEvent(data) {
   const id = data.image_source_id
   $(`#image_source_${id} img`).attr('src', `/image_sources/${id}/image.png?timestamp=${new Date().getTime()}`)
 
