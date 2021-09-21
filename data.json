@@ -108,12 +108,12 @@
       },
       "background_color": {
         "type": "color",
-        "value": "BLACK",
+        "value": "WHITE",
         "options": null
       },
       "transform": {
         "type": "transform",
-        "value": "NONE",
+        "value": "FLIP_TOP_BOTTOM",
         "options": null
       }
     }

@@ -1,14 +1,29 @@
 /* eslint-env browser, jquery */
 /*global palette, transforms */
 
-function buildColorField(key, data) {
-  const dropdown = $(`<select name="${key}" class="ui selection dropdown">`)
-  for (const color of palette) {
-    dropdown.append($(`<option value="${color}">${color}</option>`).attr('selected', color == data.value))
-  }
+const colorIcons = {
+  WHITE: 'circle outline',
+  BLACK: 'circle',
+  RED: 'red cirle'
+}
 
-  dropdown.dropdown()
-  return dropdown
+function buildColorField(key, data) {
+  const field = $('<div class="grouped fields">')
+  for (const color of palette) {
+    const radio = $(`<input type="radio" name="${key}" value="${color}">`)
+    const label = $(`<label><i class="${colorIcons[color]} circle icon"></i>${color}</label>`)
+
+    if (color == data.value) {
+      radio.attr('checked', true)
+    }
+
+    field.append(
+      $('<div class="field">').append(
+        $('<div class="ui radio checkbox">').append(radio, label)
+      )
+    )
+  }
+  return field
 }
 
 function buildHiddenField(key, data) {
@@ -35,14 +50,30 @@ function buildTextField(key, data) {
   return $(`<input name="${key}" value="${data.value}" type="text" />`)
 }
 
-function buildTransformField(key, data) {
-  const dropdown = $(`<select name="${key}" class="ui selection dropdown">`)
-  for (const transform of transforms) {
-    dropdown.append($(`<option value="${transform}">${transform}</option>`).attr('selected', transform == data.value))
-  }
+const transformIcons = {
+  NONE: 'expand',
+  FLIP_LEFT_RIGHT: 'arrows alternate horizontal',
+  FLIP_TOP_BOTTOM: 'arrows alternate vertical',
+  ROTATE_180: 'sync alternate',
+}
 
-  dropdown.dropdown()
-  return dropdown
+function buildTransformField(key, data) {
+  const field = $('<div class="grouped fields">')
+  for (const transform of transforms) {
+    const radio = $(`<input type="radio" name="${key}" value="${transform}">`)
+    const label = $(`<label><i class="${transformIcons[transform]} icon"></i>${transform}</label>`)
+
+    if (transform == data.value) {
+      radio.attr('checked', true)
+    }
+
+    field.append(
+      $('<div class="field">').append(
+        $('<div class="ui radio checkbox">').append(radio, label)
+      )
+    )
+  }
+  return field
 }
 
 function buildConfigurationField(key, data) {
