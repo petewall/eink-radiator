@@ -77,6 +77,7 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
                 if user.client_state == WebSocketState.CONNECTED:
                     await user.close()
 
+    # pylint: disable=no-self-use
     async def send_message(self, message: Any) -> None:
         for websocket in USERS:
             await websocket.send_json(message)

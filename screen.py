@@ -19,7 +19,7 @@ def quantize(image, palette):
     palette.load()
     if palette.mode != 'P':
         raise ValueError('bad mode for palette image')
-    if image.mode != 'RGB' and image.mode != 'L':
+    if image.mode not in ['RGB', 'L']:
         raise ValueError('only RGB or L mode images can be quantized to a palette')
     converted_image = image.im.convert('P', 0, palette.im)  # the 0 means turn OFF dithering
 
