@@ -1,7 +1,6 @@
 from image_sources.text import make_error_image
-from typing import Dict
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Path, Query
 from fastapi.responses import Response
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
@@ -19,17 +18,29 @@ class ImageSourceRouter(APIRouter):
         self.slideshow = slideshow
 
         @self.post('/image_sources/{image_source_id}/activate')
-        async def choose_slide(image_source_id: int):
-            index, image_source = self.find_image_source_by_id(image_source_id)
+        async def choose_slide(image_source_id: int = Path(..., title="The ID of the image source to activate", ge=0)):
+            _, image_source = self.slideshow.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
-            await self.slideshow.activate_slide(index)
+            await self.slideshow.activate_slide(image_source)
+            return Response(status_code=HTTPStatus.OK)
+
+        @self.post('/image_sources/{image_source_id}/set_index')
+        async def set_index(new_index: int, image_source_id: int = Path(..., title="The ID of the image source to re-order", ge=0)):
+            index, image_source = self.slideshow.find_image_source_by_id(image_source_id)
+            if image_source is None:
+                return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
+
+            if new_index == index:
+                return Response(status_code=HTTPStatus.OK)
+
+            await self.slideshow.set_image_source_index(image_source_id, new_index)
             return Response(status_code=HTTPStatus.OK)
 
         @self.get('/image_sources/{image_source_id}/configuration.json')
-        async def serve_image_source_configuration(image_source_id: int):
-            _, image_source = self.find_image_source_by_id(image_source_id)
+        async def serve_image_source_configuration(image_source_id: int = Path(..., title="The ID of the image source", ge=0)):
+            _, image_source = self.slideshow.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
@@ -37,7 +48,7 @@ class ImageSourceRouter(APIRouter):
 
         @self.post('/image_sources/{image_source_id}/configuration.json')
         async def update_image_source_configuration(image_source_id: int, configuration: Configuration):
-            _, image_source = self.find_image_source_by_id(image_source_id)
+            _, image_source = self.slideshow.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
@@ -49,8 +60,8 @@ class ImageSourceRouter(APIRouter):
 
 
         @self.get('/image_sources/{image_source_id}/image.png', response_class=StreamingResponse)
-        async def serve_image_source_image(image_source_id: int = None):
-            _, image_source = self.find_image_source_by_id(image_source_id)
+        async def serve_image_source_image(image_source_id: int = Path(..., title="The ID of the image source", ge=0)):
+            _, image_source = self.slideshow.find_image_source_by_id(image_source_id)
             if image_source is None:
                 return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='image source not found')
 
@@ -59,10 +70,3 @@ class ImageSourceRouter(APIRouter):
             except ValueError as e:
                 image = await make_error_image(str(e), self.screen.size)
             return image_response(image)
-
-    def find_image_source_by_id(self, image_source_id: int) -> ImageSource:
-        for index, image_source in enumerate(self.slideshow.image_sources):
-            if image_source.id == image_source_id:
-                return index, image_source
-        return None, None
-

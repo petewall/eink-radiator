@@ -67,6 +67,6 @@ class Persistence(ImageSourceObserver, SlideshowObserver):
     async def image_source_update(self, image_source: ImageSource) -> None:
         self.save()
 
-    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
-        if config_changed:
+    async def slideshow_update(self, slideshow: Slideshow, slide_activated=False, slideshow_changed=False, config_changed=False) -> None:
+        if slideshow_changed or config_changed:
             self.save()

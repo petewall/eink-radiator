@@ -10,31 +10,35 @@
     }
   },
   {
-    "type": "BlankContent",
+    "type": "ImageContent",
     "data": {
       "name": {
         "type": "text",
-        "value": "White",
+        "value": "The Girls",
         "options": null
       },
-      "color": {
+      "scale": {
+        "type": "select",
+        "value": "CONTAIN",
+        "options": [
+          "SCALE",
+          "CONTAIN",
+          "COVER"
+        ]
+      },
+      "url": {
+        "type": "text",
+        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/TvCYfpb-RECDNTT_521RiQ?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=OMpqB1THRLqityK5kag5Jg.PD0hP87W38VLdYTyOR8STb",
+        "options": null
+      },
+      "background_color": {
         "type": "color",
         "value": "WHITE",
         "options": null
-      }
-    }
-  },
-  {
-    "type": "BlankContent",
-    "data": {
-      "name": {
-        "type": "text",
-        "value": "Noir",
-        "options": null
       },
-      "color": {
-        "type": "color",
-        "value": "BLACK",
+      "transform": {
+        "type": "transform",
+        "value": "FLIP_TOP_BOTTOM",
         "options": null
       }
     }
@@ -50,6 +54,55 @@
       "color": {
         "type": "color",
         "value": "RED",
+        "options": null
+      }
+    }
+  },
+  {
+    "type": "ImageContent",
+    "data": {
+      "name": {
+        "type": "text",
+        "value": "The Boys",
+        "options": null
+      },
+      "scale": {
+        "type": "select",
+        "value": "CONTAIN",
+        "options": [
+          "SCALE",
+          "CONTAIN",
+          "COVER"
+        ]
+      },
+      "url": {
+        "type": "text",
+        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz",
+        "options": null
+      },
+      "background_color": {
+        "type": "color",
+        "value": "BLACK",
+        "options": null
+      },
+      "transform": {
+        "type": "transform",
+        "value": "NONE",
+        "options": null
+      }
+    }
+  },
+  {
+    "type": "BlankContent",
+    "data": {
+      "name": {
+        "type": "text",
+        "value": "Noir",
+        "options": null
+      },
+      "color": {
+        "type": "color",
+        "value": "BLACK",
         "options": null
       }
     }
@@ -85,69 +138,16 @@
     }
   },
   {
-    "type": "ImageContent",
+    "type": "BlankContent",
     "data": {
       "name": {
         "type": "text",
-        "value": "The Girls",
+        "value": "White",
         "options": null
       },
-      "scale": {
-        "type": "select",
-        "value": "CONTAIN",
-        "options": [
-          "SCALE",
-          "CONTAIN",
-          "COVER"
-        ]
-      },
-      "url": {
-        "type": "text",
-        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/TvCYfpb-RECDNTT_521RiQ?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=OMpqB1THRLqityK5kag5Jg.PD0hP87W38VLdYTyOR8STb",
-        "options": null
-      },
-      "background_color": {
+      "color": {
         "type": "color",
         "value": "WHITE",
-        "options": null
-      },
-      "transform": {
-        "type": "transform",
-        "value": "FLIP_TOP_BOTTOM",
-        "options": null
-      }
-    }
-  },
-  {
-    "type": "ImageContent",
-    "data": {
-      "name": {
-        "type": "text",
-        "value": "The Boys",
-        "options": null
-      },
-      "scale": {
-        "type": "select",
-        "value": "CONTAIN",
-        "options": [
-          "SCALE",
-          "CONTAIN",
-          "COVER"
-        ]
-      },
-      "url": {
-        "type": "text",
-        "value": "https://thumbnails-photos.amazon.com/v1/thumbnail/O2Z2SysZTUOQrztKI65d7g?viewBox=1156%2C1540&ownerId=AQX0OIX0W30EP&groupShareToken=mCakTc1WSemv-NWcAh0ujw._PACKi8IHVck6agt8U1rxz",
-        "options": null
-      },
-      "background_color": {
-        "type": "color",
-        "value": "BLACK",
-        "options": null
-      },
-      "transform": {
-        "type": "transform",
-        "value": "NONE",
         "options": null
       }
     }

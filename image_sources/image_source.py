@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from copy import deepcopy
 import logging
-from typing import List
+from typing import Set
 from PIL import Image
 from image_sources.configuration import Configuration
 
@@ -20,7 +20,7 @@ class ImageSource(ABC):
         self.cached_image: Image = None
         self.configuration = config
 
-        self.subscribers: List[ImageSourceObserver] = []
+        self.subscribers: Set[ImageSourceObserver] = []
 
     def get_configuration(self) -> Configuration:
         return deepcopy(self.configuration)

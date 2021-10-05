@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Set
 
 from fastapi import APIRouter, Request
 from fastapi.responses import Response
@@ -29,11 +30,3 @@ class SlideshowRouter(APIRouter):
         async def next_slide(request: Request):
             await self.slideshow.next()
             return Response(status_code=HTTPStatus.OK)
-
-        # @self.post('/slideshow/pause')
-        # async def pause(request: Request):
-        #     return image_response(self.screen.image)
-
-        # @self.post('/slideshow/play')
-        # async def play(request: Request):
-        #     return image_response(self.screen.image)

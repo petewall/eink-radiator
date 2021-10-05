@@ -2,9 +2,10 @@
 <html>
 <head>
   <title>eInk Radiator</title>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="/lib/jquery/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
   <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
+  <script src="/lib/jquery-dragndrop/jquery.dragndrop.js"></script>
   <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
   <style>
     .ui.menu .item i {
@@ -137,10 +138,10 @@
     </div>
 
     <!-- Slides -->
-    <div class="ui middle aligned horizontal divided selection list">
+    <div id="slideshow_list" class="ui middle aligned horizontal divided selection list">
 {% for image_source in slideshow.image_sources %}
       <div id="image_source_{{ image_source.id}}"
-           class="image_source slideshow item {% if loop.index0 == slideshow.index %}selected{%endif%}">
+           class="image_source slideshow item {% if image_source == slideshow.active_image_source %}selected{%endif%}">
         <img class="ui bordered thumbnail image" src="/image_sources/{{ image_source.id}}/image.png" />
         <div class="content">
           {{ image_source.configuration.data.name.value }}

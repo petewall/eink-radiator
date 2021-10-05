@@ -22,8 +22,8 @@ function openSocketConnection() {
     }
   }
   socket.onmessage = (message) => {
-    console.log('Got message from websocket:', message)
     const data = JSON.parse(message.data)
+    console.log('Got message from websocket:', data)
     if (data.type == 'image_source') {
       handleImageSourceEvent(data)
     }
@@ -36,6 +36,6 @@ function openSocketConnection() {
   }
 }
 
-$(document).ready(() => {
+$(() => {
   openSocketConnection()
 })

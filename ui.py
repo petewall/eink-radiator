@@ -47,6 +47,9 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
         super().__init__(title="eInkRadiatorUI")
 
         self.mount("/static", StaticFiles(directory="static"), name="static")
+        self.mount("/lib/fomantic-ui", StaticFiles(directory="node_modules/fomantic-ui/dist/"), name="fomantic-ui")
+        self.mount("/lib/jquery", StaticFiles(directory="node_modules/jquery/dist/"), name="jquery")
+        self.mount("/lib/jquery-dragndrop", StaticFiles(directory="node_modules/@nobleclem/jquery-dragndrop/"), name="jquery-dragndrop")
 
         self.screen = screen
         self.screen.add_subscriber(self)
@@ -94,14 +97,15 @@ class UI(FastAPI, ScreenObserver, SlideshowObserver):
             'screen_busy': screen.busy
         })
 
-    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
+    async def slideshow_update(self, slideshow: Slideshow, slide_activated=False, slideshow_changed=False, config_changed=False) -> None:
         await self.send_message({
             'type': 'slideshow',
-            'image_source_index': slideshow.index,
-            'image_source_id': slideshow.get_active_image_source().id,
+            'image_source_id': slideshow.active_image_source.id,
             'interval': slideshow.current_interval,
-            'slide_changed': slide_changed,
-            'config_changed': config_changed
+            'slide_activated': slide_activated,
+            'slideshow_changed': slideshow_changed,
+            'config_changed': config_changed,
+            'slides': [image_source.id for image_source in slideshow.image_sources]
         })
 
     async def start(self, port: int) -> None:

@@ -49,9 +49,9 @@ class Screen(SlideshowObserver):
         for subscriber in self.subscribers:
             await subscriber.screen_update(self)
 
-    async def slideshow_update(self, slideshow: Slideshow, slide_changed=False, config_changed=False) -> None:
-        if slide_changed:
-            image_source = slideshow.get_active_image_source()
+    async def slideshow_update(self, slideshow: Slideshow, slide_activated=False, slideshow_changed=False, config_changed=False) -> None:
+        if slide_activated:
+            image_source = slideshow.active_image_source
             new_image = await image_source.get_image(self.size)
             await self.set_image(new_image)
 
