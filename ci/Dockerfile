@@ -1,4 +1,4 @@
-FROM python:3.10.0
+FROM python:3.10.2
 
 ENV CI=true
 LABEL description="An image suitable for testing the eInk Radiator project"
