@@ -19,8 +19,8 @@ jinja2 = "*"
 requests = "*"
 uvicorn = {extras = ["standard"], version = "*"}  # Standard is required for WebSocket support
 pydantic = "*"
-inky = "*"
-"rpi.gpio" = "*"
+inky = {version = "*", markers="'raspi' in platform_release"}
+"rpi.gpio" = {version = "*", markers="'raspi' in platform_release"}
 
 [requires]
 python_version = "3.7"

@@ -1,7 +1,17 @@
+.PHONY: deps-pipenv
+
 clean:
 	rm -rf node_modules temp
 
-# Code targets
+HAS_PIPENV := $(shell command -v pipenv;)
+deps-pipenv:
+ifndef HAS_PIPENV
+	pip install pipenv
+endif
+
+Pipfile.lock: Pipfile deps-pipenv
+	pipenv lock
+
 temp/make-targets/deps: Pipfile Pipfile.lock
 	pipenv sync --dev
 	mkdir -p temp/make-targets
@@ -20,10 +30,10 @@ TEST_SOURCES := $(shell find $$PWD -name '*_test.py')
 test-units: $(TEST_SOURCES) deps
 	pipenv run python -m unittest $(TEST_SOURCES)
 
-test-features: deps
-	pipenv run behave
+# test-features: deps
+# 	pipenv run behave
 
-test: test-units test-features
+test: test-units
 
 lint-python: deps
 	pipenv run pylint \

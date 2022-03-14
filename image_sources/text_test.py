@@ -55,7 +55,7 @@ class TestTextContent(unittest.TestCase):
     async def test_multiline_string(self):
         image_source = TextContent(
             TextContent.configuration(
-                text='Docker engineers\ndo it in a container',
+                text='Cloud native engineers\ndo it in a pod',
                 foreground_color=Color.WHITE,
                 background_color=Color.BLACK
             )
