@@ -18,73 +18,79 @@ resources:
 
   - name: pull-requests
     type: pull-request
+    icon: github
     source:
       repository: petewall/eink-radiator
       access_token: ((github-access-token))
 
+  - name: python
+    type: registry-image
+    icon: language-python
+    source:
+      repository: python
+      tag: 3.7
+      username: ((dockerhub-username))
+      password: ((dockerhub-password))
+
+  - name: node-js
+    type: registry-image
+    icon: nodejs
+    source:
+      repository: node
+      tag: 14
+      username: ((dockerhub-username))
+      password: ((dockerhub-password))
+
 jobs:
   - name: test
     plan:
-      - get: source
-        trigger: true
       - in_parallel:
-        - task: lint-python
-          config:
-            platform: linux
-            image_resource:
-              type: registry-image
-              source:
-                repository: python
-                tag: 3.7
-                username: ((dockerhub-username))
-                password: ((dockerhub-password))
-            inputs:
-              - name: source
-            run:
-              dir: source
-              path: make
-              args: [lint-python]
-        - task: test-python
-          config:
-            platform: linux
-            image_resource:
-              type: registry-image
-              source:
-                repository: python
-                tag: 3.7
-                username: ((dockerhub-username))
-                password: ((dockerhub-password))
-            inputs:
-              - name: source
-            run:
-              dir: source
-              path: make
-              args: [test-units]
-        - task: lint-javascript
-          config:
-            platform: linux
-            image_resource:
-              type: registry-image
-              source:
-                repository: node
-                tag: 14
-                username: ((dockerhub-username))
-                password: ((dockerhub-password))
-            inputs:
-              - name: source
-            run:
-              dir: source
-              path: make
-              args: [lint-js]
+        - get: python
+        - get: node-js
+        - get: source
+          trigger: true
+      - task: lint-python
+        image: python
+        config:
+          platform: linux
+          inputs:
+            - name: source
+          run:
+            dir: source
+            path: make
+            args: [lint-python]
+      - task: test-python
+        image: python
+        config:
+          platform: linux
+          inputs:
+            - name: source
+          run:
+            dir: source
+            path: make
+            args: [test-units]
+      - task: lint-javascript
+        image: node-js
+        config:
+          platform: linux
+          inputs:
+            - name: source
+          run:
+            dir: source
+            path: make
+            args: [lint-js]
 
   - name: test-pull-request
     plan:
-      - get: source
-        resource: pull-requests
-        trigger: true
-        version: every
-        params:
-          integration_tool: rebase
+      - in_parallel:
+        - get: python
+        - get: node-js
+        - get: source
+          resource: pull-requests
+          trigger: true
+          version: every
+          params:
+            integration_tool: rebase
       - put: pull-requests
         params:
           path: source
@@ -92,15 +98,9 @@ jobs:
       - do:
       - in_parallel:
         - task: lint-python
+          image: python
           config:
             platform: linux
-            image_resource:
-              type: registry-image
-              source:
-                repository: python
-                tag: 3.7
-                username: ((dockerhub-username))
-                password: ((dockerhub-password))
             inputs:
               - name: source
             run:
@@ -113,15 +113,9 @@ jobs:
               path: source
               status: failure
         - task: test-python
+          image: python
           config:
             platform: linux
-            image_resource:
-              type: registry-image
-              source:
-                repository: python
-                tag: 3.7
-                username: ((dockerhub-username))
-                password: ((dockerhub-password))
             inputs:
               - name: source
             run:
@@ -134,15 +128,9 @@ jobs:
               path: source
               status: failure
         - task: lint-javascript
+          image: node-js
           config:
             platform: linux
-            image_resource:
-              type: registry-image
-              source:
-                repository: node
-                tag: 14
-                username: ((dockerhub-username))
-                password: ((dockerhub-password))
             inputs:
               - name: source
             run:
