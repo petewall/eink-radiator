@@ -1,4 +1,4 @@
-.PHONY: deps-pipenv
+.PHONY: deps-pipenv deps js-deps
 
 clean:
 	rm -rf node_modules temp
@@ -9,15 +9,12 @@ ifndef HAS_PIPENV
 	pip install pipenv
 endif
 
-Pipfile.lock: Pipfile deps-pipenv
-	pipenv lock
-
 temp/make-targets/deps: Pipfile Pipfile.lock
 	pipenv sync --dev
 	mkdir -p temp/make-targets
 	touch temp/make-targets/deps
 
-deps: temp/make-targets/deps
+deps: deps-pipenv temp/make-targets/deps
 
 temp/make-targets/js-deps: package.json yarn.lock
 	yarn install
