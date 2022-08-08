@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 import os
 import unittest
 from hamcrest import assert_that, equal_to, has_key, is_, not_

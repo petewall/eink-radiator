@@ -1,4 +1,3 @@
-#pylint: disable=no-self-use
 import json
 import unittest
 from hamcrest import assert_that, equal_to, is_

@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 import os
 from io import BytesIO
 from urllib.error import HTTPError, URLError

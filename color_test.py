@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use,line-too-long
-
 import unittest
 from hamcrest import assert_that, equal_to, is_
 from color import Color
