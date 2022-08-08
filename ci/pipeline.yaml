@@ -49,36 +49,37 @@ jobs:
         - get: node-js
         - get: source
           trigger: true
-      - task: lint-python
-        image: python
-        config:
-          platform: linux
-          inputs:
-            - name: source
-          run:
-            dir: source
-            path: make
-            args: [lint-python]
-      - task: test-python
-        image: python
-        config:
-          platform: linux
-          inputs:
-            - name: source
-          run:
-            dir: source
-            path: make
-            args: [test-units]
-      - task: lint-javascript
-        image: node-js
-        config:
-          platform: linux
-          inputs:
-            - name: source
-          run:
-            dir: source
-            path: make
-            args: [lint-js]
+      - in_parallel:
+        - task: lint-python
+          image: python
+          config:
+            platform: linux
+            inputs:
+              - name: source
+            run:
+              dir: source
+              path: make
+              args: [lint-python]
+        - task: test-python
+          image: python
+          config:
+            platform: linux
+            inputs:
+              - name: source
+            run:
+              dir: source
+              path: make
+              args: [test-units]
+        - task: lint-javascript
+          image: node-js
+          config:
+            platform: linux
+            inputs:
+              - name: source
+            run:
+              dir: source
+              path: make
+              args: [lint-js]
 
   - name: test-pull-request
     plan:
