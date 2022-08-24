@@ -1,0 +1,16 @@
+rotation:
+- type: blank
+  name: Red
+  duration: 1s
+  params:
+    color: red
+- type: blank
+  name: White
+  duration: 1s
+  params:
+    color: white
+- type: blank
+  name: Black
+  duration: oogabooga
+  params:
+    color: black

@@ -1,0 +1,7 @@
+---
+data: configs/data.yaml
+screen: configs/screen.yaml
+# imagePath: test/images
+# imageSourcesPath: test/image_sources
+# screenPath: test/noopscreen
+# port: 8000
