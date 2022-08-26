@@ -5,7 +5,7 @@ resources:
   icon: github
   source:
     uri: git@github.com:petewall/eink-radiator.git
-    branch: main
+    branch: rearchitecture
     private_key: ((github.private_key))
 
 - name: display
@@ -45,9 +45,9 @@ resources:
 
 - name: golang
   type: registry-image
-  # icon: language-python
+  icon: language-go
   source:
-    repository: go
+    repository: golang
     tag: 1.18
     username: ((dockerhub.username))
     password: ((dockerhub.password))

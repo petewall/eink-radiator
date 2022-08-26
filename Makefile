@@ -1,6 +1,7 @@
 # HAS_GINKGO := $(shell command -v ginkgo;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
 # HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
+PLATFORM := $(shell uname -s)
 
 # #### DEPS ####
 # .PHONY: deps-go-binary deps-counterfeiter deps-golangci-lint deps-modules
@@ -27,7 +28,12 @@ deps-modules:
 
 lint:
 ifndef HAS_GOLANGCI_LINT
-	$(error golangci-lint is required)
+ifeq ($(PLATFORM), Darwin)
+	brew install golangci-lint
+endif
+ifeq ($(PLATFORM), Linux)
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+endif
 endif
 	golangci-lint run
 
