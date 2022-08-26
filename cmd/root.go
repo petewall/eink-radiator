@@ -23,6 +23,7 @@ func RunSerially(funcs ...func(cmd *cobra.Command, args []string) error) func(cm
 				return err
 			}
 		}
+
 		return nil
 	}
 }
@@ -30,7 +31,7 @@ func RunSerially(funcs ...func(cmd *cobra.Command, args []string) error) func(cm
 func ParseScreenConfig(cmd *cobra.Command, args []string) error {
 	configFilePath := viper.GetString("screen")
 	if configFilePath == "" {
-		return errors.New("Missing screen config file path. Please run again with --screen defined.")
+		return errors.New("missing screen config file path. Please run again with --screen defined")
 	}
 
 	configFileData, err := os.ReadFile(configFilePath)
@@ -49,7 +50,7 @@ func ParseScreenConfig(cmd *cobra.Command, args []string) error {
 func ParseDataConfig(cmd *cobra.Command, args []string) error {
 	configFilePath := viper.GetString("data")
 	if configFilePath == "" {
-		return errors.New("Missing data file path. Please run again with --data defined.")
+		return errors.New("missing data file path. Please run again with --data defined")
 	}
 
 	configFileData, err := os.ReadFile(configFilePath)
@@ -75,6 +76,7 @@ var rootCmd = &cobra.Command{
 			ImageConfigs: data.Rotation,
 		}
 		rotation.Start()
+
 		return nil
 	},
 }
@@ -92,15 +94,19 @@ var (
 	screenConfig *pkg.ScreenConfig
 )
 
+const (
+	DefaultPort = 8000
+)
+
 func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.Flags().StringVar(&cfgFile, "config", "", "config file path")
-	rootCmd.Flags().IntP("port", "p", 8000, "The port number to listen on for the HTTP API and browser UI")
+	rootCmd.Flags().IntP("port", "p", DefaultPort, "The port number to listen on for the HTTP API and browser UI")
 	rootCmd.Flags().StringP("data", "d", "", "The path to the data config file")
 	rootCmd.Flags().StringP("screen", "s", "", "The path to the screen config file")
 
-	viper.BindPFlag("port", rootCmd.Flags().Lookup("port"))
+	_ = viper.BindPFlag("port", rootCmd.Flags().Lookup("port"))
 }
 
 func initConfig() {

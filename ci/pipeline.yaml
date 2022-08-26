@@ -1,0 +1,108 @@
+---
+resources:
+- name: eink-radiator
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator.git
+    branch: main
+    private_key: ((github.private_key))
+
+- name: display
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-display.git
+    branch: main
+    private_key: ((github.private_key))
+
+# - name: display-version
+#   type: semver
+#   icon: github
+#   source:
+#     driver: git
+#     uri: git@github.com:petewall/eink-radiator-display.git
+#     branch: main
+#     file: version
+#     private_key: ((github.private_key))
+
+- name: image-source-blank
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-image-source-blank
+    branch: main
+    private_key: ((github.private_key))
+
+- name: python
+  type: registry-image
+  icon: language-python
+  source:
+    repository: python
+    tag: 3.10
+    username: ((dockerhub.username))
+    password: ((dockerhub.password)
+
+- name: golang
+  type: registry-image
+  # icon: language-python
+  source:
+    repository: go
+    tag: 1.18
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+
+jobs:
+- name: test-eink-radiator
+  plan:
+  - in_parallel:
+    - get: source
+      resource: eink-radiator
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [lint]
+
+- name: test-display
+  plan:
+  - in_parallel:
+    - get: source
+      resource: display
+      trigger: true
+    - get: python
+  - task: test
+    image: python
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [test]
+
+- name: test-image-source-blank
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-blank
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [lint]

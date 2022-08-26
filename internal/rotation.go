@@ -17,14 +17,16 @@ type Rotation struct {
 func (r *Rotation) Start() {
 	r.index = 0
 
-	for true {
+	for {
 		imageConfig := r.ImageConfigs[r.index]
 		r.index = (r.index + 1) % len(r.ImageConfigs)
 
 		imageGeneratorPath := path.Join(viper.GetString("imageSourcesPath"), imageConfig.Type)
+
 		duration, err := time.ParseDuration(imageConfig.Duration)
 		if err != nil {
 			fmt.Printf("invalid duration: %s, skipping\n", imageConfig.Duration)
+
 			continue
 		}
 
