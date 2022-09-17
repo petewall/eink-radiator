@@ -39,9 +39,7 @@ resources:
   icon: language-python
   source:
     repository: python
-    tag: 3.10
-    username: ((dockerhub.username))
-    password: ((dockerhub.password)
+    tag: 3.9
 
 - name: golang
   type: registry-image
@@ -49,8 +47,6 @@ resources:
   source:
     repository: golang
     tag: 1.18
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
 
 jobs:
 - name: test-eink-radiator

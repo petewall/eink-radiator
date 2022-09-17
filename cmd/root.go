@@ -28,10 +28,12 @@ func RunSerially(funcs ...func(cmd *cobra.Command, args []string) error) func(cm
 	}
 }
 
+var ErrMissingSreenConfig = errors.New("missing data file path. Please run again with --data defined")
+
 func ParseScreenConfig(cmd *cobra.Command, args []string) error {
 	configFilePath := viper.GetString("screen")
 	if configFilePath == "" {
-		return errors.New("missing screen config file path. Please run again with --screen defined")
+		return ErrMissingSreenConfig
 	}
 
 	configFileData, err := os.ReadFile(configFilePath)
@@ -47,10 +49,12 @@ func ParseScreenConfig(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+var ErrMissingDataFile = errors.New("missing data file path. Please run again with --data defined")
+
 func ParseDataConfig(cmd *cobra.Command, args []string) error {
 	configFilePath := viper.GetString("data")
 	if configFilePath == "" {
-		return errors.New("missing data file path. Please run again with --data defined")
+		return ErrMissingDataFile
 	}
 
 	configFileData, err := os.ReadFile(configFilePath)
@@ -71,7 +75,7 @@ var rootCmd = &cobra.Command{
 	Short:   "A brief description of your application",
 	PreRunE: RunSerially(ParseDataConfig, ParseScreenConfig),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Printf("port is %d\n", viper.GetInt("port"))
+		// fmt.Printf("port is %d\n", viper.GetInt("port"))
 		rotation := &internal.Rotation{
 			ImageConfigs: data.Rotation,
 		}
