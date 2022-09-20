@@ -11,6 +11,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/petewall/eink-radiator/v2/internal"
 	"github.com/petewall/eink-radiator/v2/pkg"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -75,9 +76,13 @@ var rootCmd = &cobra.Command{
 	Short:   "A brief description of your application",
 	PreRunE: RunSerially(ParseDataConfig, ParseScreenConfig),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// fmt.Printf("port is %d\n", viper.GetInt("port"))
+		logger := logrus.New()
+		logger.Out = cmd.ErrOrStderr()
+
+		logger.Info(fmt.Sprintf("Starting... port is %d", viper.GetInt("port")))
 		rotation := &internal.Rotation{
 			ImageConfigs: data.Rotation,
+			Logger:       logger,
 		}
 		rotation.Start()
 

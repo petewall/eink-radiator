@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/petewall/eink-radiator/v2/pkg"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 type Rotation struct {
 	ImageConfigs []pkg.ImageConfig
 	index        int
+	Logger       *logrus.Logger
 }
 
 func (r *Rotation) Start() {
@@ -25,12 +27,12 @@ func (r *Rotation) Start() {
 
 		duration, err := time.ParseDuration(imageConfig.Duration)
 		if err != nil {
-			fmt.Printf("invalid duration: %s, skipping\n", imageConfig.Duration)
+			r.Logger.Warn(fmt.Sprintf("invalid duration %s, skipping", imageConfig.Duration))
 
 			continue
 		}
 
-		fmt.Printf("calling %s -s %s -c %s\n", imageGeneratorPath, viper.GetString("screen"), "???")
+		r.Logger.Debug(fmt.Sprintf("calling %s -s %s -c %s", imageGeneratorPath, viper.GetString("screen"), "???"))
 		time.Sleep(duration)
 	}
 }
