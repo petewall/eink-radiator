@@ -102,3 +102,13 @@ jobs:
         dir: source
         path: make
         args: [lint]
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [test]
