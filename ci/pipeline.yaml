@@ -34,6 +34,24 @@ resources:
     branch: main
     private_key: ((github.private_key))
 
+- name: image-source-blank-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator-image-source-blank
+    access_token: ((github.access_token))
+
+- name: image-source-blank-version
+  type: semver
+  icon: github
+  source:
+    driver: git
+    uri: git@github.com:petewall/eink-radiator-image-source-blank.git
+    branch: main
+    file: version
+    private_key: ((github.private_key))
+
 - name: python
   type: registry-image
   icon: language-python
@@ -112,3 +130,46 @@ jobs:
         dir: source
         path: make
         args: [test]
+
+- name: release-image-source-blank
+  plan:
+    - in_parallel:
+      - get: source
+        resource: image-source-blank
+        passed:
+          - test-image-source-blank
+        trigger: true
+      - get: golang
+        passed:
+          - test-image-source-blank
+    - task: build
+      image: golang
+      config:
+        platform: linux
+        inputs:
+          - name: source
+        outputs:
+          - name: build
+        run:
+          dir: source
+          path: bash
+          args:
+            - -exc
+            - |
+              make build
+              mv build/* ../build/
+    - put: version
+      resource: image-source-blank-version
+      inputs: detect
+      params:
+        bump: patch
+    - put: image-source-blank-release
+      inputs: [build, source, version]
+      params:
+        name: version/version
+        tag: version/version
+        tag_prefix: v
+        commitish: source/.git/ref
+        generate_release_notes: true
+        globs:
+          - build/*
