@@ -47,6 +47,7 @@ resources:
   icon: github
   source:
     driver: git
+    commit_message: "[ci skip] bump version to %version%"
     uri: git@github.com:petewall/eink-radiator-image-source-blank.git
     branch: main
     file: version
