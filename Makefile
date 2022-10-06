@@ -55,7 +55,13 @@ build/eink-radiator: $(SOURCES) deps-modules
 
 build: build/eink-radiator
 
+run: build/eink-radiator
+	build/eink-radiator
+
 # #### DEVOPS ####
+ci/pipeline.yaml: ci/pipeline-template.yaml ci/data.yaml
+	ytt --file ci/pipeline-template.yaml --file ci/data.yaml > ci/pipeline.yaml
+
 set-pipeline: ci/pipeline.yaml
 	fly --target wallhouse set-pipeline \
 		--pipeline eink-radiator \

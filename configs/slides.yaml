@@ -1,4 +1,6 @@
-rotation:
+apiVersion: v1.eink-radiator.petewall.net
+kind: Slides
+slides:
 - type: blank
   name: Red
   duration: 1s

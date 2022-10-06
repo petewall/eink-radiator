@@ -1,0 +1,146 @@
+---
+#@ load("@ytt:data", "data")
+resources:
+- name: eink-radiator
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator.git
+    branch: rearchitecture
+    private_key: ((github.private_key))
+
+#@ for/end component in data.values.components:
+- name: #@ component.name
+  type: git
+  icon: github
+  source:
+    uri: #@ "git@github.com:" + component.repo.owner + "/" + component.repo.name
+    branch: #@ component.branch
+    private_key: ((github.private_key))
+
+#@ for/end component in data.values.components:
+- name: #@ component.name + "-release"
+  type: github-release
+  icon: github
+  source:
+    owner: #@ component.repo.owner
+    repository: #@ component.repo.name
+    access_token: ((github.access_token))
+
+#@ for/end component in data.values.components:
+- name: #@ component.name + "-version"
+  type: semver
+  icon: github
+  source:
+    driver: git
+    commit_message: "[ci skip] bump version to %version%"
+    uri: #@ "git@github.com:" + component.repo.owner + "/" + component.repo.name + ".git"
+    branch: #@ component.branch
+    file: version
+    private_key: ((github.private_key))
+
+- name: python
+  type: registry-image
+  icon: language-python
+  source:
+    repository: python
+    tag: 3.9
+
+- name: golang
+  type: registry-image
+  icon: language-go
+  source:
+    repository: golang
+    tag: 1.18
+
+jobs:
+- name: test-eink-radiator
+  plan:
+  - in_parallel:
+    - get: source
+      resource: eink-radiator
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [lint]
+
+#@ for/end component in data.values.components:
+- name: #@ "test-" + component.name
+  plan:
+  - in_parallel:
+    - get: source
+      resource: #@ component.name
+      trigger: true
+    - get: #@ component.language
+  - task: lint
+    image: #@ component.language
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [lint]
+  - task: test
+    image: #@ component.language
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [test]
+
+#@ for/end component in data.values.components:
+- name: #@ "release-" + component.name
+  plan:
+    - in_parallel:
+      - get: source
+        resource: #@ component.name
+        passed:
+          - #@ "test-" + component.name
+        trigger: true
+      - get: #@ component.language
+        passed:
+          - #@ "test-" + component.name
+    - task: build
+      image: #@ component.language
+      config:
+        platform: linux
+        inputs:
+          - name: source
+        outputs:
+          - name: build
+        run:
+          dir: source
+          path: bash
+          args:
+            - -exc
+            - |
+              make build
+              mv build/* ../build/
+    - put: version
+      resource: #@ component.name + "-version"
+      inputs: detect
+      params:
+        bump: patch
+    - put: #@ component.name + "-release"
+      inputs: [build, source, version]
+      params:
+        name: version/version
+        tag: version/version
+        tag_prefix: v
+        commitish: source/.git/ref
+        generate_release_notes: true
+        globs:
+          - build/*

@@ -1,0 +1,21 @@
+#@data/values
+---
+components:
+  - name: image-source-blank
+    language: golang
+    repo:
+      owner: petewall
+      name: eink-radiator-image-source-blank
+    branch: main
+  - name: image-source-image
+    language: golang
+    repo:
+      owner: petewall
+      name: eink-radiator-image-source-image
+    branch: main
+  - name: display
+    language: python
+    repo:
+      owner: petewall
+      name: eink-radiator-display
+    branch: main
