@@ -127,7 +127,7 @@ jobs:
           args:
             - -exc
             - |
-              make build
+              make build-all
               mv build/* ../build/
     - put: version
       resource: #@ component.name + "-version"
