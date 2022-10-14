@@ -1,0 +1,19 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: tools
+  contents:
+  - path: blank
+    githubRelease:
+      slug: petewall/eink-radiator-image-source-blank
+      latest: true
+      assetNames:
+        - blank-darwin-amd64
+      disableAutoChecksumValidation: true
+  - path: image
+    githubRelease:
+      slug: petewall/eink-radiator-image-source-image
+      latest: true
+      assetNames:
+        - image-darwin-amd64
+      disableAutoChecksumValidation: true
