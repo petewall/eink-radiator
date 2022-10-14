@@ -3,7 +3,7 @@ resources:
   type: git
   icon: github
   source:
-    uri: git@github.com:petewall/eink-radiator.git
+    uri: git@github.com:petewall/eink-radiator
     branch: rearchitecture
     private_key: ((github.private_key))
 - name: image-source-blank
@@ -27,6 +27,13 @@ resources:
     uri: git@github.com:petewall/eink-radiator-display
     branch: main
     private_key: ((github.private_key))
+- name: eink-radiator-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator
+    access_token: ((github.access_token))
 - name: image-source-blank-release
   type: github-release
   icon: github
@@ -48,6 +55,16 @@ resources:
     owner: petewall
     repository: eink-radiator-display
     access_token: ((github.access_token))
+- name: eink-radiator-version
+  type: semver
+  icon: github
+  source:
+    driver: git
+    commit_message: '[ci skip] bump version to %version%'
+    uri: git@github.com:petewall/eink-radiator.git
+    branch: rearchitecture
+    file: version
+    private_key: ((github.private_key))
 - name: image-source-blank-version
   type: semver
   icon: github
@@ -89,7 +106,7 @@ resources:
   icon: language-go
   source:
     repository: golang
-    tag: 1.18
+    tag: 1.19
 jobs:
 - name: test-eink-radiator
   plan:
@@ -109,6 +126,17 @@ jobs:
         path: make
         args:
         - lint
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
 - name: test-image-source-blank
   plan:
   - in_parallel:
@@ -196,6 +224,51 @@ jobs:
         path: make
         args:
         - test
+- name: release-eink-radiator
+  plan:
+  - in_parallel:
+    - get: source
+      resource: eink-radiator
+      passed:
+      - test-eink-radiator
+      trigger: true
+    - get: golang
+      passed:
+      - test-eink-radiator
+  - task: build
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      outputs:
+      - name: build
+      run:
+        dir: source
+        path: bash
+        args:
+        - -exc
+        - |
+          make build-all
+          mv build/* ../build/
+  - put: version
+    resource: eink-radiator-version
+    inputs: detect
+    params:
+      bump: patch
+  - put: eink-radiator-release
+    inputs:
+    - build
+    - source
+    - version
+    params:
+      name: version/version
+      tag: version/version
+      tag_prefix: v
+      commitish: source/.git/ref
+      generate_release_notes: true
+      globs:
+      - build/*
 - name: release-image-source-blank
   plan:
   - in_parallel:

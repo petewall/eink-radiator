@@ -1,14 +1,6 @@
 ---
 #@ load("@ytt:data", "data")
 resources:
-- name: eink-radiator
-  type: git
-  icon: github
-  source:
-    uri: git@github.com:petewall/eink-radiator.git
-    branch: rearchitecture
-    private_key: ((github.private_key))
-
 #@ for/end component in data.values.components:
 - name: #@ component.name
   type: git
@@ -51,27 +43,9 @@ resources:
   icon: language-go
   source:
     repository: golang
-    tag: 1.18
+    tag: 1.19
 
 jobs:
-- name: test-eink-radiator
-  plan:
-  - in_parallel:
-    - get: source
-      resource: eink-radiator
-      trigger: true
-    - get: golang
-  - task: lint
-    image: golang
-    config:
-      platform: linux
-      inputs:
-        - name: source
-      run:
-        dir: source
-        path: make
-        args: [lint]
-
 #@ for/end component in data.values.components:
 - name: #@ "test-" + component.name
   plan:

@@ -1,6 +1,12 @@
 #@data/values
 ---
 components:
+  - name: eink-radiator
+    language: golang
+    repo:
+      owner: petewall
+      name: eink-radiator
+    branch: rearchitecture
   - name: image-source-blank
     language: golang
     repo:

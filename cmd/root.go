@@ -28,7 +28,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "eink-radiator",
-	Short: "A brief description of your application",
+	Short: "Main process for the eInk Radiator",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logrus.New()
 		logger.Out = cmd.ErrOrStderr()

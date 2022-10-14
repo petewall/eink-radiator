@@ -1,20 +1,20 @@
-# HAS_GINKGO := $(shell command -v ginkgo;)
+HAS_GINKGO := $(shell command -v ginkgo;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
-# HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
+HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
 PLATFORM := $(shell uname -s)
 
 # #### DEPS ####
-# .PHONY: deps-go-binary deps-counterfeiter deps-golangci-lint deps-modules
+.PHONY: deps-counterfeiter deps-ginkgo deps-modules
 
-# deps-counterfeiter: deps-go-binary
-# ifndef HAS_COUNTERFEITER
-# 	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
-# endif
+deps-counterfeiter:
+ifndef HAS_COUNTERFEITER
+	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
+endif
 
-# deps-ginkgo: deps-go-binary
-# ifndef HAS_GINKGO
-# 	go install github.com/onsi/ginkgo/ginkgo@latest
-# endif
+deps-ginkgo:
+ifndef HAS_GINKGO
+	go install github.com/onsi/ginkgo/v2/ginkgo
+endif
 
 deps-modules:
 	go mod download
@@ -37,8 +37,8 @@ endif
 endif
 	golangci-lint run
 
-# test: lib/libfakes/fake_firmware_store.go deps-modules deps-ginkgo
-# 	ginkgo -r -skipPackage test .
+test: deps-modules deps-ginkgo
+	ginkgo -r .
 
 # integration-test: deps-modules deps-ginkgo
 # 	ginkgo -r test/integration
@@ -47,13 +47,26 @@ endif
 # 	ginkgo -r .
 
 # #### BUILD ####
-.PHONY: build
+.PHONY: build build-all
 SOURCES = $(shell find . -name "*.go" | grep -v "_test\." )
-
-build/eink-radiator: $(SOURCES) deps-modules
-	go build -o build/eink-radiator github.com/petewall/eink-radiator/v2
+VERSION := $(or $(VERSION), dev)
+LDFLAGS="-X github.com/petewall/eink-radiator/v2/cmd.Version=$(VERSION)"
 
 build: build/eink-radiator
+
+build/eink-radiator: $(SOURCES) deps-modules
+	go build -o $@ github.com/petewall/eink-radiator/v2
+
+build-all: build/eink-radiator-arm6 build/eink-radiator-arm7 build/eink-radiator-darwin-amd64
+
+build/eink-radiator-arm6: $(SOURCES) deps-modules
+	GOOS=linux GOARCH=arm GOARM=6 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator/v2
+
+build/eink-radiator-arm7: $(SOURCES) deps-modules
+	GOOS=linux GOARCH=arm GOARM=7 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator/v2
+
+build/eink-radiator-darwin-amd64: $(SOURCES) deps-modules
+	GOOS=darwin GOARCH=amd64 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator/v2
 
 run: build/eink-radiator
 	build/eink-radiator
