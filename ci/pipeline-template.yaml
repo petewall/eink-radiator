@@ -1,7 +1,15 @@
----
 #@ load("@ytt:data", "data")
+---
+resource_types:
+- name: pull-request
+  type: registry-image
+  source:
+    repository: teliaoss/github-pr-resource
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+
 resources:
-#@ for/end component in data.values.components:
+#@ for component in data.values.components:
 - name: #@ component.name
   type: git
   icon: github
@@ -10,7 +18,14 @@ resources:
     branch: #@ component.branch
     private_key: ((github.private_key))
 
-#@ for/end component in data.values.components:
+- name: #@ component.name + "-pull-requests"
+  type: pull-request
+  icon: github
+  check_every: 1h
+  source:
+    repository: #@ component.repo.owner + "/" + component.repo.name
+    access_token: ((github.access_token))
+
 - name: #@ component.name + "-release"
   type: github-release
   icon: github
@@ -19,7 +34,6 @@ resources:
     repository: #@ component.repo.name
     access_token: ((github.access_token))
 
-#@ for/end component in data.values.components:
 - name: #@ component.name + "-version"
   type: semver
   icon: github
@@ -30,6 +44,7 @@ resources:
     branch: #@ component.branch
     file: version
     private_key: ((github.private_key))
+#@ end
 
 - name: python
   type: registry-image
@@ -37,6 +52,8 @@ resources:
   source:
     repository: python
     tag: 3.9
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 
 - name: golang
   type: registry-image
@@ -44,9 +61,29 @@ resources:
   source:
     repository: golang
     tag: 1.19
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+
+groups:
+- name: all
+  jobs:
+#@ for component in data.values.components:
+  - #@ "test-" + component.name
+  - #@ "release-" + component.name
+  - #@ "test-" + component.name + "-pr"
+#@ end
+
+#@ for component in data.values.components:
+- name: #@ component.name
+  jobs:
+  - #@ "test-" + component.name
+  - #@ "release-" + component.name
+  - #@ "test-" + component.name + "-pr"
+#@ end
+
 
 jobs:
-#@ for/end component in data.values.components:
+#@ for component in data.values.components:
 - name: #@ "test-" + component.name
   plan:
   - in_parallel:
@@ -75,7 +112,6 @@ jobs:
         path: make
         args: [test]
 
-#@ for/end component in data.values.components:
 - name: #@ "release-" + component.name
   plan:
     - in_parallel:
@@ -87,6 +123,7 @@ jobs:
       - get: #@ component.language
         passed:
           - #@ "test-" + component.name
+    #@ if component.buildable:
     - task: build
       image: #@ component.language
       config:
@@ -103,18 +140,89 @@ jobs:
             - |
               make build-all
               mv build/* ../build/
+    #@ end
     - put: version
       resource: #@ component.name + "-version"
       inputs: detect
       params:
         bump: patch
     - put: #@ component.name + "-release"
-      inputs: [build, source, version]
+      inputs:
+        #@ if component.buildable:
+        - build
+        #@ end
+        - source
+        - version
       params:
         name: version/version
         tag: version/version
         tag_prefix: v
         commitish: source/.git/ref
         generate_release_notes: true
+        #@ if component.buildable:
         globs:
           - build/*
+        #@ end
+
+- name: #@ "test-" + component.name + "-pr"
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: #@ component.name + "-pull-requests"
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: #@ component.name + "-pull-requests"
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: #@ component.name + "-pull-requests"
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: #@ component.language
+  - task: lint
+    image: #@ component.language
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [lint]
+    on_failure:
+      put: #@ component.name + "-pull-requests"
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: #@ component.language
+    config:
+      platform: linux
+      inputs:
+        - name: source
+      run:
+        dir: source
+        path: make
+        args: [test]
+    on_failure:
+      put: #@ component.name + "-pull-requests"
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: #@ component.name + "-pull-requests"
+    inputs: detect
+    params:
+      path: source
+      status: success
+#@ end

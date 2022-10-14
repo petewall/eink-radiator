@@ -3,24 +3,28 @@
 components:
   - name: eink-radiator
     language: golang
+    buildable: true
     repo:
       owner: petewall
       name: eink-radiator
     branch: rearchitecture
   - name: image-source-blank
     language: golang
+    buildable: true
     repo:
       owner: petewall
       name: eink-radiator-image-source-blank
     branch: main
   - name: image-source-image
     language: golang
+    buildable: true
     repo:
       owner: petewall
       name: eink-radiator-image-source-image
     branch: main
   - name: display
     language: python
+    buildable: false
     repo:
       owner: petewall
       name: eink-radiator-display

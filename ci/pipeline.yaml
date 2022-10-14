@@ -1,3 +1,10 @@
+resource_types:
+- name: pull-request
+  type: registry-image
+  source:
+    repository: teliaoss/github-pr-resource
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 resources:
 - name: eink-radiator
   type: git
@@ -6,54 +13,19 @@ resources:
     uri: git@github.com:petewall/eink-radiator
     branch: rearchitecture
     private_key: ((github.private_key))
-- name: image-source-blank
-  type: git
+- name: eink-radiator-pull-requests
+  type: pull-request
   icon: github
+  check_every: 1h
   source:
-    uri: git@github.com:petewall/eink-radiator-image-source-blank
-    branch: main
-    private_key: ((github.private_key))
-- name: image-source-image
-  type: git
-  icon: github
-  source:
-    uri: git@github.com:petewall/eink-radiator-image-source-image
-    branch: main
-    private_key: ((github.private_key))
-- name: display
-  type: git
-  icon: github
-  source:
-    uri: git@github.com:petewall/eink-radiator-display
-    branch: main
-    private_key: ((github.private_key))
+    repository: petewall/eink-radiator
+    access_token: ((github.access_token))
 - name: eink-radiator-release
   type: github-release
   icon: github
   source:
     owner: petewall
     repository: eink-radiator
-    access_token: ((github.access_token))
-- name: image-source-blank-release
-  type: github-release
-  icon: github
-  source:
-    owner: petewall
-    repository: eink-radiator-image-source-blank
-    access_token: ((github.access_token))
-- name: image-source-image-release
-  type: github-release
-  icon: github
-  source:
-    owner: petewall
-    repository: eink-radiator-image-source-image
-    access_token: ((github.access_token))
-- name: display-release
-  type: github-release
-  icon: github
-  source:
-    owner: petewall
-    repository: eink-radiator-display
     access_token: ((github.access_token))
 - name: eink-radiator-version
   type: semver
@@ -65,6 +37,27 @@ resources:
     branch: rearchitecture
     file: version
     private_key: ((github.private_key))
+- name: image-source-blank
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-image-source-blank
+    branch: main
+    private_key: ((github.private_key))
+- name: image-source-blank-pull-requests
+  type: pull-request
+  icon: github
+  check_every: 1h
+  source:
+    repository: petewall/eink-radiator-image-source-blank
+    access_token: ((github.access_token))
+- name: image-source-blank-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator-image-source-blank
+    access_token: ((github.access_token))
 - name: image-source-blank-version
   type: semver
   icon: github
@@ -75,6 +68,27 @@ resources:
     branch: main
     file: version
     private_key: ((github.private_key))
+- name: image-source-image
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-image-source-image
+    branch: main
+    private_key: ((github.private_key))
+- name: image-source-image-pull-requests
+  type: pull-request
+  icon: github
+  check_every: 1h
+  source:
+    repository: petewall/eink-radiator-image-source-image
+    access_token: ((github.access_token))
+- name: image-source-image-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator-image-source-image
+    access_token: ((github.access_token))
 - name: image-source-image-version
   type: semver
   icon: github
@@ -85,6 +99,27 @@ resources:
     branch: main
     file: version
     private_key: ((github.private_key))
+- name: display
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-display
+    branch: main
+    private_key: ((github.private_key))
+- name: display-pull-requests
+  type: pull-request
+  icon: github
+  check_every: 1h
+  source:
+    repository: petewall/eink-radiator-display
+    access_token: ((github.access_token))
+- name: display-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator-display
+    access_token: ((github.access_token))
 - name: display-version
   type: semver
   icon: github
@@ -101,12 +136,51 @@ resources:
   source:
     repository: python
     tag: 3.9
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 - name: golang
   type: registry-image
   icon: language-go
   source:
     repository: golang
     tag: 1.19
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+groups:
+- name: all
+  jobs:
+  - test-eink-radiator
+  - release-eink-radiator
+  - test-eink-radiator-pr
+  - test-image-source-blank
+  - release-image-source-blank
+  - test-image-source-blank-pr
+  - test-image-source-image
+  - release-image-source-image
+  - test-image-source-image-pr
+  - test-display
+  - release-display
+  - test-display-pr
+- name: eink-radiator
+  jobs:
+  - test-eink-radiator
+  - release-eink-radiator
+  - test-eink-radiator-pr
+- name: image-source-blank
+  jobs:
+  - test-image-source-blank
+  - release-image-source-blank
+  - test-image-source-blank-pr
+- name: image-source-image
+  jobs:
+  - test-image-source-image
+  - release-image-source-image
+  - test-image-source-image-pr
+- name: display
+  jobs:
+  - test-display
+  - release-display
+  - test-display-pr
 jobs:
 - name: test-eink-radiator
   plan:
@@ -128,93 +202,6 @@ jobs:
         - lint
   - task: test
     image: golang
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      run:
-        dir: source
-        path: make
-        args:
-        - test
-- name: test-image-source-blank
-  plan:
-  - in_parallel:
-    - get: source
-      resource: image-source-blank
-      trigger: true
-    - get: golang
-  - task: lint
-    image: golang
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      run:
-        dir: source
-        path: make
-        args:
-        - lint
-  - task: test
-    image: golang
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      run:
-        dir: source
-        path: make
-        args:
-        - test
-- name: test-image-source-image
-  plan:
-  - in_parallel:
-    - get: source
-      resource: image-source-image
-      trigger: true
-    - get: golang
-  - task: lint
-    image: golang
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      run:
-        dir: source
-        path: make
-        args:
-        - lint
-  - task: test
-    image: golang
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      run:
-        dir: source
-        path: make
-        args:
-        - test
-- name: test-display
-  plan:
-  - in_parallel:
-    - get: source
-      resource: display
-      trigger: true
-    - get: python
-  - task: lint
-    image: python
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      run:
-        dir: source
-        path: make
-        args:
-        - lint
-  - task: test
-    image: python
     config:
       platform: linux
       inputs:
@@ -269,6 +256,98 @@ jobs:
       generate_release_notes: true
       globs:
       - build/*
+- name: test-eink-radiator-pr
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: eink-radiator-pull-requests
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: eink-radiator-pull-requests
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: eink-radiator-pull-requests
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+    on_failure:
+      put: eink-radiator-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+    on_failure:
+      put: eink-radiator-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: eink-radiator-pull-requests
+    inputs: detect
+    params:
+      path: source
+      status: success
+- name: test-image-source-blank
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-blank
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
 - name: release-image-source-blank
   plan:
   - in_parallel:
@@ -314,6 +393,98 @@ jobs:
       generate_release_notes: true
       globs:
       - build/*
+- name: test-image-source-blank-pr
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-blank-pull-requests
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: image-source-blank-pull-requests
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: image-source-blank-pull-requests
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+    on_failure:
+      put: image-source-blank-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+    on_failure:
+      put: image-source-blank-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: image-source-blank-pull-requests
+    inputs: detect
+    params:
+      path: source
+      status: success
+- name: test-image-source-image
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-image
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
 - name: release-image-source-image
   plan:
   - in_parallel:
@@ -359,6 +530,98 @@ jobs:
       generate_release_notes: true
       globs:
       - build/*
+- name: test-image-source-image-pr
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-image-pull-requests
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: image-source-image-pull-requests
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: image-source-image-pull-requests
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+    on_failure:
+      put: image-source-image-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+    on_failure:
+      put: image-source-image-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: image-source-image-pull-requests
+    inputs: detect
+    params:
+      path: source
+      status: success
+- name: test-display
+  plan:
+  - in_parallel:
+    - get: source
+      resource: display
+      trigger: true
+    - get: python
+  - task: lint
+    image: python
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+  - task: test
+    image: python
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
 - name: release-display
   plan:
   - in_parallel:
@@ -370,22 +633,6 @@ jobs:
     - get: python
       passed:
       - test-display
-  - task: build
-    image: python
-    config:
-      platform: linux
-      inputs:
-      - name: source
-      outputs:
-      - name: build
-      run:
-        dir: source
-        path: bash
-        args:
-        - -exc
-        - |
-          make build-all
-          mv build/* ../build/
   - put: version
     resource: display-version
     inputs: detect
@@ -393,7 +640,6 @@ jobs:
       bump: patch
   - put: display-release
     inputs:
-    - build
     - source
     - version
     params:
@@ -402,5 +648,66 @@ jobs:
       tag_prefix: v
       commitish: source/.git/ref
       generate_release_notes: true
-      globs:
-      - build/*
+- name: test-display-pr
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: display-pull-requests
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: display-pull-requests
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: display-pull-requests
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: python
+  - task: lint
+    image: python
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+    on_failure:
+      put: display-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: python
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+    on_failure:
+      put: display-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: display-pull-requests
+    inputs: detect
+    params:
+      path: source
+      status: success
