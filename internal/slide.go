@@ -2,9 +2,11 @@ package internal
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -13,42 +15,9 @@ const (
 )
 
 type SlideConfig struct {
-	APIVersion string   `json:"apiVersion"`
-	Kind       string   `json:"kind"`
-	Slides     []*Slide `json:"slides"`
-}
-
-type SlideConfigFileParser func(path string) (*SlideConfig, error)
-
-var ParseSlideConfigFromFile = func(path string) (*SlideConfig, error) {
-	return &SlideConfig{
-		Slides: []*Slide{
-			{
-				Type:     "blank",
-				Name:     "Red",
-				Duration: "1s",
-				Params: map[string]interface{}{
-					"color": "red",
-				},
-			},
-			{
-				Type:     "blank",
-				Name:     "Black",
-				Duration: "1s",
-				Params: map[string]interface{}{
-					"color": "black",
-				},
-			},
-			{
-				Type:     "blank",
-				Name:     "White",
-				Duration: "1s",
-				Params: map[string]interface{}{
-					"color": "white",
-				},
-			},
-		},
-	}, nil
+	APIVersion string   `json:"apiVersion" yaml:"apiVersion"`
+	Kind       string   `json:"kind" yaml:"kind"`
+	Slides     []*Slide `json:"slides" yaml:"slides"`
 }
 
 func (sc *SlideConfig) Validate() error {
@@ -64,17 +33,37 @@ func (sc *SlideConfig) Validate() error {
 }
 
 type Slide struct {
-	Type     string                 `json:"type"`
-	Name     string                 `json:"name,omitempty"`
-	Duration string                 `json:"duration"`
-	Params   map[string]interface{} `json:"params"`
+	Type     string                 `json:"type" yaml:"type"`
+	Name     string                 `json:"name" yaml:"name"`
+	Duration string                 `json:"duration" yaml:"duration"`
+	Params   map[string]interface{} `json:"params" yaml:"params"`
 }
 
-func (s *Slide) GenerateImage(toolsPath, imagePath string, screen *ScreenSize) (string, error) {
-	cmd := filepath.Join(toolsPath, s.Type)
-	args := []string{"generate", "--height", strconv.Itoa(screen.Height), "--width", strconv.Itoa(screen.Width)}
-	fmt.Printf("running %s %s\n", cmd, strings.Join(args, " "))
-	// session := exec.Command(s.Type, "--height", strconv.Itoa(screen.Height), "--width", strconv.Itoa(screen.Width))
-	// err := session.Run()
-	return "", nil
+func (s *Slide) GenerateImage(tool *Tool, imageDir string, screen *ScreenSize) (string, error) {
+	slideConfig, err := yaml.Marshal(s.Params)
+	if err != nil {
+		return "", fmt.Errorf("failed to prepare slide config: %w", err)
+	}
+
+	file, err := os.CreateTemp("", s.Name+"-"+s.Type+"-config-*.yaml")
+	_, err = file.Write(slideConfig)
+	if err != nil {
+		return "", fmt.Errorf("failed to write slide config: %w", err)
+	}
+	defer os.Remove(file.Name())
+
+	generatedImage := filepath.Join(imageDir, s.Name+".png")
+	args := []string{
+		"generate",
+		"--config", file.Name(),
+		"--height", strconv.Itoa(screen.Height),
+		"--width", strconv.Itoa(screen.Width),
+		"--output", generatedImage,
+	}
+	session := ExecCommand(tool.Path, args...)
+	err = session.Run()
+	if err != nil {
+		return "", fmt.Errorf("image generator failed: %w", err)
+	}
+	return generatedImage, nil
 }

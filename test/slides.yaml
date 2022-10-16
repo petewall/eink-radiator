@@ -3,16 +3,20 @@ kind: Slides
 slides:
 - type: blank
   name: Red
-  duration: 1s
+  duration: 1m
   params:
     color: red
 - type: blank
   name: White
-  duration: 1s
+  duration: 1m
   params:
     color: white
 - type: blank
-  name: Black
+  name: InvalidDuration
   duration: oogabooga
   params:
     color: black
+- type: swirl
+  name: InvalidType
+  duration: 1m
+  params: {}

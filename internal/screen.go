@@ -3,9 +3,6 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
-	"os/exec"
-	"path/filepath"
-	"strings"
 )
 
 type ScreenSize struct {
@@ -26,7 +23,7 @@ type ScreenDriver struct {
 }
 
 func LoadFromDriver(screenPath string) (Screen, error) {
-	output, err := exec.Command(screenPath, "config").Output()
+	output, err := ExecCommand(screenPath, "config").Output()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get screen config from %s: %w", screenPath, err)
 	}
@@ -34,7 +31,7 @@ func LoadFromDriver(screenPath string) (Screen, error) {
 	var driver *ScreenDriver
 	err = json.Unmarshal(output, &driver)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get screen config from %s: %w", screenPath, err)
+		return nil, fmt.Errorf("failed to parse screen config from %s: %w", screenPath, err)
 	}
 	driver.Path = screenPath
 
@@ -50,10 +47,11 @@ func (s *ScreenDriver) GetPalette() []string {
 }
 
 func (s *ScreenDriver) SetImage(imagePath string) error {
-	cmd := filepath.Join(s.Path, "screen")
 	args := []string{"display", imagePath}
-	fmt.Printf("running %s %s\n", cmd, strings.Join(args, " "))
-	// session := exec.Command(s.Type, "--height", strconv.Itoa(screen.Height), "--width", strconv.Itoa(screen.Width))
-	// err := session.Run()
+	session := ExecCommand(s.Path, args...)
+	err := session.Run()
+	if err != nil {
+		return fmt.Errorf("failed to display the image: %w", err)
+	}
 	return nil
 }
