@@ -78,4 +78,34 @@ var _ = Describe("Screen", func() {
 			})
 		})
 	})
+
+	Describe("SetImage", func() {
+		It("calls the display driver with an image", func() {
+			screen := &internal.ScreenDriver{
+				Path: "path/to/screen",
+			}
+			err := screen.SetImage("path/to/image.png")
+			Expect(err).ToNot(HaveOccurred())
+
+			By("calling the display command on the screen driver", func() {
+				screenPath, screenArgs := sessionFactory.ArgsForCall(0)
+				Expect(screenPath).To(Equal("path/to/screen"))
+				Expect(screenArgs).To(ConsistOf("display", "path/to/image.png"))
+			})
+		})
+
+		When("running the command fails", func() {
+			BeforeEach(func() {
+				session.RunReturns(errors.New("session failed"))
+			})
+			It("returns an error", func() {
+				screen := &internal.ScreenDriver{
+					Path: "path/to/screen",
+				}
+				err := screen.SetImage("path/to/image.png")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("failed to display the image path/to/image.png: session failed"))
+			})
+		})
+	})
 })

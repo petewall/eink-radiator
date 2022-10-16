@@ -51,7 +51,7 @@ func (s *ScreenDriver) SetImage(imagePath string) error {
 	session := ExecCommand(s.Path, args...)
 	err := session.Run()
 	if err != nil {
-		return fmt.Errorf("failed to display the image: %w", err)
+		return fmt.Errorf("failed to display the image %s: %w", imagePath, err)
 	}
 	return nil
 }
