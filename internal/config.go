@@ -26,7 +26,7 @@ func (c *Config) Validate() error {
 	}
 
 	if c.Kind != ConfigKind {
-		return fmt.Errorf("unexpected config kind: %s", c.APIVersion)
+		return fmt.Errorf("unexpected config kind: %s", c.Kind)
 	}
 
 	return nil
