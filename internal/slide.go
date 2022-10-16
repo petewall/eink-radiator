@@ -87,7 +87,11 @@ func (s *Slide) GenerateImage(tool *Tool, imageDir string, screen *ScreenSize) (
 	if err != nil {
 		return "", fmt.Errorf("failed to write slide config: %w", err)
 	}
-	defer RemoveFile(file.Name())
+
+	// Need to do the anonymous function to appease the errcheck linter.
+	// Since defer doesn't handle return values, and we need to explicitly
+	// state that we're disregarding the error return value of RemoveFile
+	defer func() { _ = RemoveFile(file.Name()) }()
 
 	generatedImage := filepath.Join(imageDir, s.Name+".png")
 	args := []string{

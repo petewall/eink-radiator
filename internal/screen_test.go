@@ -43,6 +43,7 @@ var _ = Describe("Screen", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			By("calling the config command on the screen driver", func() {
+				Expect(sessionFactory.CallCount()).To(Equal(1))
 				screenPath, screenArgs := sessionFactory.ArgsForCall(0)
 				Expect(screenPath).To(Equal("path/to/screen"))
 				Expect(screenArgs).To(ConsistOf("config"))
