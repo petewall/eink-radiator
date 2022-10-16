@@ -1,10 +1,11 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -26,17 +27,54 @@ func (sc *SlideConfig) Validate() error {
 	}
 
 	if sc.Kind != SlideConfigKind {
-		return fmt.Errorf("unexpected slide config kind: %s", sc.APIVersion)
+		return fmt.Errorf("unexpected slide config kind: %s", sc.Kind)
+	}
+
+	if len(sc.Slides) == 0 {
+		return errors.New("slide config does not contain any slides")
+	}
+
+	slideIndecies := map[string]int{}
+	for slideIndex, slide := range sc.Slides {
+		existingSlideIndex, isPresent := slideIndecies[slide.Name]
+		if isPresent {
+			return fmt.Errorf("slide #%d (%s) has the same name as the earlier slide #%d", slideIndex, slide.Name, existingSlideIndex)
+		}
+		slideIndecies[slide.Name] = slideIndex
+		err := slide.Validate()
+		if err != nil {
+			return fmt.Errorf("slide #%d (%s) is not valid: %w", slideIndex, slide.Name, err)
+		}
 	}
 
 	return nil
 }
 
 type Slide struct {
-	Type     string                 `json:"type" yaml:"type"`
 	Name     string                 `json:"name" yaml:"name"`
+	Type     string                 `json:"type" yaml:"type"`
 	Duration string                 `json:"duration" yaml:"duration"`
 	Params   map[string]interface{} `json:"params" yaml:"params"`
+}
+
+func (s *Slide) Validate() error {
+	if s.Name == "" {
+		return errors.New("slide name cannot be empty")
+	}
+
+	if s.Type == "" {
+		return errors.New("slide type cannot be empty")
+	}
+
+	if s.Duration == "" {
+		return errors.New("slide duration cannot be empty")
+	}
+
+	_, err := time.ParseDuration(s.Duration)
+	if err != nil {
+		return fmt.Errorf("slide duration is invalid: %s", s.Duration)
+	}
+	return nil
 }
 
 func (s *Slide) GenerateImage(tool *Tool, imageDir string, screen *ScreenSize) (string, error) {
@@ -45,12 +83,11 @@ func (s *Slide) GenerateImage(tool *Tool, imageDir string, screen *ScreenSize) (
 		return "", fmt.Errorf("failed to prepare slide config: %w", err)
 	}
 
-	file, err := os.CreateTemp("", s.Name+"-"+s.Type+"-config-*.yaml")
-	_, err = file.Write(slideConfig)
+	file, err := TempFile(s.Name+"-"+s.Type+"-config-*.yaml", slideConfig)
 	if err != nil {
 		return "", fmt.Errorf("failed to write slide config: %w", err)
 	}
-	defer os.Remove(file.Name())
+	defer RemoveFile(file.Name())
 
 	generatedImage := filepath.Join(imageDir, s.Name+".png")
 	args := []string{
