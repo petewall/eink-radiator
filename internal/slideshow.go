@@ -7,6 +7,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	SlideshowActionNext     = "next"
+	SlideshowActionPrevious = "previous"
+	SlideshowActionStop     = "stop"
+)
+
+//counterfeiter:generate . SlideshowAPI
+type SlideshowAPI interface {
+	NextSlide()
+	PreviousSlide()
+}
+
 type Slideshow struct {
 	Config      *Config
 	SlideConfig *SlideConfig
@@ -14,16 +26,45 @@ type Slideshow struct {
 
 	Screen Screen
 	Logger *logrus.Logger
+
+	actionChan chan string
 }
 
 func (s *Slideshow) Start() {
 	s.slideIndex = 0
+	s.actionChan = make(chan string, 5) // Why 5? i dunno. test with multiple actions and see if this makes sense
 
 	for {
 		slide := s.SlideConfig.Slides[s.slideIndex]
+
 		s.DisplaySlide(slide)
+
+		select {
+		case action := <-s.actionChan:
+			s.Logger.Debugf("action requested: %s", action)
+			if action == SlideshowActionPrevious {
+				s.slideIndex = (s.slideIndex - 2 + len(s.SlideConfig.Slides)) % len(s.SlideConfig.Slides)
+			} else if action == SlideshowActionStop {
+				break
+			}
+		case <-time.After(slide.Duration):
+			s.Logger.Debug("sleeping complete")
+		}
+
 		s.slideIndex = (s.slideIndex + 1) % len(s.SlideConfig.Slides)
 	}
+}
+
+func (s *Slideshow) NextSlide() {
+	s.actionChan <- SlideshowActionNext
+}
+
+func (s *Slideshow) PreviousSlide() {
+	s.actionChan <- SlideshowActionPrevious
+}
+
+func (s *Slideshow) Stop() {
+	s.actionChan <- SlideshowActionStop
 }
 
 func (s *Slideshow) DisplaySlide(slide *Slide) {
@@ -49,13 +90,4 @@ func (s *Slideshow) DisplaySlide(slide *Slide) {
 		return
 	}
 	s.Logger.Debugf("finished displaying image for slide %d (%s)", s.slideIndex, slide.Name)
-
-	duration, err := time.ParseDuration(slide.Duration)
-	s.Logger.Debugf("sleeping for %s...", duration.String())
-	if err != nil {
-		s.Logger.WithError(err).Warn(fmt.Sprintf("slide %d (%s) has an invalid duration %s, skipping", s.slideIndex, slide.Name, slide.Duration))
-		return
-	}
-
-	time.Sleep(duration)
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/petewall/eink-radiator/v2/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func ParseConfigFromFile(path string, dest interface{}) error {
@@ -28,19 +29,6 @@ func ParseConfigFromFile(path string, dest interface{}) error {
 	return nil
 }
 
-// func RunSerially(funcs ...func(cmd *cobra.Command, args []string) error) func(cmd *cobra.Command, args []string) error {
-// 	return func(cmd *cobra.Command, args []string) error {
-// 		for _, fn := range funcs {
-// 			err := fn(cmd, args)
-// 			if err != nil {
-// 				return err
-// 			}
-// 		}
-
-// 		return nil
-// 	}
-// }
-
 var rootCmd = &cobra.Command{
 	Use:   "eink-radiator",
 	Short: "Main process for the eInk Radiator",
@@ -50,7 +38,6 @@ var rootCmd = &cobra.Command{
 		logger.Level = logrus.DebugLevel
 
 		configPath := "test/config.yaml"
-		logger.Infof("Parsing config (%s)...", configPath)
 		config := &internal.Config{}
 		err := ParseConfigFromFile(configPath, config)
 		if err != nil {
@@ -60,9 +47,8 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("config is not valid: %w", err)
 		}
-		logger.Info("Finished parsing config")
+		logger.Infof("Parsed config (%s)", configPath)
 
-		logger.Infof("Parsing slide config (%s)...", config.SlidesPath)
 		slideConfig := &internal.SlideConfig{}
 		err = ParseConfigFromFile(config.SlidesPath, slideConfig)
 		if err != nil {
@@ -72,14 +58,13 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("slide config is not valid: %w", err)
 		}
-		logger.Infof("Finished parsing slide config: %d slides", len(slideConfig.Slides))
+		logger.Infof("Parsed slide config (%s): %d slides", config.SlidesPath, len(slideConfig.Slides))
 
-		logger.Info("Loading screen config...")
 		screen, err := internal.LoadFromDriver(config.GetTool("screen").Path)
 		if err != nil {
 			return fmt.Errorf("failed to load screen config: %w", err)
 		}
-		logger.Infof("Finished loading screen config: %dx%d [%s]", screen.GetSize().Width, screen.GetSize().Height, strings.Join(screen.GetPalette(), ", "))
+		logger.Infof("Loaded screen config: %dx%d [%s]", screen.GetSize().Width, screen.GetSize().Height, strings.Join(screen.GetPalette(), ", "))
 
 		slideshow := &internal.Slideshow{
 			Config:      config,
@@ -87,9 +72,11 @@ var rootCmd = &cobra.Command{
 			Screen:      screen,
 			Logger:      logger,
 		}
-		slideshow.Start()
 
-		return nil
+		server := internal.NewServer(viper.GetInt("port"), slideshow, logger)
+
+		go slideshow.Start()
+		return server.Start()
 	},
 }
 
@@ -101,4 +88,6 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Flags().Int("port", 8000, "the port number for the HTTP service to listen on")
+	_ = viper.BindPFlags(rootCmd.Flags())
 }

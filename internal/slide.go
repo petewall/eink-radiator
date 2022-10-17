@@ -51,10 +51,11 @@ func (sc *SlideConfig) Validate() error {
 }
 
 type Slide struct {
-	Name     string                 `json:"name" yaml:"name"`
-	Type     string                 `json:"type" yaml:"type"`
-	Duration string                 `json:"duration" yaml:"duration"`
-	Params   map[string]interface{} `json:"params" yaml:"params"`
+	Name           string                 `json:"name" yaml:"name"`
+	Type           string                 `json:"type" yaml:"type"`
+	DurationAmount string                 `json:"duration" yaml:"duration"`
+	Duration       time.Duration          `json:"-" yaml:"-"`
+	Params         map[string]interface{} `json:"params" yaml:"params"`
 }
 
 func (s *Slide) Validate() error {
@@ -66,14 +67,15 @@ func (s *Slide) Validate() error {
 		return errors.New("slide type cannot be empty")
 	}
 
-	if s.Duration == "" {
+	if s.DurationAmount == "" {
 		return errors.New("slide duration cannot be empty")
 	}
 
-	_, err := time.ParseDuration(s.Duration)
+	duration, err := time.ParseDuration(s.DurationAmount)
 	if err != nil {
-		return fmt.Errorf("slide duration is invalid: %s", s.Duration)
+		return fmt.Errorf("slide duration is invalid: %s", s.DurationAmount)
 	}
+	s.Duration = duration
 	return nil
 }
 

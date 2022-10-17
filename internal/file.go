@@ -4,8 +4,6 @@ import (
 	"os"
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
-
 //counterfeiter:generate . File
 type File interface {
 	Name() string

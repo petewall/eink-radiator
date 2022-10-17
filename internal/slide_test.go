@@ -2,6 +2,7 @@ package internal_test
 
 import (
 	"errors"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -19,9 +20,9 @@ var _ = Describe("SlideConfig", func() {
 				Kind:       internal.SlideConfigKind,
 				Slides: []*internal.Slide{
 					&internal.Slide{
-						Name:     "TestSlide",
-						Type:     "test",
-						Duration: "30m",
+						Name:           "TestSlide",
+						Type:           "test",
+						DurationAmount: "30m",
 					},
 				},
 			}
@@ -60,9 +61,9 @@ var _ = Describe("SlideConfig", func() {
 		When("there are multiple slides with the same name", func() {
 			It("returns an error", func() {
 				config.Slides = append(config.Slides, &internal.Slide{
-					Name:     config.Slides[0].Name,
-					Type:     "test",
-					Duration: "30m",
+					Name:           config.Slides[0].Name,
+					Type:           "test",
+					DurationAmount: "30m",
 				})
 				err := config.Validate()
 				Expect(err).To(HaveOccurred())
@@ -72,7 +73,7 @@ var _ = Describe("SlideConfig", func() {
 
 		When("there is an invalid slides", func() {
 			It("returns an error", func() {
-				config.Slides[0].Duration = "what?"
+				config.Slides[0].DurationAmount = "what?"
 				err := config.Validate()
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("slide #0 (TestSlide) is not valid: slide duration is invalid: what?"))
@@ -85,9 +86,9 @@ var _ = Describe("Slide", func() {
 	var slide *internal.Slide
 	BeforeEach(func() {
 		slide = &internal.Slide{
-			Name:     "TestSlide",
-			Type:     "test",
-			Duration: "30m",
+			Name:           "TestSlide",
+			Type:           "test",
+			DurationAmount: "30m",
 			Params: map[string]interface{}{
 				"location": "earth",
 				"glorious": true,
@@ -98,6 +99,9 @@ var _ = Describe("Slide", func() {
 	Describe("Validate", func() {
 		It("validates the slide", func() {
 			Expect(slide.Validate()).To(Succeed())
+
+			expectedDuration, _ := time.ParseDuration("30m")
+			Expect(slide.Duration).To(Equal(expectedDuration))
 		})
 
 		When("the name is empty", func() {
@@ -120,7 +124,7 @@ var _ = Describe("Slide", func() {
 
 		When("the duration is empty", func() {
 			It("returns an error", func() {
-				slide.Duration = ""
+				slide.DurationAmount = ""
 				err := slide.Validate()
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("slide duration cannot be empty"))
@@ -129,7 +133,7 @@ var _ = Describe("Slide", func() {
 
 		When("the duration is invalid", func() {
 			It("returns an error", func() {
-				slide.Duration = "not a valid duration"
+				slide.DurationAmount = "not a valid duration"
 				err := slide.Validate()
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("slide duration is invalid: not a valid duration"))

@@ -1,11 +1,23 @@
 apiVersion: v1.eink-radiator.petewall.net
 kind: Slides
 slides:
+- name: Rainbow
+  type: image
+  duration: 30s
+  params:
+    source: https://upload.wikimedia.org/wikipedia/commons/2/24/Supernumerary-rainbows-jb.jpg
+    scale: resize
 - name: Red
   type: blank
-  duration: 1m
+  duration: 5s
   params:
     color: red
+- name: Cats
+  type: image
+  duration: 30s
+  params:
+    source: https://upload.wikimedia.org/wikipedia/commons/0/0b/Cat_poster_1.jpg
+    scale: resize
 - name: White
   type: blank
   duration: 1m

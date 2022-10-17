@@ -6,6 +6,16 @@ import (
 	// "github.com/petewall/eink-radiator/v2/internal"
 )
 
-var _ = XDescribe("Slideshow", func() {
+var _ = Describe("Slideshow", func() {
+	Describe("Start", func() {
+		XIt("starts the slideshow", func() {
+			By("starting at 0", func() {})
+			By("repeating forever", func() {})
+		})
+	})
 
+	Describe("DisplaySlide", func() {
+		XIt("generates the image and sends it to the screen", func() {
+		})
+	})
 })
