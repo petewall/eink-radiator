@@ -11,7 +11,7 @@ resources:
   icon: github
   source:
     uri: git@github.com:petewall/eink-radiator
-    branch: rearchitecture
+    branch: main
     private_key: ((github.private_key))
 - name: eink-radiator-pull-requests
   type: pull-request
@@ -34,7 +34,7 @@ resources:
     driver: git
     commit_message: '[ci skip] bump version to %version%'
     uri: git@github.com:petewall/eink-radiator.git
-    branch: rearchitecture
+    branch: main
     file: version
     private_key: ((github.private_key))
 - name: image-source-blank

@@ -7,7 +7,7 @@ components:
     repo:
       owner: petewall
       name: eink-radiator
-    branch: rearchitecture
+    branch: main
   - name: image-source-blank
     language: golang
     buildable: true
