@@ -8,12 +8,12 @@ import (
 	"os"
 	"strings"
 
-	"gopkg.in/yaml.v3"
-
-	"github.com/petewall/eink-radiator/v2/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
+
+	"github.com/petewall/eink-radiator/v2/internal"
 )
 
 func ParseConfigFromFile(path string, dest interface{}) error {
@@ -37,9 +37,8 @@ var rootCmd = &cobra.Command{
 		logger.Out = cmd.ErrOrStderr()
 		logger.Level = logrus.DebugLevel
 
-		configPath := "test/config.yaml"
 		config := &internal.Config{}
-		err := ParseConfigFromFile(configPath, config)
+		err := ParseConfigFromFile(viper.GetString("config"), config)
 		if err != nil {
 			return fmt.Errorf("failed to load config: %w", err)
 		}
@@ -47,7 +46,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("config is not valid: %w", err)
 		}
-		logger.Infof("Parsed config (%s)", configPath)
+		logger.Infof("Parsed config (%s)", viper.GetString("config"))
 
 		slideConfig := &internal.SlideConfig{}
 		err = ParseConfigFromFile(config.SlidesPath, slideConfig)
@@ -66,13 +65,7 @@ var rootCmd = &cobra.Command{
 		}
 		logger.Infof("Loaded screen config: %dx%d [%s]", screen.GetSize().Width, screen.GetSize().Height, strings.Join(screen.GetPalette(), ", "))
 
-		slideshow := &internal.Slideshow{
-			Config:      config,
-			SlideConfig: slideConfig,
-			Screen:      screen,
-			Logger:      logger,
-		}
-
+		slideshow := internal.NewSlideshow(config, slideConfig, screen, logger)
 		server := internal.NewServer(viper.GetInt("port"), slideshow, logger)
 
 		go slideshow.Start()
@@ -89,5 +82,6 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().Int("port", 8000, "the port number for the HTTP service to listen on")
+	rootCmd.Flags().StringP("config", "c", "config.yaml", "the config file")
 	_ = viper.BindPFlags(rootCmd.Flags())
 }

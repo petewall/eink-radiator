@@ -16,6 +16,14 @@ type FakeSlideshowAPI struct {
 	previousSlideMutex       sync.RWMutex
 	previousSlideArgsForCall []struct {
 	}
+	StartStub        func()
+	startMutex       sync.RWMutex
+	startArgsForCall []struct {
+	}
+	StopStub        func()
+	stopMutex       sync.RWMutex
+	stopArgsForCall []struct {
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -68,6 +76,54 @@ func (fake *FakeSlideshowAPI) PreviousSlideCalls(stub func()) {
 	fake.PreviousSlideStub = stub
 }
 
+func (fake *FakeSlideshowAPI) Start() {
+	fake.startMutex.Lock()
+	fake.startArgsForCall = append(fake.startArgsForCall, struct {
+	}{})
+	stub := fake.StartStub
+	fake.recordInvocation("Start", []interface{}{})
+	fake.startMutex.Unlock()
+	if stub != nil {
+		fake.StartStub()
+	}
+}
+
+func (fake *FakeSlideshowAPI) StartCallCount() int {
+	fake.startMutex.RLock()
+	defer fake.startMutex.RUnlock()
+	return len(fake.startArgsForCall)
+}
+
+func (fake *FakeSlideshowAPI) StartCalls(stub func()) {
+	fake.startMutex.Lock()
+	defer fake.startMutex.Unlock()
+	fake.StartStub = stub
+}
+
+func (fake *FakeSlideshowAPI) Stop() {
+	fake.stopMutex.Lock()
+	fake.stopArgsForCall = append(fake.stopArgsForCall, struct {
+	}{})
+	stub := fake.StopStub
+	fake.recordInvocation("Stop", []interface{}{})
+	fake.stopMutex.Unlock()
+	if stub != nil {
+		fake.StopStub()
+	}
+}
+
+func (fake *FakeSlideshowAPI) StopCallCount() int {
+	fake.stopMutex.RLock()
+	defer fake.stopMutex.RUnlock()
+	return len(fake.stopArgsForCall)
+}
+
+func (fake *FakeSlideshowAPI) StopCalls(stub func()) {
+	fake.stopMutex.Lock()
+	defer fake.stopMutex.Unlock()
+	fake.StopStub = stub
+}
+
 func (fake *FakeSlideshowAPI) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -75,6 +131,10 @@ func (fake *FakeSlideshowAPI) Invocations() map[string][][]interface{} {
 	defer fake.nextSlideMutex.RUnlock()
 	fake.previousSlideMutex.RLock()
 	defer fake.previousSlideMutex.RUnlock()
+	fake.startMutex.RLock()
+	defer fake.startMutex.RUnlock()
+	fake.stopMutex.RLock()
+	defer fake.stopMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

@@ -6,6 +6,8 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	. "github.com/onsi/gomega/gbytes"
+	"github.com/sirupsen/logrus"
 
 	"github.com/petewall/eink-radiator/v2/internal"
 	"github.com/petewall/eink-radiator/v2/internal/internalfakes"
@@ -13,15 +15,18 @@ import (
 
 var _ = Describe("Server", func() {
 	var (
-		logger    *internalfakes.FakeLogger
+		log       *Buffer
 		server    *internal.Server
 		slideshow *internalfakes.FakeSlideshowAPI
 	)
 
 	BeforeEach(func() {
-		logger = &internalfakes.FakeLogger{}
+		log = NewBuffer()
+		logObject := logrus.New()
+		logObject.Out = log
+		logObject.Level = logrus.DebugLevel
 		slideshow = &internalfakes.FakeSlideshowAPI{}
-		server = internal.NewServer(1234, slideshow, logger)
+		server = internal.NewServer(1234, slideshow, logObject)
 	})
 
 	Describe("/api/next", func() {

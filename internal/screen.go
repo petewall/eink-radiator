@@ -10,6 +10,7 @@ type ScreenSize struct {
 	Width  int `json:"width"`
 }
 
+//counterfeiter:generate . Screen
 type Screen interface {
 	GetSize() *ScreenSize
 	GetPalette() []string

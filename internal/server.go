@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
@@ -12,10 +13,10 @@ type Server struct {
 
 	Router    *mux.Router
 	slideshow SlideshowAPI
-	log       Logger
+	log       *logrus.Logger
 }
 
-func NewServer(port int, slideshow SlideshowAPI, log Logger) *Server {
+func NewServer(port int, slideshow SlideshowAPI, log *logrus.Logger) *Server {
 	server := &Server{
 		port:      port,
 		Router:    mux.NewRouter(),
