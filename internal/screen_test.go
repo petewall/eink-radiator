@@ -27,7 +27,7 @@ var _ = Describe("Screen", func() {
 
 	Describe("LoadFromDriver", func() {
 		BeforeEach(func() {
-			output := internal.ScreenDriver{
+			output := internal.Screen{
 				Size: &internal.ScreenSize{
 					Height: 768,
 					Width:  1024,
@@ -50,10 +50,9 @@ var _ = Describe("Screen", func() {
 			})
 
 			By("returning a screen object", func() {
-				size := screen.GetSize()
-				Expect(size.Height).To(Equal(768))
-				Expect(size.Width).To(Equal(1024))
-				Expect(screen.GetPalette()).To(ConsistOf("red", "green", "blue"))
+				Expect(screen.Size.Height).To(Equal(768))
+				Expect(screen.Size.Width).To(Equal(1024))
+				Expect(screen.Palette).To(ConsistOf("red", "green", "blue"))
 			})
 		})
 
@@ -82,7 +81,7 @@ var _ = Describe("Screen", func() {
 
 	Describe("SetImage", func() {
 		It("calls the display driver with an image", func() {
-			screen := &internal.ScreenDriver{
+			screen := &internal.Screen{
 				Path: "path/to/screen",
 			}
 			err := screen.SetImage("path/to/image.png")
@@ -100,7 +99,7 @@ var _ = Describe("Screen", func() {
 				session.RunReturns(errors.New("session failed"))
 			})
 			It("returns an error", func() {
-				screen := &internal.ScreenDriver{
+				screen := &internal.Screen{
 					Path: "path/to/screen",
 				}
 				err := screen.SetImage("path/to/image.png")

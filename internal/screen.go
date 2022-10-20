@@ -10,44 +10,30 @@ type ScreenSize struct {
 	Width  int `json:"width"`
 }
 
-//counterfeiter:generate . Screen
-type Screen interface {
-	GetSize() *ScreenSize
-	GetPalette() []string
-	SetImage(imagePath string) error
-}
-
-type ScreenDriver struct {
+type Screen struct {
+	Kind    string      `json:"kind"`
 	Size    *ScreenSize `json:"size"`
 	Palette []string    `json:"palette"`
 	Path    string      `json:"-"`
 }
 
-func LoadFromDriver(screenPath string) (Screen, error) {
+func LoadFromDriver(screenPath string) (*Screen, error) {
 	output, err := ExecCommand(screenPath, "config").Output()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get screen config from %s: %w", screenPath, err)
 	}
 
-	var driver *ScreenDriver
-	err = json.Unmarshal(output, &driver)
+	var screen *Screen
+	err = json.Unmarshal(output, &screen)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse screen config from %s: %w", screenPath, err)
 	}
-	driver.Path = screenPath
+	screen.Path = screenPath
 
-	return driver, nil
+	return screen, nil
 }
 
-func (s *ScreenDriver) GetSize() *ScreenSize {
-	return s.Size
-}
-
-func (s *ScreenDriver) GetPalette() []string {
-	return s.Palette
-}
-
-func (s *ScreenDriver) SetImage(imagePath string) error {
+func (s *Screen) SetImage(imagePath string) error {
 	args := []string{"display", imagePath}
 	session := ExecCommand(s.Path, args...)
 	err := session.Run()

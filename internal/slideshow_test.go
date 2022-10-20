@@ -17,7 +17,7 @@ var _ = Describe("Slideshow", func() {
 	var (
 		config    *internal.Config
 		slides    *internal.SlideConfig
-		screen    *internalfakes.FakeScreen
+		screen    *internal.Screen
 		log       *logrus.Logger
 		logBuffer *Buffer
 
@@ -62,11 +62,13 @@ var _ = Describe("Slideshow", func() {
 			},
 		}
 
-		screen = &internalfakes.FakeScreen{}
-		screen.GetSizeReturns(&internal.ScreenSize{
-			Width:  640,
-			Height: 480,
-		})
+		screen = &internal.Screen{
+			Path: "/path/to/screen",
+			Size: &internal.ScreenSize{
+				Width:  640,
+				Height: 480,
+			},
+		}
 
 		logBuffer = NewBuffer()
 		log = logrus.New()
@@ -106,8 +108,9 @@ var _ = Describe("Slideshow", func() {
 			})
 
 			By("displaying the image", func() {
-				Expect(screen.SetImageCallCount()).To(Equal(1))
-				Expect(screen.SetImageArgsForCall(0)).To(Equal("/path/to/images/Slide1.png"))
+				cli, args := sessionFactory.ArgsForCall(1)
+				Expect(cli).To(Equal("/path/to/screen"))
+				Expect(args).To(ConsistOf(strings.Split("display /path/to/images/Slide1.png", " ")))
 			})
 
 			By("stopping", func() {

@@ -59,7 +59,7 @@ build/eink-radiator-darwin-amd64: $(SOURCES) deps-modules
 	GOOS=darwin GOARCH=amd64 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator/v2
 
 run: build/eink-radiator
-	build/eink-radiator
+	build/eink-radiator --config test/config.yaml
 
 # #### DEVOPS ####
 ci/pipeline.yaml: ci/pipeline-template.yaml ci/data.yaml

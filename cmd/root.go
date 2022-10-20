@@ -63,10 +63,10 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("failed to load screen config: %w", err)
 		}
-		logger.Infof("Loaded screen config: %dx%d [%s]", screen.GetSize().Width, screen.GetSize().Height, strings.Join(screen.GetPalette(), ", "))
+		logger.Infof("Loaded screen config: %dx%d [%s]", screen.Size.Width, screen.Size.Height, strings.Join(screen.Palette, ", "))
 
 		slideshow := internal.NewSlideshow(config, slideConfig, screen, logger)
-		server := internal.NewServer(viper.GetInt("port"), slideshow, logger)
+		server := internal.NewServer(viper.GetInt("port"), slideshow, screen, logger)
 
 		go slideshow.Start()
 		return server.Start()

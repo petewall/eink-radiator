@@ -24,12 +24,12 @@ type SlideshowAPI interface {
 type Slideshow struct {
 	config     *Config
 	slides     *SlideConfig
-	screen     Screen
+	screen     *Screen
 	log        *logrus.Logger
 	actionChan chan string
 }
 
-func NewSlideshow(config *Config, slides *SlideConfig, screen Screen, log *logrus.Logger) SlideshowAPI {
+func NewSlideshow(config *Config, slides *SlideConfig, screen *Screen, log *logrus.Logger) SlideshowAPI {
 	return &Slideshow{
 		config:     config,
 		slides:     slides,
@@ -52,7 +52,7 @@ func (s *Slideshow) Start() {
 			return
 		}
 
-		image, err := slide.GenerateImage(tool, s.config.ImagesPath, s.screen.GetSize())
+		image, err := slide.GenerateImage(tool, s.config.ImagesPath, s.screen.Size)
 		if err != nil {
 			s.log.WithError(err).Warn(fmt.Sprintf("slide %d (%s) failed to generate an image, skipping", slideIndex, slide.Name))
 			return
