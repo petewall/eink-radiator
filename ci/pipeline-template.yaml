@@ -120,6 +120,8 @@ jobs:
         passed:
           - #@ "test-" + component.name
         trigger: true
+      - get: version
+        resource: #@ component.name + "-version"
       - get: #@ component.language
         passed:
           - #@ "test-" + component.name
@@ -130,6 +132,7 @@ jobs:
         platform: linux
         inputs:
           - name: source
+          - name: version
         outputs:
           - name: build
         run:
@@ -138,6 +141,7 @@ jobs:
           args:
             - -exc
             - |
+              export VERSION=$(cat ../version/version)
               make build-all
               mv build/* ../build/
     #@ end
