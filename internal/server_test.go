@@ -35,6 +35,15 @@ var _ = Describe("Server", func() {
 			Palette: []string{"red", "green", "blue"},
 		}
 		slideshow = &internalfakes.FakeSlideshowAPI{}
+		slideshow.GetSlideConfigReturns(&internal.SlideConfig{
+			APIVersion: internal.SlideConfigAPIVersion,
+			Kind:       internal.SlideConfigKind,
+			Slides: []*internal.Slide{
+				MakeFakeSlide("Slide1", "test", "1ms", nil),
+				MakeFakeSlide("Slide2", "test", "1ms", nil),
+				MakeFakeSlide("Slide3", "test", "1ms", nil),
+			},
+		})
 		server = internal.NewServer(1234, slideshow, screen, logObject)
 	})
 
@@ -77,6 +86,75 @@ var _ = Describe("Server", func() {
 				},
 				"palette": ["red", "green", "blue"]
 			}`))
+		})
+	})
+
+	Describe("/api/slides.json", func() {
+		It("returns the list of slides", func() {
+			r := httptest.NewRequest(http.MethodGet, "/api/slides.json", nil)
+			w := httptest.NewRecorder()
+			server.Router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(MatchJSON(`{
+				"apiVersion": "v1.eink-radiator.petewall.net",
+				"kind": "Slides",
+				"slides": [
+					{
+						"name": "Slide1",
+						"type": "test",
+						"duration": "1ms",
+						"params": {}
+					},
+					{
+						"name": "Slide2",
+						"type": "test",
+						"duration": "1ms",
+						"params": {}
+					},
+					{
+						"name": "Slide3",
+						"type": "test",
+						"duration": "1ms",
+						"params": {}
+					}
+				]
+			}`))
+		})
+	})
+
+	Describe("/api/slide/<name>/config.json", func() {
+		BeforeEach(func() {
+			slideshow.GetSlideReturns(MakeFakeSlide("Slide3", "test", "1ms", nil))
+		})
+
+		It("returns the of slide", func() {
+			r := httptest.NewRequest(http.MethodGet, "/api/slide/Slide3/config.json", nil)
+			w := httptest.NewRecorder()
+			server.Router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(MatchJSON(`{
+				"name": "Slide3",
+				"type": "test",
+				"duration": "1ms",
+				"params": {}
+			}`))
+		})
+
+		When("the slide is not found", func() {
+			BeforeEach(func() {
+				slideshow.GetSlideReturns(nil)
+			})
+
+			It("returns 404", func() {
+				r := httptest.NewRequest(http.MethodGet, "/api/slide/WhatSlide/config.json", nil)
+				w := httptest.NewRecorder()
+				server.Router.ServeHTTP(w, r)
+
+				Expect(w.Code).To(Equal(http.StatusNotFound))
+				Expect(w.Body.String()).To(Equal("there are not any slides named \"WhatSlide\""))
+			})
 		})
 	})
 })

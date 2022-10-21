@@ -2,7 +2,6 @@ package internal_test
 
 import (
 	"strings"
-	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -41,24 +40,9 @@ var _ = Describe("Slideshow", func() {
 			APIVersion: internal.SlideConfigAPIVersion,
 			Kind:       internal.SlideConfigKind,
 			Slides: []*internal.Slide{
-				&internal.Slide{
-					Name:     "Slide1",
-					Type:     "test",
-					Duration: time.Millisecond,
-					Params:   map[string]interface{}{},
-				},
-				&internal.Slide{
-					Name:     "Slide2",
-					Type:     "test",
-					Duration: time.Millisecond,
-					Params:   map[string]interface{}{},
-				},
-				&internal.Slide{
-					Name:     "Slide3",
-					Type:     "test",
-					Duration: time.Millisecond,
-					Params:   map[string]interface{}{},
-				},
+				MakeFakeSlide("Slide1", "test", "1ms", nil),
+				MakeFakeSlide("Slide2", "test", "1ms", nil),
+				MakeFakeSlide("Slide3", "test", "1ms", nil),
 			},
 		}
 
@@ -90,6 +74,32 @@ var _ = Describe("Slideshow", func() {
 		sessionFactory.Returns(session)
 
 		internal.ExecCommand = sessionFactory.Spy
+	})
+
+	Describe("GetSlide", func() {
+		It("returns the slide with the matching name", func() {
+			slideshow := internal.NewSlideshow(config, slides, screen, log)
+			slide := slideshow.GetSlide("Slide2")
+			Expect(slide.Name).To(Equal("Slide2"))
+			Expect(slide.Type).To(Equal("test"))
+			Expect(slide.DurationAmount).To(Equal("1ms"))
+		})
+
+		When("the slide is not found", func() {
+			It("returns nil", func() {
+				slideshow := internal.NewSlideshow(config, slides, screen, log)
+				slide := slideshow.GetSlide("UnknownSlide")
+				Expect(slide).To(BeNil())
+			})
+		})
+	})
+
+	Describe("GetSlideConfig", func() {
+		It("returns the slide config", func() {
+			slideshow := internal.NewSlideshow(config, slides, screen, log)
+			slideConfig := slideshow.GetSlideConfig()
+			Expect(slideConfig).To(Equal(slides))
+		})
 	})
 
 	Describe("Start", func() {

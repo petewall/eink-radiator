@@ -29,6 +29,11 @@ func NewServer(port int, slideshow SlideshowAPI, screen *Screen, log *logrus.Log
 	server.Router.HandleFunc("/api/next", server.handleNext).Methods("POST")
 	server.Router.HandleFunc("/api/prev", server.handlePrevious).Methods("POST")
 	server.Router.HandleFunc("/api/screen/config.json", server.handleScreenConfig).Methods("GET")
+
+	server.Router.HandleFunc("/api/slides.json", server.handleSlides).Methods("GET")
+	server.Router.HandleFunc("/api/slide/{name}/config.json", server.handleSlideConfig).Methods("GET")
+	// server.Router.HandleFunc("/api/slide/{name}/image.png", server.handleSlideImage).Methods("GET")
+
 	return server
 }
 
@@ -49,14 +54,39 @@ func (s *Server) handlePrevious(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintln(w, http.StatusText(http.StatusOK))
 }
 
-func (s *Server) handleScreenConfig(w http.ResponseWriter, r *http.Request) {
-	screenConfig, err := json.Marshal(s.screen)
+func (s *Server) writeJSONResponse(w http.ResponseWriter, object interface{}) {
+	bytes, err := json.Marshal(object)
 	if err != nil {
-		s.log.WithError(err).Warn("failed to prepare screen config")
+		s.log.WithError(err).Warn("failed to prepare response")
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintln(w, "failed to prepare screen config")
+		_, _ = fmt.Fprintln(w, "failed to prepare response")
+		return
 	}
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(screenConfig)
+	_, _ = w.Write(bytes)
 }
+
+func (s *Server) handleScreenConfig(w http.ResponseWriter, r *http.Request) {
+	s.writeJSONResponse(w, s.screen)
+}
+
+func (s *Server) handleSlides(w http.ResponseWriter, r *http.Request) {
+	s.writeJSONResponse(w, s.slideshow.GetSlideConfig())
+}
+
+func (s *Server) handleSlideConfig(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+	slide := s.slideshow.GetSlide(name)
+	if slide == nil {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = fmt.Fprintf(w, "there are not any slides named \"%s\"", name)
+		return
+	}
+
+	s.writeJSONResponse(w, slide)
+}
+
+// func (s *Server) handleSlideImage(w http.ResponseWriter, r *http.Request) {
+
+// }

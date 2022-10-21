@@ -13,8 +13,10 @@ const (
 	SlideshowActionStop     = "stop"
 )
 
-//counterfeiter:generate . SlideshowAPI
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SlideshowAPI
 type SlideshowAPI interface {
+	GetSlide(name string) *Slide
+	GetSlideConfig() *SlideConfig
 	Start()
 	Stop()
 	NextSlide()
@@ -37,6 +39,19 @@ func NewSlideshow(config *Config, slides *SlideConfig, screen *Screen, log *logr
 		log:        log,
 		actionChan: make(chan string, 5), // Why 5? i dunno. test with multiple actions and see if this makes sense
 	}
+}
+
+func (s *Slideshow) GetSlide(name string) *Slide {
+	for _, slide := range s.slides.Slides {
+		if slide.Name == name {
+			return slide
+		}
+	}
+	return nil
+}
+
+func (s *Slideshow) GetSlideConfig() *SlideConfig {
+	return s.slides
 }
 
 func (s *Slideshow) Start() {

@@ -4,13 +4,13 @@ import (
 	"os/exec"
 )
 
-//counterfeiter:generate . Session
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Session
 type Session interface {
 	Run() error
 	Output() ([]byte, error)
 }
 
-//counterfeiter:generate . SessionFactory
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SessionFactory
 type SessionFactory func(name string, arg ...string) Session
 
 var ExecCommand SessionFactory = func(name string, arg ...string) Session {
