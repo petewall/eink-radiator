@@ -15,20 +15,26 @@ type Server struct {
 	Router    *mux.Router
 	screen    *Screen
 	slideshow SlideshowAPI
+	ui        *UI
 	log       *logrus.Logger
 }
 
-func NewServer(port int, slideshow SlideshowAPI, screen *Screen, log *logrus.Logger) *Server {
+func NewServer(port int, slideshow SlideshowAPI, screen *Screen, ui *UI, log *logrus.Logger) *Server {
 	server := &Server{
 		port:      port,
 		Router:    mux.NewRouter(),
 		screen:    screen,
 		slideshow: slideshow,
+		ui:        ui,
 		log:       log,
 	}
+	server.Router.HandleFunc("/", server.handleUI).Methods("GET")
+	server.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("web/static/"))))
+
 	server.Router.HandleFunc("/api/next", server.handleNext).Methods("POST")
 	server.Router.HandleFunc("/api/prev", server.handlePrevious).Methods("POST")
 	server.Router.HandleFunc("/api/screen/config.json", server.handleScreenConfig).Methods("GET")
+	// server.Router.HandleFunc("/api/screen/image.png", server.handleScreenConfig).Methods("GET")
 
 	server.Router.HandleFunc("/api/slides.json", server.handleSlides).Methods("GET")
 	server.Router.HandleFunc("/api/slide/{name}/config.json", server.handleSlideConfig).Methods("GET")
@@ -40,6 +46,16 @@ func NewServer(port int, slideshow SlideshowAPI, screen *Screen, log *logrus.Log
 func (s *Server) Start() error {
 	s.log.Infof("Starting HTTP service on port %d", s.port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), s.Router)
+}
+
+func (s *Server) handleUI(w http.ResponseWriter, r *http.Request) {
+	err := s.ui.Render(w, s.screen)
+	if err != nil {
+		s.log.WithError(err).Warn("failed to render ui template")
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = fmt.Fprintln(w, "failed to render ui template")
+		return
+	}
 }
 
 func (s *Server) handleNext(w http.ResponseWriter, r *http.Request) {

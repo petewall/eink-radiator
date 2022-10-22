@@ -8,6 +8,6 @@ tools:
   type: imageSource
   path: test/tools/image/image-darwin-amd64
 - name: screen
-  path: ../eink-radiator-display/dist/main/main
+  path: ../eink-radiator-display/dist/main
 imagesPath: test/images
 slidesPath: test/slides.yaml

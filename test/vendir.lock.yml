@@ -2,12 +2,12 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - githubRelease:
-      tag: v0.1.8
-      url: https://api.github.com/repos/petewall/eink-radiator-image-source-blank/releases/79927393
+      tag: v0.1.12
+      url: https://api.github.com/repos/petewall/eink-radiator-image-source-blank/releases/80628990
     path: blank
   - githubRelease:
-      tag: v0.1.6
-      url: https://api.github.com/repos/petewall/eink-radiator-image-source-image/releases/79927404
+      tag: v0.1.11
+      url: https://api.github.com/repos/petewall/eink-radiator-image-source-image/releases/80629261
     path: image
   path: tools
 kind: LockConfig

@@ -1,0 +1,48 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>eInk Radiator</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
+  <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- Menu bar -->
+  <div class="ui fixed inverted menu">
+    <div class="ui container">
+      <a href="#" class="header item">
+        <i class="inverted expand icon"></i>
+        eInk Radiator
+      </a>
+      <!-- <div class="ui simple dropdown item">
+        New Image Source <i class="dropdown icon"></i>
+        <div class="menu">
+          <a class="item" href="#">Blank</a>
+          <a class="item" href="#">Text</a>
+          <a class="item" href="#">Weather</a>
+          <a class="item" href="#">Image</a>
+        </div>
+      </div> -->
+
+      <div class="right palette item">
+        {{range .Screen.Palette}}
+          <i style="background-color: {{.}};"></i>
+        {{end}}
+      </div>
+    </div>
+  </div>
+
+  <div id="screen_content" class="ui segment">
+    <div class="ui disabled dimmer">
+      <div class="ui indeterminate text loader">Screen is busy</div>
+    </div>
+    <img class="ui centered bordered screen image" src="/api/screen/image.png" />
+    <h4 class="ui center aligned header">{{ .Screen.Size.Width }} &times; {{ .Screen.Size.Height }}</h4>
+  </div>
+
+</body>
+</html>
+{{end}}

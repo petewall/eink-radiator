@@ -65,8 +65,14 @@ var rootCmd = &cobra.Command{
 		}
 		logger.Infof("Loaded screen config: %dx%d [%s]", screen.Size.Width, screen.Size.Height, strings.Join(screen.Palette, ", "))
 
+		ui, err := internal.NewUI("web/templates/index.html")
+		if err != nil {
+			return fmt.Errorf("failed to create UI: %w", err)
+		}
+		logger.Info("User interface module loaded")
+
 		slideshow := internal.NewSlideshow(config, slideConfig, screen, logger)
-		server := internal.NewServer(viper.GetInt("port"), slideshow, screen, logger)
+		server := internal.NewServer(viper.GetInt("port"), slideshow, screen, ui, logger)
 
 		go slideshow.Start()
 		return server.Start()

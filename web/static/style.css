@@ -1,0 +1,9 @@
+.ui.menu .item i {
+    margin-right: 1.5em;
+}
+  
+.menu .palette i {
+    border: 1px solid grey;
+    height: 1em;
+    width: 1em;
+}
