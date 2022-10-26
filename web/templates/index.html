@@ -9,7 +9,6 @@
   <link rel="stylesheet" type="text/css" href="/static/style.css" />
 </head>
 <body>
-
   <!-- Menu bar -->
   <div class="ui fixed inverted menu">
     <div class="ui container">
@@ -17,15 +16,6 @@
         <i class="inverted expand icon"></i>
         eInk Radiator
       </a>
-      <!-- <div class="ui simple dropdown item">
-        New Image Source <i class="dropdown icon"></i>
-        <div class="menu">
-          <a class="item" href="#">Blank</a>
-          <a class="item" href="#">Text</a>
-          <a class="item" href="#">Weather</a>
-          <a class="item" href="#">Image</a>
-        </div>
-      </div> -->
 
       <div class="right palette item">
         {{range .Screen.Palette}}
@@ -35,12 +25,23 @@
     </div>
   </div>
 
-  <div id="screen_content" class="ui segment">
-    <div class="ui disabled dimmer">
-      <div class="ui indeterminate text loader">Screen is busy</div>
+  <div class="ui two column grid">
+    <div class="ui column vertical menu">
+      {{range .Slides}}
+      <div class="slideshow item">
+        <img class="ui left floated bordered thumbnail image" src="/api/slide/{{.Name}}/image.png" />
+        <p>{{.Name}}<br />{{.Type}}<br />{{.DurationAmount}}</p>
+      </div>
+      {{end}}
     </div>
-    <img class="ui centered bordered screen image" src="/api/screen/image.png" />
-    <h4 class="ui center aligned header">{{ .Screen.Size.Width }} &times; {{ .Screen.Size.Height }}</h4>
+
+    <div id="screen_content" class="ui column">
+      <div class="ui disabled dimmer">
+        <div class="ui indeterminate text loader">Screen is busy</div>
+      </div>
+      <img class="ui centered bordered screen image" src="/api/screen/image.png" />
+      <h4 class="ui center aligned header">{{ .Screen.Size.Width }} &times; {{ .Screen.Size.Height }}</h4>
+    </div>
   </div>
 
 </body>

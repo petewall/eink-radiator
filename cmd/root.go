@@ -72,7 +72,7 @@ var rootCmd = &cobra.Command{
 		logger.Info("User interface module loaded")
 
 		slideshow := internal.NewSlideshow(config, slideConfig, screen, logger)
-		server := internal.NewServer(viper.GetInt("port"), slideshow, screen, ui, logger)
+		server := internal.NewServer(config, slideshow, screen, ui, logger)
 
 		go slideshow.Start()
 		return server.Start()
@@ -87,7 +87,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().Int("port", 8000, "the port number for the HTTP service to listen on")
+	// rootCmd.Flags().Int("port", 8000, "the port number for the HTTP service to listen on")
 	rootCmd.Flags().StringP("config", "c", "config.yaml", "the config file")
 	_ = viper.BindPFlags(rootCmd.Flags())
 }

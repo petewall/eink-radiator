@@ -120,7 +120,7 @@ var _ = Describe("Slideshow", func() {
 			By("displaying the image", func() {
 				cli, args := sessionFactory.ArgsForCall(1)
 				Expect(cli).To(Equal("/path/to/screen"))
-				Expect(args).To(ConsistOf(strings.Split("display /path/to/images/Slide1.png", " ")))
+				Expect(args).To(ConsistOf(strings.Split("display /path/to/images/Slide1.png --save /path/to/images/screen.png", " ")))
 			})
 
 			By("stopping", func() {

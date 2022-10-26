@@ -15,6 +15,7 @@ const (
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SlideshowAPI
 type SlideshowAPI interface {
+	GetSlides() []*Slide
 	GetSlide(name string) *Slide
 	GetSlideConfig() *SlideConfig
 	Start()
@@ -41,6 +42,10 @@ func NewSlideshow(config *Config, slides *SlideConfig, screen *Screen, log *logr
 	}
 }
 
+func (s *Slideshow) GetSlides() []*Slide {
+	return s.slides.Slides
+}
+
 func (s *Slideshow) GetSlide(name string) *Slide {
 	for _, slide := range s.slides.Slides {
 		if slide.Name == name {
@@ -61,13 +66,7 @@ func (s *Slideshow) Start() {
 		slide := s.slides.Slides[slideIndex]
 
 		s.log.Debugf("generating image for slide %d (%s)...", slideIndex, slide.Name)
-		tool := s.config.GetTool(slide.Type)
-		if tool == nil {
-			s.log.Warn(fmt.Sprintf("slide %d (%s) uses an unknown tool type (%s), skipping", slideIndex, slide.Name, slide.Type))
-			return
-		}
-
-		image, err := slide.GenerateImage(tool, s.config.ImagesPath, s.screen.Size)
+		image, err := slide.GenerateImage(s.config, s.screen.Size)
 		if err != nil {
 			s.log.WithError(err).Warn(fmt.Sprintf("slide %d (%s) failed to generate an image, skipping", slideIndex, slide.Name))
 			return
@@ -75,7 +74,7 @@ func (s *Slideshow) Start() {
 		s.log.Debugf("finished generating image for slide %d (%s): %s", slideIndex, slide.Name, image)
 
 		s.log.Debugf("displaying image for slide %d (%s)...", slideIndex, slide.Name)
-		err = s.screen.SetImage(image)
+		err = s.screen.SetImage(s.config, image)
 		if err != nil {
 			s.log.WithError(err).Warn(fmt.Sprintf("failed to display slide %d (%s), skipping", slideIndex, slide.Name))
 			return

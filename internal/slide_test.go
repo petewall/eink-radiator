@@ -72,7 +72,7 @@ var _ = Describe("Slide", func() {
 
 	Describe("GenerateImage", func() {
 		var (
-			tool           *internal.Tool
+			config         *internal.Config
 			screen         *internal.ScreenSize
 			file           *internalfakes.FakeFile
 			tempFile       *internalfakes.FakeTempFileMaker
@@ -82,9 +82,14 @@ var _ = Describe("Slide", func() {
 		)
 
 		BeforeEach(func() {
-			tool = &internal.Tool{
-				Name: "test",
-				Path: "/path/to/test",
+			config = &internal.Config{
+				Tools: []*internal.Tool{
+					&internal.Tool{
+						Name: "test",
+						Path: "/path/to/test",
+					},
+				},
+				ImagesPath: "/path/to/images",
 			}
 			screen = &internal.ScreenSize{
 				Width:  1024,
@@ -107,7 +112,7 @@ var _ = Describe("Slide", func() {
 		})
 
 		It("calls the image source tool to generate an image", func() {
-			imagePath, err := slide.GenerateImage(tool, "/path/to/images", screen)
+			imagePath, err := slide.GenerateImage(config, screen)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("creating a config file from the slide params", func() {
@@ -138,13 +143,25 @@ var _ = Describe("Slide", func() {
 			})
 		})
 
+		When("the slide uses a tool that doesn't exist", func() {
+			BeforeEach(func() {
+				slide.Type = "something"
+			})
+
+			It("returns an error", func() {
+				_, err := slide.GenerateImage(config, screen)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("no tool found for type \"something\""))
+			})
+		})
+
 		When("creating the config file fails", func() {
 			BeforeEach(func() {
 				tempFile.Returns(nil, errors.New("temp file failed"))
 			})
 
 			It("returns an error", func() {
-				_, err := slide.GenerateImage(tool, "/path/to/images", screen)
+				_, err := slide.GenerateImage(config, screen)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("failed to write slide config: temp file failed"))
 			})
@@ -156,7 +173,7 @@ var _ = Describe("Slide", func() {
 			})
 
 			It("returns an error", func() {
-				_, err := slide.GenerateImage(tool, "/path/to/images", screen)
+				_, err := slide.GenerateImage(config, screen)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("image generator failed: session run failed"))
 			})

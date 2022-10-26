@@ -11,3 +11,4 @@ tools:
   path: ../eink-radiator-display/dist/main
 imagesPath: test/images
 slidesPath: test/slides.yaml
+port: 8000

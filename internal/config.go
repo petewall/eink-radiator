@@ -8,6 +8,7 @@ type Config struct {
 	Tools      []*Tool `json:"tools" yaml:"tools"`
 	ImagesPath string  `json:"imagesPath" yaml:"imagesPath"`
 	SlidesPath string  `json:"slidesPath" yaml:"slidesPath"`
+	Port       int     `json:"port" yaml:"port"`
 }
 
 type Tool struct {

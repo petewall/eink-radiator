@@ -15,6 +15,7 @@ import (
 
 var _ = Describe("Server", func() {
 	var (
+		config    *internal.Config
 		log       *Buffer
 		screen    *internal.Screen
 		server    *internal.Server
@@ -22,6 +23,9 @@ var _ = Describe("Server", func() {
 	)
 
 	BeforeEach(func() {
+		config = &internal.Config{
+			Port: 1234,
+		}
 		log = NewBuffer()
 		logObject := logrus.New()
 		logObject.Out = log
@@ -44,7 +48,7 @@ var _ = Describe("Server", func() {
 				MakeFakeSlide("Slide3", "test", "1ms", nil),
 			},
 		})
-		server = internal.NewServer(1234, slideshow, screen, logObject)
+		server = internal.NewServer(config, slideshow, screen, nil, logObject)
 	})
 
 	Describe("/api/next", func() {

@@ -7,3 +7,8 @@
     height: 1em;
     width: 1em;
 }
+
+.thumbnail {
+    height: 10%;
+    width: 10%;
+}

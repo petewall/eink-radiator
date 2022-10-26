@@ -3,6 +3,7 @@ package internal_test
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -13,11 +14,15 @@ import (
 
 var _ = Describe("Screen", func() {
 	var (
+		config         *internal.Config
 		session        *internalfakes.FakeSession
 		sessionFactory *internalfakes.FakeSessionFactory
 	)
 
 	BeforeEach(func() {
+		config = &internal.Config{
+			ImagesPath: "/path/to/images",
+		}
 		session = &internalfakes.FakeSession{}
 		sessionFactory = &internalfakes.FakeSessionFactory{}
 		sessionFactory.Returns(session)
@@ -84,13 +89,13 @@ var _ = Describe("Screen", func() {
 			screen := &internal.Screen{
 				Path: "path/to/screen",
 			}
-			err := screen.SetImage("path/to/image.png")
+			err := screen.SetImage(config, "path/to/image.png")
 			Expect(err).ToNot(HaveOccurred())
 
 			By("calling the display command on the screen driver", func() {
 				screenPath, screenArgs := sessionFactory.ArgsForCall(0)
 				Expect(screenPath).To(Equal("path/to/screen"))
-				Expect(screenArgs).To(ConsistOf("display", "path/to/image.png"))
+				Expect(screenArgs).To(ConsistOf(strings.Split("display path/to/image.png --save /path/to/images/screen.png", " ")))
 			})
 		})
 
@@ -102,7 +107,7 @@ var _ = Describe("Screen", func() {
 				screen := &internal.Screen{
 					Path: "path/to/screen",
 				}
-				err := screen.SetImage("path/to/image.png")
+				err := screen.SetImage(config, "path/to/image.png")
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("failed to display the image path/to/image.png: session failed"))
 			})

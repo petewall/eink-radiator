@@ -29,6 +29,16 @@ type FakeSlideshowAPI struct {
 	getSlideConfigReturnsOnCall map[int]struct {
 		result1 *internal.SlideConfig
 	}
+	GetSlidesStub        func() []*internal.Slide
+	getSlidesMutex       sync.RWMutex
+	getSlidesArgsForCall []struct {
+	}
+	getSlidesReturns struct {
+		result1 []*internal.Slide
+	}
+	getSlidesReturnsOnCall map[int]struct {
+		result1 []*internal.Slide
+	}
 	NextSlideStub        func()
 	nextSlideMutex       sync.RWMutex
 	nextSlideArgsForCall []struct {
@@ -163,6 +173,59 @@ func (fake *FakeSlideshowAPI) GetSlideConfigReturnsOnCall(i int, result1 *intern
 	}{result1}
 }
 
+func (fake *FakeSlideshowAPI) GetSlides() []*internal.Slide {
+	fake.getSlidesMutex.Lock()
+	ret, specificReturn := fake.getSlidesReturnsOnCall[len(fake.getSlidesArgsForCall)]
+	fake.getSlidesArgsForCall = append(fake.getSlidesArgsForCall, struct {
+	}{})
+	stub := fake.GetSlidesStub
+	fakeReturns := fake.getSlidesReturns
+	fake.recordInvocation("GetSlides", []interface{}{})
+	fake.getSlidesMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeSlideshowAPI) GetSlidesCallCount() int {
+	fake.getSlidesMutex.RLock()
+	defer fake.getSlidesMutex.RUnlock()
+	return len(fake.getSlidesArgsForCall)
+}
+
+func (fake *FakeSlideshowAPI) GetSlidesCalls(stub func() []*internal.Slide) {
+	fake.getSlidesMutex.Lock()
+	defer fake.getSlidesMutex.Unlock()
+	fake.GetSlidesStub = stub
+}
+
+func (fake *FakeSlideshowAPI) GetSlidesReturns(result1 []*internal.Slide) {
+	fake.getSlidesMutex.Lock()
+	defer fake.getSlidesMutex.Unlock()
+	fake.GetSlidesStub = nil
+	fake.getSlidesReturns = struct {
+		result1 []*internal.Slide
+	}{result1}
+}
+
+func (fake *FakeSlideshowAPI) GetSlidesReturnsOnCall(i int, result1 []*internal.Slide) {
+	fake.getSlidesMutex.Lock()
+	defer fake.getSlidesMutex.Unlock()
+	fake.GetSlidesStub = nil
+	if fake.getSlidesReturnsOnCall == nil {
+		fake.getSlidesReturnsOnCall = make(map[int]struct {
+			result1 []*internal.Slide
+		})
+	}
+	fake.getSlidesReturnsOnCall[i] = struct {
+		result1 []*internal.Slide
+	}{result1}
+}
+
 func (fake *FakeSlideshowAPI) NextSlide() {
 	fake.nextSlideMutex.Lock()
 	fake.nextSlideArgsForCall = append(fake.nextSlideArgsForCall, struct {
@@ -266,6 +329,8 @@ func (fake *FakeSlideshowAPI) Invocations() map[string][][]interface{} {
 	defer fake.getSlideMutex.RUnlock()
 	fake.getSlideConfigMutex.RLock()
 	defer fake.getSlideConfigMutex.RUnlock()
+	fake.getSlidesMutex.RLock()
+	defer fake.getSlidesMutex.RUnlock()
 	fake.nextSlideMutex.RLock()
 	defer fake.nextSlideMutex.RUnlock()
 	fake.previousSlideMutex.RLock()

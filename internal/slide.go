@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -39,7 +40,23 @@ func (s *Slide) Validate() error {
 	return nil
 }
 
-func (s *Slide) GenerateImage(tool *Tool, imageDir string, screen *ScreenSize) (string, error) {
+func (s *Slide) GetImage(config *Config, screen *ScreenSize) (string, error) {
+	imagePath := filepath.Join(config.ImagesPath, s.Name+".png")
+	_, err := os.Stat(imagePath)
+	if os.IsNotExist(err) {
+		return s.GenerateImage(config, screen)
+	} else if err != nil {
+		return "", err
+	}
+	return imagePath, nil
+}
+
+func (s *Slide) GenerateImage(config *Config, screen *ScreenSize) (string, error) {
+	tool := config.GetTool(s.Type)
+	if tool == nil {
+		return "", fmt.Errorf("no tool found for type \"%s\"", s.Type)
+	}
+
 	slideConfig, err := yaml.Marshal(s.Params)
 	if err != nil {
 		return "", fmt.Errorf("failed to prepare slide config: %w", err)
@@ -55,7 +72,7 @@ func (s *Slide) GenerateImage(tool *Tool, imageDir string, screen *ScreenSize) (
 	// state that we're disregarding the error return value of RemoveFile
 	defer func() { _ = RemoveFile(file.Name()) }()
 
-	generatedImage := filepath.Join(imageDir, s.Name+".png")
+	generatedImage := filepath.Join(config.ImagesPath, s.Name+".png")
 	args := []string{
 		"generate",
 		"--config", file.Name(),

@@ -12,6 +12,7 @@ type UI struct {
 
 type TemplateData struct {
 	Screen *Screen
+	Slides []*Slide
 }
 
 func NewUI(path string) (*UI, error) {
@@ -24,9 +25,10 @@ func NewUI(path string) (*UI, error) {
 	}, nil
 }
 
-func (ui *UI) Render(w io.Writer, screen *Screen) error {
+func (ui *UI) Render(w io.Writer, screen *Screen, slides []*Slide) error {
 	data := &TemplateData{
 		Screen: screen,
+		Slides: slides,
 	}
 	return ui.indexTemplate.ExecuteTemplate(w, "index", data)
 }

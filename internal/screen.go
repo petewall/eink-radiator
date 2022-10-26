@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 )
 
 type ScreenSize struct {
@@ -33,8 +34,8 @@ func LoadFromDriver(screenPath string) (*Screen, error) {
 	return screen, nil
 }
 
-func (s *Screen) SetImage(imagePath string) error {
-	args := []string{"display", imagePath}
+func (s *Screen) SetImage(config *Config, imagePath string) error {
+	args := []string{"display", imagePath, "--save", filepath.Join(config.ImagesPath, "screen.png")}
 	session := ExecCommand(s.Path, args...)
 	err := session.Run()
 	if err != nil {
