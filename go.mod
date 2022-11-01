@@ -10,7 +10,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.4.0
 	github.com/onsi/gomega v1.23.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/spf13/cobra v1.6.0
+	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
 	golang.org/x/tools v0.2.0
 	gopkg.in/yaml.v3 v3.0.1
