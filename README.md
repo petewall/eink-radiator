@@ -17,7 +17,7 @@ These repositories are small, self-contained tools for generating images:
 * Grafana Widget - (TBD) Display a Grafana-rendered dashboard widget, based on [this video](https://www.youtube.com/watch?v=AEQhsWX4v78)
 * [Image](https://github.com/petewall/eink-radiator-image-source-image) - Resizes or crops an image from a URL
 * Images - (TBD) Creates a slide from a set of images at random
-* [QR Code](https://github.com/petewall/eink-radiator-image-source-qrcode) - (In development) Creates a QR Code
+* [QR Code](https://github.com/petewall/eink-radiator-image-source-qr-code) - (In development) Creates a QR Code
 * Stocks - (TBD) Creates a slide showing stock information
 * [Text](https://github.com/petewall/eink-radiator-image-source-text) - Creates a slide based on text
 * Weather - (TBD) Creates a slide showing weather data
