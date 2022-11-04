@@ -8,7 +8,7 @@ This repository contains the main orchestrator and an administative user interfa
 
 ## Display
 
-The [https://github.com/petewall/eink-radiator-display](display) repo controls how to display a slide to the eInk screen
+The [display](https://github.com/petewall/eink-radiator-display) repo controls how to display a slide to the eInk screen
 
 ## Image Sources
 
