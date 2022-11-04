@@ -19,7 +19,7 @@ These repositories are small, self-contained tools for generating images:
 * Images - (TBD) Creates a slide from a set of images at random
 * [QR Code](https://github.com/petewall/eink-radiator-image-source-qrcode) - (In development) Creates a QR Code
 * Stocks - (TBD) Creates a slide showing stock information
-* Text - (TBD) Creates a slide based on text
+* [Text](https://github.com/petewall/eink-radiator-image-source-text) - Creates a slide based on text
 * Weather - (TBD) Creates a slide showing weather data
 
 ## User Interface
