@@ -1,5 +1,7 @@
 # eInk Radiator
 
+![CI](https://ci.petewall.net/api/v1/teams/main/pipelines/eink-radiator/jobs/test-eink-radiator/badge)
+
 The eInk Radiator is a [project of mine](https://petewall.net/tag/eink-radiator/), designed around the [Inky wHAT](https://shop.pimoroni.com/products/inky-what) eInk screen from [Pimoroni](https://shop.pimoroni.com/), to "radiate" various information on a schedule.
 
 This repository contains the main orchestrator and an administative user interface. It also uses several other repositories:
