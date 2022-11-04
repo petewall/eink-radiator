@@ -99,6 +99,37 @@ resources:
     branch: main
     file: version
     private_key: ((github.private_key))
+- name: image-source-text
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-image-source-text
+    branch: main
+    private_key: ((github.private_key))
+- name: image-source-text-pull-requests
+  type: pull-request
+  icon: github
+  check_every: 1h
+  source:
+    repository: petewall/eink-radiator-image-source-text
+    access_token: ((github.access_token))
+- name: image-source-text-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator-image-source-text
+    access_token: ((github.access_token))
+- name: image-source-text-version
+  type: semver
+  icon: github
+  source:
+    driver: git
+    commit_message: '[ci skip] bump version to %version%'
+    uri: git@github.com:petewall/eink-radiator-image-source-text.git
+    branch: main
+    file: version
+    private_key: ((github.private_key))
 - name: display
   type: git
   icon: github
@@ -158,6 +189,9 @@ groups:
   - test-image-source-image
   - release-image-source-image
   - test-image-source-image-pr
+  - test-image-source-text
+  - release-image-source-text
+  - test-image-source-text-pr
   - test-display
   - release-display
   - test-display-pr
@@ -176,6 +210,11 @@ groups:
   - test-image-source-image
   - release-image-source-image
   - test-image-source-image-pr
+- name: image-source-text
+  jobs:
+  - test-image-source-text
+  - release-image-source-text
+  - test-image-source-text-pr
 - name: display
   jobs:
   - test-display
@@ -601,6 +640,147 @@ jobs:
         path: source
         status: failure
   - put: image-source-image-pull-requests
+    inputs: detect
+    params:
+      path: source
+      status: success
+- name: test-image-source-text
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-text
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+- name: release-image-source-text
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-text
+      passed:
+      - test-image-source-text
+      trigger: true
+    - get: version
+      resource: image-source-text-version
+    - get: golang
+      passed:
+      - test-image-source-text
+  - task: build
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      - name: version
+      outputs:
+      - name: build
+      run:
+        dir: source
+        path: bash
+        args:
+        - -exc
+        - |
+          export VERSION=$(cat ../version/version)
+          make build-all
+          mv build/* ../build/
+  - put: version
+    resource: image-source-text-version
+    inputs: detect
+    params:
+      bump: patch
+  - put: image-source-text-release
+    inputs:
+    - build
+    - source
+    - version
+    params:
+      name: version/version
+      tag: version/version
+      tag_prefix: v
+      commitish: source/.git/ref
+      generate_release_notes: true
+      globs:
+      - build/*
+- name: test-image-source-text-pr
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-text-pull-requests
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: image-source-text-pull-requests
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: image-source-text-pull-requests
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+    on_failure:
+      put: image-source-text-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+    on_failure:
+      put: image-source-text-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: image-source-text-pull-requests
     inputs: detect
     params:
       path: source

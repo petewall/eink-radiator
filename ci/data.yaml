@@ -22,6 +22,13 @@ components:
       owner: petewall
       name: eink-radiator-image-source-image
     branch: main
+  - name: image-source-text
+    language: golang
+    buildable: true
+    repo:
+      owner: petewall
+      name: eink-radiator-image-source-text
+    branch: main
   - name: display
     language: python
     buildable: false
