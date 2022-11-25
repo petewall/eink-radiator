@@ -9,7 +9,9 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/petewall/eink-radiator/v2/internal"
-	"github.com/petewall/eink-radiator/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator/v2/internal/helpers"
+	"github.com/petewall/eink-radiator/v2/internal/helpers/helpersfakes"
+	"github.com/petewall/eink-radiator/v2/pkg"
 )
 
 var _ = Describe("Slideshow", func() {
@@ -20,20 +22,20 @@ var _ = Describe("Slideshow", func() {
 		log       *logrus.Logger
 		logBuffer *Buffer
 
-		tempFile       *internalfakes.FakeTempFileMaker
-		removeFile     *internalfakes.FakeFileRemover
-		session        *internalfakes.FakeSession
-		sessionFactory *internalfakes.FakeSessionFactory
+		tempFile       *helpersfakes.FakeTempFileMaker
+		removeFile     *helpersfakes.FakeFileRemover
+		session        *helpersfakes.FakeSession
+		sessionFactory *helpersfakes.FakeSessionFactory
 	)
 
 	BeforeEach(func() {
-		tool := &internal.Tool{
+		imageSource := &pkg.ImageSource{
 			Name: "test",
 			Path: "/path/to/test",
 		}
 		config = &internal.Config{
-			Tools:      []*internal.Tool{tool},
-			ImagesPath: "/path/to/images",
+			ImageSources: pkg.ImageSources{imageSource},
+			ImagesPath:   "/path/to/images",
 		}
 
 		slides = &internal.SlideConfig{
@@ -59,21 +61,21 @@ var _ = Describe("Slideshow", func() {
 		log.Out = logBuffer
 		log.Level = logrus.DebugLevel
 
-		file := &internalfakes.FakeFile{}
+		file := &helpersfakes.FakeFile{}
 		file.NameReturnsOnCall(0, "/tmp/Slide1-test-config-1111.yaml")
 		file.NameReturnsOnCall(1, "/tmp/Slide2-test-config-2222.yaml")
 		file.NameReturnsOnCall(2, "/tmp/Slide3-test-config-3333.yaml")
-		tempFile = &internalfakes.FakeTempFileMaker{}
+		tempFile = &helpersfakes.FakeTempFileMaker{}
 		tempFile.Returns(file, nil)
-		removeFile = &internalfakes.FakeFileRemover{}
-		internal.TempFile = tempFile.Spy
-		internal.RemoveFile = removeFile.Spy
+		removeFile = &helpersfakes.FakeFileRemover{}
+		helpers.TempFile = tempFile.Spy
+		helpers.RemoveFile = removeFile.Spy
 
-		session = &internalfakes.FakeSession{}
-		sessionFactory = &internalfakes.FakeSessionFactory{}
+		session = &helpersfakes.FakeSession{}
+		sessionFactory = &helpersfakes.FakeSessionFactory{}
 		sessionFactory.Returns(session)
 
-		internal.ExecCommand = sessionFactory.Spy
+		helpers.ExecCommand = sessionFactory.Spy
 	})
 
 	Describe("GetSlide", func() {

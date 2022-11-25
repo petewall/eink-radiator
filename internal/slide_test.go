@@ -8,7 +8,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/petewall/eink-radiator/v2/internal"
-	"github.com/petewall/eink-radiator/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator/v2/internal/helpers"
+	"github.com/petewall/eink-radiator/v2/internal/helpers/helpersfakes"
+	"github.com/petewall/eink-radiator/v2/pkg"
 )
 
 var _ = Describe("Slide", func() {
@@ -74,17 +76,17 @@ var _ = Describe("Slide", func() {
 		var (
 			config         *internal.Config
 			screen         *internal.ScreenSize
-			file           *internalfakes.FakeFile
-			tempFile       *internalfakes.FakeTempFileMaker
-			removeFile     *internalfakes.FakeFileRemover
-			session        *internalfakes.FakeSession
-			sessionFactory *internalfakes.FakeSessionFactory
+			file           *helpersfakes.FakeFile
+			tempFile       *helpersfakes.FakeTempFileMaker
+			removeFile     *helpersfakes.FakeFileRemover
+			session        *helpersfakes.FakeSession
+			sessionFactory *helpersfakes.FakeSessionFactory
 		)
 
 		BeforeEach(func() {
 			config = &internal.Config{
-				Tools: []*internal.Tool{
-					&internal.Tool{
+				ImageSources: pkg.ImageSources{
+					&pkg.ImageSource{
 						Name: "test",
 						Path: "/path/to/test",
 					},
@@ -96,19 +98,19 @@ var _ = Describe("Slide", func() {
 				Height: 768,
 			}
 
-			file = &internalfakes.FakeFile{}
+			file = &helpersfakes.FakeFile{}
 			file.NameReturns("/tmp/TestSlide-test-config-1234.yaml")
-			tempFile = &internalfakes.FakeTempFileMaker{}
+			tempFile = &helpersfakes.FakeTempFileMaker{}
 			tempFile.Returns(file, nil)
-			removeFile = &internalfakes.FakeFileRemover{}
-			internal.TempFile = tempFile.Spy
-			internal.RemoveFile = removeFile.Spy
+			removeFile = &helpersfakes.FakeFileRemover{}
+			helpers.TempFile = tempFile.Spy
+			helpers.RemoveFile = removeFile.Spy
 
-			session = &internalfakes.FakeSession{}
-			sessionFactory = &internalfakes.FakeSessionFactory{}
+			session = &helpersfakes.FakeSession{}
+			sessionFactory = &helpersfakes.FakeSessionFactory{}
 			sessionFactory.Returns(session)
 
-			internal.ExecCommand = sessionFactory.Spy
+			helpers.ExecCommand = sessionFactory.Spy
 		})
 
 		It("calls the image source tool to generate an image", func() {
@@ -151,7 +153,7 @@ var _ = Describe("Slide", func() {
 			It("returns an error", func() {
 				_, err := slide.GenerateImage(config, screen)
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("no tool found for type \"something\""))
+				Expect(err.Error()).To(Equal("no image source found for type \"something\""))
 			})
 		})
 

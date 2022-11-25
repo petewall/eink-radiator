@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/petewall/eink-radiator/v2/internal"
+	"github.com/petewall/eink-radiator/v2/pkg"
 )
 
 var _ = Describe("Config", func() {
@@ -13,8 +14,8 @@ var _ = Describe("Config", func() {
 		config = &internal.Config{
 			APIVersion: internal.ConfigAPIVersion,
 			Kind:       internal.ConfigKind,
-			Tools: []*internal.Tool{
-				&internal.Tool{
+			ImageSources: pkg.ImageSources{
+				&pkg.ImageSource{
 					Name: "test",
 					Path: "/path/to/test",
 				},
@@ -44,22 +45,6 @@ var _ = Describe("Config", func() {
 				err := config.Validate()
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("unexpected config kind: WhatIsThis"))
-			})
-		})
-	})
-
-	Describe("GetTool", func() {
-		It("returns the tool based on the name", func() {
-			tool := config.GetTool("test")
-			Expect(tool).ToNot(BeNil())
-			Expect(tool.Name).To(Equal("test"))
-			Expect(tool.Path).To(Equal("/path/to/test"))
-		})
-
-		When("the tool doesn't exist", func() {
-			It("returns nil", func() {
-				tool := config.GetTool("magic")
-				Expect(tool).To(BeNil())
 			})
 		})
 	})

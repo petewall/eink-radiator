@@ -9,25 +9,26 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/petewall/eink-radiator/v2/internal"
-	"github.com/petewall/eink-radiator/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator/v2/internal/helpers"
+	"github.com/petewall/eink-radiator/v2/internal/helpers/helpersfakes"
 )
 
 var _ = Describe("Screen", func() {
 	var (
 		config         *internal.Config
-		session        *internalfakes.FakeSession
-		sessionFactory *internalfakes.FakeSessionFactory
+		session        *helpersfakes.FakeSession
+		sessionFactory *helpersfakes.FakeSessionFactory
 	)
 
 	BeforeEach(func() {
 		config = &internal.Config{
 			ImagesPath: "/path/to/images",
 		}
-		session = &internalfakes.FakeSession{}
-		sessionFactory = &internalfakes.FakeSessionFactory{}
+		session = &helpersfakes.FakeSession{}
+		sessionFactory = &helpersfakes.FakeSessionFactory{}
 		sessionFactory.Returns(session)
 
-		internal.ExecCommand = sessionFactory.Spy
+		helpers.ExecCommand = sessionFactory.Spy
 	})
 
 	Describe("LoadFromDriver", func() {

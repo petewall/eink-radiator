@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+
+	"github.com/petewall/eink-radiator/v2/internal/helpers"
 )
 
 type ScreenSize struct {
@@ -19,7 +21,7 @@ type Screen struct {
 }
 
 func LoadFromDriver(screenPath string) (*Screen, error) {
-	output, err := ExecCommand(screenPath, "config").Output()
+	output, err := helpers.ExecCommand(screenPath, "config").Output()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get screen config from %s: %w", screenPath, err)
 	}
@@ -36,7 +38,7 @@ func LoadFromDriver(screenPath string) (*Screen, error) {
 
 func (s *Screen) SetImage(config *Config, imagePath string) error {
 	args := []string{"display", imagePath, "--save", filepath.Join(config.ImagesPath, "screen.png")}
-	session := ExecCommand(s.Path, args...)
+	session := helpers.ExecCommand(s.Path, args...)
 	err := session.Run()
 	if err != nil {
 		return fmt.Errorf("failed to display the image %s: %w", imagePath, err)

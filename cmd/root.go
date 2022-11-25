@@ -59,7 +59,7 @@ var rootCmd = &cobra.Command{
 		}
 		logger.Infof("Parsed slide config (%s): %d slides", config.SlidesPath, len(slideConfig.Slides))
 
-		screen, err := internal.LoadFromDriver(config.GetTool("screen").Path)
+		screen, err := internal.LoadFromDriver(config.ScreenPath)
 		if err != nil {
 			return fmt.Errorf("failed to load screen config: %w", err)
 		}

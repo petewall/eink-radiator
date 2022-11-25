@@ -1,14 +1,19 @@
 package internal
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/petewall/eink-radiator/v2/pkg"
+)
 
 type Config struct {
-	APIVersion string  `json:"apiVersion" yaml:"apiVersion" `
-	Kind       string  `json:"kind" yaml:"kind"`
-	Tools      []*Tool `json:"tools" yaml:"tools"`
-	ImagesPath string  `json:"imagesPath" yaml:"imagesPath"`
-	SlidesPath string  `json:"slidesPath" yaml:"slidesPath"`
-	Port       int     `json:"port" yaml:"port"`
+	APIVersion   string           `json:"apiVersion" yaml:"apiVersion" `
+	Kind         string           `json:"kind" yaml:"kind"`
+	ImageSources pkg.ImageSources `json:"imageSources" yaml:"imageSources"`
+	ImagesPath   string           `json:"imagesPath" yaml:"imagesPath"`
+	ScreenPath   string           `json:"screenPath" yaml:"screenPath"`
+	SlidesPath   string           `json:"slidesPath" yaml:"slidesPath"`
+	Port         int              `json:"port" yaml:"port"`
 }
 
 type Tool struct {
@@ -28,16 +33,6 @@ func (c *Config) Validate() error {
 
 	if c.Kind != ConfigKind {
 		return fmt.Errorf("unexpected config kind: %s", c.Kind)
-	}
-
-	return nil
-}
-
-func (c *Config) GetTool(name string) *Tool {
-	for _, tool := range c.Tools {
-		if tool.Name == name {
-			return tool
-		}
 	}
 
 	return nil

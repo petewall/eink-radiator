@@ -5,10 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
-
-	"gopkg.in/yaml.v3"
 )
 
 type Slide struct {
@@ -52,38 +49,12 @@ func (s *Slide) GetImage(config *Config, screen *ScreenSize) (string, error) {
 }
 
 func (s *Slide) GenerateImage(config *Config, screen *ScreenSize) (string, error) {
-	tool := config.GetTool(s.Type)
-	if tool == nil {
-		return "", fmt.Errorf("no tool found for type \"%s\"", s.Type)
+	imageSource := config.ImageSources.Get(s.Type)
+	if imageSource == nil {
+		return "", fmt.Errorf("no image source found for type \"%s\"", s.Type)
 	}
-
-	slideConfig, err := yaml.Marshal(s.Params)
-	if err != nil {
-		return "", fmt.Errorf("failed to prepare slide config: %w", err)
-	}
-
-	file, err := TempFile(s.Name+"-"+s.Type+"-config-*.yaml", slideConfig)
-	if err != nil {
-		return "", fmt.Errorf("failed to write slide config: %w", err)
-	}
-
-	// Need to do the anonymous function to appease the errcheck linter.
-	// Since defer doesn't handle return values, and we need to explicitly
-	// state that we're disregarding the error return value of RemoveFile
-	defer func() { _ = RemoveFile(file.Name()) }()
 
 	generatedImage := filepath.Join(config.ImagesPath, s.Name+".png")
-	args := []string{
-		"generate",
-		"--config", file.Name(),
-		"--height", strconv.Itoa(screen.Height),
-		"--width", strconv.Itoa(screen.Width),
-		"--output", generatedImage,
-	}
-	session := ExecCommand(tool.Path, args...)
-	err = session.Run()
-	if err != nil {
-		return "", fmt.Errorf("image generator failed: %w", err)
-	}
-	return generatedImage, nil
+	err := imageSource.GenerateToFile(s.Name, generatedImage, screen.Width, screen.Height, s.Params)
+	return generatedImage, err
 }

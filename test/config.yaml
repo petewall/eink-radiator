@@ -1,14 +1,11 @@
 apiVersion: v1.eink-radiator.petewall.net
 kind: Config
-tools:
+imageSources:
 - name: blank
-  type: imageSource
   path: test/tools/blank/blank-darwin-amd64
 - name: image
-  type: imageSource
   path: test/tools/image/image-darwin-amd64
-- name: screen
-  path: ../eink-radiator-display/dist/main
 imagesPath: test/images
+screenPath: ../eink-radiator-display/dist/main
 slidesPath: test/slides.yaml
 port: 8000
