@@ -7,12 +7,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
-	Router    *mux.Router
+	Router    *chi.Mux
 	config    *Config
 	screen    *Screen
 	slideshow SlideshowAPI
@@ -22,24 +23,31 @@ type Server struct {
 
 func NewServer(config *Config, slideshow SlideshowAPI, screen *Screen, ui *UI, log *logrus.Logger) *Server {
 	server := &Server{
-		Router:    mux.NewRouter(),
+		Router:    chi.NewRouter(),
 		config:    config,
 		screen:    screen,
 		slideshow: slideshow,
 		ui:        ui,
 		log:       log,
 	}
-	server.Router.HandleFunc("/", server.handleUI).Methods("GET")
-	server.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("web/static/"))))
 
-	server.Router.HandleFunc("/api/next", server.handleNext).Methods("POST")
-	server.Router.HandleFunc("/api/prev", server.handlePrevious).Methods("POST")
-	server.Router.HandleFunc("/api/screen/config.json", server.handleScreenConfig).Methods("GET")
-	server.Router.HandleFunc("/api/screen/image.png", server.handleScreenImage).Methods("GET")
+	server.Router.Use(middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: log, NoColor: false}))
 
-	server.Router.HandleFunc("/api/slides.json", server.handleSlides).Methods("GET")
-	server.Router.HandleFunc("/api/slide/{name}/config.json", server.handleSlideConfig).Methods("GET")
-	server.Router.HandleFunc("/api/slide/{name}/image.png", server.handleSlideImage).Methods("GET")
+	server.Router.Get("/", server.handleUI)
+	server.Router.Handle("/static/*", http.StripPrefix("/static", http.FileServer(http.Dir("web/static"))))
+
+	server.Router.Post("/api/next", server.handleNext)
+	server.Router.Post("/api/prev", server.handlePrevious)
+	server.Router.Get("/api/screen/config.json", server.handleScreenConfig)
+
+	server.Router.Get("/api/slides.json", server.handleSlides)
+	server.Router.Get("/api/slide/{name}/config.json", server.handleSlideConfig)
+
+	server.Router.Group(func(r chi.Router) {
+		r.Use(middleware.NoCache)
+		r.Get("/api/screen/image.png", server.handleScreenImage)
+		r.Get("/api/slide/{name}/image.png", server.handleSlideImage)
+	})
 
 	return server
 }
@@ -107,7 +115,7 @@ func (s *Server) handleSlides(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleSlideConfig(w http.ResponseWriter, r *http.Request) {
-	name := mux.Vars(r)["name"]
+	name := chi.URLParam(r, "name")
 	slide := s.slideshow.GetSlide(name)
 	if slide == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -119,7 +127,7 @@ func (s *Server) handleSlideConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleSlideImage(w http.ResponseWriter, r *http.Request) {
-	name := mux.Vars(r)["name"]
+	name := chi.URLParam(r, "name")
 	slide := s.slideshow.GetSlide(name)
 	if slide == nil {
 		w.WriteHeader(http.StatusNotFound)
