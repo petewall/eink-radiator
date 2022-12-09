@@ -99,6 +99,37 @@ resources:
     branch: main
     file: version
     private_key: ((github.private_key))
+- name: image-source-nasa-image-of-the-day
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:petewall/eink-radiator-image-source-nasa-image-of-the-day
+    branch: main
+    private_key: ((github.private_key))
+- name: image-source-nasa-image-of-the-day-pull-requests
+  type: pull-request
+  icon: github
+  check_every: 1h
+  source:
+    repository: petewall/eink-radiator-image-source-nasa-image-of-the-day
+    access_token: ((github.access_token))
+- name: image-source-nasa-image-of-the-day-release
+  type: github-release
+  icon: github
+  source:
+    owner: petewall
+    repository: eink-radiator-image-source-nasa-image-of-the-day
+    access_token: ((github.access_token))
+- name: image-source-nasa-image-of-the-day-version
+  type: semver
+  icon: github
+  source:
+    driver: git
+    commit_message: '[ci skip] bump version to %version%'
+    uri: git@github.com:petewall/eink-radiator-image-source-nasa-image-of-the-day.git
+    branch: main
+    file: version
+    private_key: ((github.private_key))
 - name: image-source-text
   type: git
   icon: github
@@ -189,6 +220,9 @@ groups:
   - test-image-source-image
   - release-image-source-image
   - test-image-source-image-pr
+  - test-image-source-nasa-image-of-the-day
+  - release-image-source-nasa-image-of-the-day
+  - test-image-source-nasa-image-of-the-day-pr
   - test-image-source-text
   - release-image-source-text
   - test-image-source-text-pr
@@ -210,6 +244,11 @@ groups:
   - test-image-source-image
   - release-image-source-image
   - test-image-source-image-pr
+- name: image-source-nasa-image-of-the-day
+  jobs:
+  - test-image-source-nasa-image-of-the-day
+  - release-image-source-nasa-image-of-the-day
+  - test-image-source-nasa-image-of-the-day-pr
 - name: image-source-text
   jobs:
   - test-image-source-text
@@ -640,6 +679,147 @@ jobs:
         path: source
         status: failure
   - put: image-source-image-pull-requests
+    inputs: detect
+    params:
+      path: source
+      status: success
+- name: test-image-source-nasa-image-of-the-day
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-nasa-image-of-the-day
+      trigger: true
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+- name: release-image-source-nasa-image-of-the-day
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-nasa-image-of-the-day
+      passed:
+      - test-image-source-nasa-image-of-the-day
+      trigger: true
+    - get: version
+      resource: image-source-nasa-image-of-the-day-version
+    - get: golang
+      passed:
+      - test-image-source-nasa-image-of-the-day
+  - task: build
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      - name: version
+      outputs:
+      - name: build
+      run:
+        dir: source
+        path: bash
+        args:
+        - -exc
+        - |
+          export VERSION=$(cat ../version/version)
+          make build-all
+          mv build/* ../build/
+  - put: version
+    resource: image-source-nasa-image-of-the-day-version
+    inputs: detect
+    params:
+      bump: patch
+  - put: image-source-nasa-image-of-the-day-release
+    inputs:
+    - build
+    - source
+    - version
+    params:
+      name: version/version
+      tag: version/version
+      tag_prefix: v
+      commitish: source/.git/ref
+      generate_release_notes: true
+      globs:
+      - build/*
+- name: test-image-source-nasa-image-of-the-day-pr
+  serial: true
+  plan:
+  - in_parallel:
+    - get: source
+      resource: image-source-nasa-image-of-the-day-pull-requests
+      trigger: true
+      version: every
+      params:
+        integration_tool: rebase
+      on_success:
+        put: image-source-nasa-image-of-the-day-pull-requests
+        inputs: detect
+        params:
+          path: source
+          status: pending
+      on_failure:
+        put: image-source-nasa-image-of-the-day-pull-requests
+        inputs: detect
+        params:
+          path: source
+          context: merge-conflict
+          status: failure
+    - get: golang
+  - task: lint
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - lint
+    on_failure:
+      put: image-source-nasa-image-of-the-day-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - task: test
+    image: golang
+    config:
+      platform: linux
+      inputs:
+      - name: source
+      run:
+        dir: source
+        path: make
+        args:
+        - test
+    on_failure:
+      put: image-source-nasa-image-of-the-day-pull-requests
+      inputs: detect
+      params:
+        path: source
+        status: failure
+  - put: image-source-nasa-image-of-the-day-pull-requests
     inputs: detect
     params:
       path: source

@@ -22,6 +22,15 @@ components:
       owner: petewall
       name: eink-radiator-image-source-image
     branch: main
+  - name: image-source-nasa-image-of-the-day
+    language: golang
+    buildable: true
+    repo:
+      owner: petewall
+      name: eink-radiator-image-source-nasa-image-of-the-day
+    branch: main
+    env:
+      API_KEY: ((nasa.apikey))
   - name: image-source-text
     language: golang
     buildable: true
