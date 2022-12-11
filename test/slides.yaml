@@ -23,7 +23,3 @@ slides:
   duration: 1m
   params:
     color: white
-- name: InvalidType
-  type: swirl
-  duration: 1m
-  params: {}
