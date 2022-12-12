@@ -3,7 +3,7 @@ module github.com/petewall/eink-radiator/v2
 go 1.19
 
 require (
-	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0
 	github.com/google/pprof v0.0.0-20221010195024-131d412537ea
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0
