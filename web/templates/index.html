@@ -4,8 +4,8 @@
 <head>
   <title>eInk Radiator</title>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.0/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.0/dist/semantic.min.js"></script>
   <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="/static/style.css" />
 </head>
@@ -27,13 +27,29 @@
   </div>
 
   <div class="ui two column grid">
-    <div class="ui column vertical menu">
-      {{range .Slides}}
-      <div class="slideshow item">
-        <img class="ui left floated bordered thumbnail image" src="/api/slide/{{.Name}}/image.png" />
-        <p>{{.Name}}<br />{{.Type}}<br />{{.DurationAmount}}</p>
+    
+    <!--  -->
+    <div class="ui column list">
+      <div class="ui four column grid">
+        {{range .Slides}}
+          <div class="ui column">
+            <img class="ui centered bordered thumbnail image" src="/api/slide/{{.Name}}/image.png" />
+          </div>
+          <div class="ui middle aligned column">
+            <p style="font-weight:bold;">{{.Name}}</p>
+            {{.Type}}
+          </div>
+          <div class="ui middle aligned column">
+            <i class="stopwatch icon"></i>{{.DurationAmount}}
+          </div>
+          <div class="ui middle aligned column">
+            <i class="pen icon"></i>
+            <br />
+            <i class="chevron circle right icon"></i>
+          </div>
+        {{end}}
       </div>
-      {{end}}
+
     </div>
 
     <div id="screen_content" class="ui column">
