@@ -1,0 +1,34 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: components
+  contents:
+  - path: main
+    githubRelease:
+      slug: #@ data.values.main.repo
+      latest: true
+      disableAutoChecksumValidation: true
+      assetNames:
+        - #@ "eink-radiator-" + data.values.platform
+  - path: ui
+    git:
+      url: https://github.com/petewall/eink-radiator
+      ref: origin/main
+      latest: true
+      includePaths:
+      - web/**/*
+  - path: display
+    git:
+      url: https://github.com/petewall/eink-radiator-display
+      ref: origin/main
+#@ for imageSource in data.values.imageSources:
+  - path: #@ "image-source-" + imageSource.name
+    githubRelease:
+      slug: #@ imageSource.repo
+      latest: true
+      disableAutoChecksumValidation: true
+      assetNames:
+        - #@ imageSource.name + "-" + data.values.platform
+#@ end

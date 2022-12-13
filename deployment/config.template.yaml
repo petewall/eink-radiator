@@ -1,0 +1,13 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: v1.eink-radiator.petewall.net
+kind: Config
+imageSources:
+#@ for imageSource in data.values.imageSources:
+- name: #@ imageSource.name
+  path: #@ data.values.dir + "/components/image-source-" + imageSource.name
+#@ end
+imagesPath: #@ data.values.dir + "/images"
+screenPath: #@ data.values.dir + "/components/display/main.py"
+slidesPath: #@ data.values.dir + "/slides.yaml"
+port: 8000

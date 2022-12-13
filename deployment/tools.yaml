@@ -1,0 +1,18 @@
+#@data/values
+---
+main:
+  repo: petewall/eink-radiator
+display:
+  repo:
+    owner: petewall
+    name: eink-radiator-display
+  branch: main
+imageSources:
+  - name: blank
+    repo: petewall/eink-radiator-image-source-blank
+  - name: image
+    repo: petewall/eink-radiator-image-source-image
+  - name: nasa-image-of-the-day
+    repo: petewall/eink-radiator-image-source-nasa-image-of-the-day
+  - name: text
+    repo: petewall/eink-radiator-image-source-text

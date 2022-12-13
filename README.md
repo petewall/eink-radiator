@@ -6,6 +6,12 @@ The eInk Radiator is a [project of mine](https://petewall.net/tag/eink-radiator/
 
 This repository contains the main orchestrator and an administative user interface. It also uses several other repositories:
 
+## Installation
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/petewall/eink-radiator/main/deployment/deploy.sh)"
+```
+
 ## Display
 
 The [display](https://github.com/petewall/eink-radiator-display) repo controls how to display a slide to the eInk screen
@@ -18,7 +24,7 @@ These repositories are small, self-contained tools for generating images:
 * Concourse - (TBD) Creates a slide based on a [Concourse](https://concourse-ci.org/) pipeline(s)
 * Grafana Widget - (TBD) Display a Grafana-rendered dashboard widget, based on [this video](https://www.youtube.com/watch?v=AEQhsWX4v78)
 * [Image](https://github.com/petewall/eink-radiator-image-source-image) - Resizes or crops an image from a URL
-* Images - (TBD) Creates a slide from a set of images at random
+* [NASA Image of the Day](https://github.com/petewall/eink-radiator-image-source-nasa-image-of-the-day) - Gets an image from [NASA Image of the Day](https://www.nasa.gov/multimedia/imagegallery/iotd.html)
 * [QR Code](https://github.com/petewall/eink-radiator-image-source-qr-code) - (In development) Creates a QR Code
 * Stocks - (TBD) Creates a slide showing stock information
 * [Text](https://github.com/petewall/eink-radiator-image-source-text) - Creates a slide based on text
