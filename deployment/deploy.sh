@@ -17,23 +17,23 @@ fi
 mkdir -p "${DEPLOYMENT_DIR}"
 cd "${DEPLOYMENT_DIR}"
 
-PLATFORM="darwin-amd64"
+PLATFORM="arm6"
 set -e
 
 echo "Generating bill of materials via vendir..."
 ytt \
-    --file tools.yaml \
     --data-value platform="${PLATFORM}" \
-    --file vendir.template.yml > vendir.yml
+    --file https://raw.githubusercontent.com/petewall/eink-radiator/main/deployment/tools.yaml \
+    --file https://raw.githubusercontent.com/petewall/eink-radiator/main/deployment/vendir.template.yml > vendir.yml
 
 echo "Downloading components..."
 vendir sync
 
 echo "Generating config.yaml..."
 ytt \
-    --file tools.yaml \
     --data-value dir="${DEPLOYMENT_DIR}" \
-    --file config.template.yaml > config.yaml
+    --file https://raw.githubusercontent.com/petewall/eink-radiator/main/deployment/tools.yaml \
+    --file https://raw.githubusercontent.com/petewall/eink-radiator/main/deployment/config.template.yaml > config.yaml
 
 if [ ! -f slides.yaml ]; then
     echo "Generating stubbed slides.yaml..."
