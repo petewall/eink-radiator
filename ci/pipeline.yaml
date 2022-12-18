@@ -707,6 +707,8 @@ jobs:
       platform: linux
       inputs:
       - name: source
+      params:
+        API_KEY: ((nasa.apikey))
       run:
         dir: source
         path: make

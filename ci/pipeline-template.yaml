@@ -107,6 +107,8 @@ jobs:
       platform: linux
       inputs:
         - name: source
+      #@ if/end hasattr(component, 'env'):
+      params: #@ component.env
       run:
         dir: source
         path: make
