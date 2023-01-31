@@ -20,7 +20,7 @@ deps-modules:
 	go mod download
 
 # #### TEST ####
-.PHONY: lint
+.PHONY: lint test
 
 lint:
 ifndef HAS_GOLANGCI_LINT
