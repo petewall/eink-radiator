@@ -8,7 +8,7 @@ require (
 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.13.0
 	github.com/onsi/ginkgo/v2 v2.33.0
-	github.com/onsi/gomega v1.43.1
+	github.com/onsi/gomega v1.44.0
 	github.com/sirupsen/logrus v1.10.2
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
