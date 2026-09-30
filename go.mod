@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.3.2
 	github.com/go-task/slim-sprig v2.20.0+incompatible
 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.13.0
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.14.0
 	github.com/onsi/ginkgo/v2 v2.33.0
 	github.com/onsi/gomega v1.43.1
 	github.com/sirupsen/logrus v1.10.2
